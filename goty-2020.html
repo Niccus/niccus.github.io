@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <title>nic's game of the year tyool 2020</title>
+    <style>
+        :root {
+            --color-custom-bright: #FFFFFF;
+            --color-custom-dark: #000000;
+        }
+
+        * {
+            left: 0px;
+            padding-top: 1%;
+            padding-left: 1%;
+            position: static;
+            font-family: 'Lato', sans-serif;
+        }
+
+        #title {
+            font-size: 48px;
+        }
+
+        #prelude {
+            background-color: #111;
+            padding: 10px;
+            margin: 20px;
+            width: 50%; 
+            font-size: 18px;
+        }
+
+        .detail {
+            width: max(60%, 600px);
+            font-size:18px;
+            background: var(--color-custom-dark);
+            color: #fff;
+            padding: 20px;
+
+            border-bottom: 5px solid #444;
+            border-right: 5px solid #444;
+        }
+
+        img {
+            max-width: 900px;
+        }
+
+        .item {
+            margin-top: 125px;
+        }
+
+        .itemtitle {
+            position: relative;
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .slant {
+            position: relative;
+            width: 80px;
+            padding: 10px 10px 10px 30px;
+            font-size: 20px;
+            z-index: 1;
+            display: block;
+            white-space: nowrap;
+            text-align: right;
+
+            left: -15px;
+            top: -20px;
+            
+            color: var(--color-custom-bright);
+            background: #222;
+            border-bottom: 3px solid var(--color-custom-bright);
+
+            display: inline-block;
+        }
+        .slant:after {
+            content: " ";
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            
+            background: var(--color-custom-dark);
+            border-bottom: 3px solid var(--color-custom-bright);
+            border-right: 20px solid var(--color-custom-bright);
+            
+            transform-origin: bottom left;
+            -ms-transform: skew(-30deg, 0deg);
+            -webkit-transform: skew(-30deg, 0deg);
+            transform: skew(-30deg, 0deg);
+        }
+
+        #backlog {
+            margin-top: 200px;
+        }
+        #backlogmsg {
+            font-size: 24px;
+            padding-bottom: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width: 99%; position: absolute; top: 0px; font-size: 40px; color: #e8e8e8; background-color: #222;">
+        <div id="title">A canonical ordering of the games I've played this year (2020).</div>
+        <div id="prelude">
+            Gaming-wise, this year had been defined by me getting much busier, and also moving in such a way that I don't have access to my computer. All of my gaming had been on my laptop, and while my computer is quite the slouch for gaming performance, my laptop is much, much worse for that. <br /><br />
+            So. Very limited exploration of gaming, and a lot of plans halting. And then the rest of 2020 happened, and my very early plans for moving my computer to where it needs to be couldn't happen, and it will not happen for the foreseeable future. <br /><br />
+            With the inexorable time of March still going... Let's do what I can?
+        </div>
+        <div id="list">
+
+        </div>
+        <div id="backlog">
+            <div> Backlog status: </div>
+            <div id="backlogmsg"></div>
+        </div>
+    </div>
+    
+    <!-- Skew div taken from a stackoverflow thread:
+    https://stackoverflow.com/questions/26075318/skew-div-border-of-one-side-only-using-one-div-only -->
+
+    <script>
+        //Constant-luminance code adapted from some old shader code
+        const gamma = 2.2;
+        let _Lum = [0.3, 0.59, 0.11];
+
+        let abs = Math.abs;
+        function unGamma(c) {
+            return [Math.pow(c[0], 1.0/gamma), Math.pow(c[1], 1.0/gamma), Math.pow(c[2], 1.0/gamma)];
+        }
+
+        function vPlus(xs, ys) {
+            let zs = [];
+            for(let i = 0; i < xs.length; ++i) {
+                zs[i] = xs[i] + ys[i];
+            }
+            return zs;
+        }
+
+        function vSum(xs) {
+            let sum = 0;
+            for(let i = 0; i < xs.length; ++i) {
+                sum += xs[i];
+            }
+            return sum;
+        }
+
+        function vScale(xs, a) {
+            let zs = [];
+            for(let i = 0; i < xs.length; ++i) {
+                zs[i] = xs[i] * a;
+            }
+            return zs;
+        }
+
+        function xLum(rgb) {
+            let zs = [];
+            zs[0] = _Lum[0] * rgb[0];
+            zs[1] = _Lum[1] * rgb[1];
+            zs[2] = _Lum[2] * rgb[2];
+            return zs;
+        }
+
+        function vLum(rgb) {
+            return vSum(xLum(rgb));
+        }
+
+        function saturate(x) {
+            return x>1 ? 1 : (x<0 ? 0 : x)
+        }
+
+        function saturates(arr) {
+            return arr.map(saturate);
+        }
+
+        function HUEtoRGB(hue)
+        {
+            let r = abs(hue * 6 - 3) - 1;
+            let g = 2 - abs(hue * 6 - 2);
+            let b = 2 - abs(hue * 6 - 4);
+            return saturates([r,g,b]);
+        }
+
+        //Convert overbright channels to brightness in other channels.
+        //Sacrifices chroma for a better representation of luma.
+        function Flatten(rgb)
+        {
+            let r = rgb[0];
+            let g = rgb[1];
+            let b = rgb[2];
+            let delta;
+            let lumDelta;
+
+            let outrgb = [];
+
+            //Ensure 'nice' cases
+            if(Math.max(r, Math.max(g, b)) <= 1) { return rgb; }
+
+            //Case 1: R needs clamp
+            if(r > g && r > b)
+            {
+                delta = r - 1;
+                r = 1;
+                lumDelta = delta * _Lum[0] / (_Lum[1] + _Lum[2]);
+                g += lumDelta;
+                b += lumDelta;
+
+                //Flatten remaining 2 if the overflow causes further overflow
+                if(g >= 1)
+                {
+                    delta = g - 1;
+                    lumDelta = delta * _Lum[1] / _Lum[2];
+                    b += lumDelta;
+                }
+                else if(b >= 1)
+                {
+                    delta = b - 1;
+                    lumDelta = delta * _Lum[2] / _Lum[1];
+                    g += lumDelta;
+                }
+
+                //Clamp overflow
+                if(g > 1) {g = 1;}
+                if(b > 1) {b = 1;}
+            }
+            //Case 2: G needs clamp
+            else if(g > b)
+            {
+                delta = g - 1;
+                g = 1;
+                lumDelta = delta * _Lum[1] / (_Lum[0] + _Lum[2]);
+                r += lumDelta;
+                b += lumDelta;
+
+                //Flatten remaining 2 if the overflow causes further overflow
+                if(r >= 1)
+                {
+                    delta = r - 1;
+                    lumDelta = delta * _Lum[0] / _Lum[2];
+                    b += lumDelta;
+                }
+                else if(b >= 1)
+                {
+                    delta = b - 1;
+                    lumDelta = delta * _Lum[2] / _Lum[0];
+                    r += lumDelta;
+                }
+
+                //Clamp overflow
+                if(r > 1) {r = 1;}
+                if(b > 1) {b = 1;}
+            }
+            //Case 3: B needs clamp
+            else 
+            {
+                delta = b - 1;
+                b = 1;
+                lumDelta = delta * _Lum[2] / (_Lum[0] + _Lum[1]);
+                r += lumDelta;
+                g += lumDelta;
+
+                //Flatten remaining 2 if the overflow causes further overflow
+                if(r >= 1)
+                {
+                    delta = r - 1;
+                    lumDelta = delta * _Lum[0] / _Lum[1];
+                    g += lumDelta;
+                }
+                else if(g >= 1)
+                {
+                    delta = g - 1;
+                    lumDelta = delta * _Lum[1] / _Lum[0];
+                    r += lumDelta;
+                }
+
+                //Clamp overflow
+                if(r > 1) {r = 1;}
+                if(g > 1) {g = 1;}
+            }
+
+            outrgb = [r, g, b];
+            return outrgb;
+        }
+
+        function MHSYtoRGB(HSY)
+        {
+            let RGB = HUEtoRGB(HSY[0]);
+            let SRGB = [
+                ((RGB[0] - 1) * HSY[1] + 1),
+                ((RGB[1] - 1) * HSY[1] + 1),
+                ((RGB[2] - 1) * HSY[1] + 1)
+            ];
+            //let outRGB = vScale(SRGB, 1/ vLum(SRGB) * HSY[2]);
+            let lum = 1.0 / vLum(SRGB) * HSY[2];
+            let outRGB = [SRGB[0] * lum, SRGB[1] * lum, SRGB[2] * lum];
+            // //if(outRGB.x > 1 || outRGB.y > 1 || outRGB .z > 1) { return float3(0,0,0); }
+            return Flatten(outRGB);
+        }
+
+        //
+
+        const divList = document.getElementById('list');
+        const backlogmsg = document.getElementById('backlogmsg');
+
+        //Functions straight up copied from w3school
+        function setCookie(cname, cvalue) {
+            document.cookie = cname + "=" + cvalue + ";path=/";
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        //http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html
+        !function(a,b,c,d,e,f,g,h,i){function j(a){var b,c=a.length,e=this,f=0,g=e.i=e.j=0,h=e.S=[];for(c||(a=[c++]);d>f;)h[f]=f++;for(f=0;d>f;f++)h[f]=h[g=s&g+a[f%c]+(b=h[f])],h[g]=b;(e.g=function(a){for(var b,c=0,f=e.i,g=e.j,h=e.S;a--;)b=h[f=s&f+1],c=c*d+h[s&(h[f]=h[g=s&g+b])+(h[g]=b)];return e.i=f,e.j=g,c})(d)}function k(a,b){var c,d=[],e=typeof a;if(b&&"object"==e)for(c in a)try{d.push(k(a[c],b-1))}catch(f){}return d.length?d:"string"==e?a:a+"\0"}function l(a,b){for(var c,d=a+"",e=0;e<d.length;)b[s&e]=s&(c^=19*b[s&e])+d.charCodeAt(e++);return n(b)}function m(c){try{return o?n(o.randomBytes(d)):(a.crypto.getRandomValues(c=new Uint8Array(d)),n(c))}catch(e){return[+new Date,a,(c=a.navigator)&&c.plugins,a.screen,n(b)]}}function n(a){return String.fromCharCode.apply(0,a)}var o,p=c.pow(d,e),q=c.pow(2,f),r=2*q,s=d-1,t=c["seed"+i]=function(a,f,g){var h=[];f=1==f?{entropy:!0}:f||{};var o=l(k(f.entropy?[a,n(b)]:null==a?m():a,3),h),s=new j(h);return l(n(s.S),b),(f.pass||g||function(a,b,d){return d?(c[i]=a,b):a})(function(){for(var a=s.g(e),b=p,c=0;q>a;)a=(a+c)*d,b*=d,c=s.g(1);for(;a>=r;)a/=2,b/=2,c>>>=1;return(a+c)/b},o,"global"in f?f.global:this==c)};if(l(c[i](),b),g&&g.exports){g.exports=t;try{o=require("crypto")}catch(u){}}else h&&h.amd&&h(function(){return t})}(this,[],Math,256,6,52,"object"==typeof module&&module,"function"==typeof define&&define,"random");
+        //string Math.seedrandom(string _);
+        //float-[0,1) Math.random();
+
+        //Carried over from last year, despite the lack of ordering
+        //The numbered ordering here is from order of dumping the names from my various gaming venues. It... still doesn't mean much.
+        var list = {
+            1: {
+                name: `The Hex`,
+                detail: `A game that, by the end, felt like a natural next step after Pony Island. Just like before, I don't think all of it hits, but there are enough clever moments and plenty enough heart to carry me through.`,
+                weight: 0,
+                variance: 1000,
+            },
+            2: {
+                name: `Golf Peaks`,
+                detail: `A puzzle ascent with the right slope, although maybe a bit filler-y. Beautiful presentation, and the mechanics sort of mean that it can't become particularly deep, but it does get satisfyingly difficult.`,
+                weight: 0,
+                variance: 1000,
+            },
+            3: {
+                name: `Iconoclasts`,
+                detail: `A fun crufty romp all the way through, hailing mostly from the Order of Ecclesia side of metroidvanias. Not as hard as I expected from a Konjak game! (except Challenge Mode, of course)`,
+                weight: 0,
+                variance: 1000,
+            },
+            4: {
+                name: `Starcrawlers`,
+                detail: `A pretty decent "one of those", as in grid-based dungeon crawlers. There are a lot of rough edges, but it still offers reasonably deep combat and exploration. Maybe ignore the writing?`,
+                weight: 0,
+                variance: 1000,
+            },
+            5: {
+                name: `Mindustry (5.0)`,
+                detail: `An early entrant to a budding Factorio-likes genre. This one offloads assembler-based complexity onto heaps of belt-logic complexity, and makes the game sort of run-based and combat-required.`,
+                weight: 0,
+                variance: 1000,
+            },
+            6: {
+                name: `Etherborn`,
+                detail: `A short strolling puzzler, in that surprisingly growing genre of spatial-orienting-platforming puzzles. Sort of wish it was longer, and its NG+ was less deep than wanted.`,
+                weight: 0,
+                variance: 1000,
+            },
+            7: {
+                name: `:THE LONGING:`,
+                detail: `A long, long way to go.`,
+                weight: 0,
+                variance: 1000,
+            },
+            8: {
+                name: `SteamWorld Quest: Hand of Gilgamech`,
+                detail: `A successful mix of JRPG and deckbuilding, although the story is nonexistent. The post-game grinding is a tad slow, but that's the completionist in me getting to complete something.`,
+                weight: 0,
+                variance: 1000,
+            },
+            9: {
+                name: `Monster Train`,
+                detail: `After (and around!) Slay the Spire, there were quite a lot of deck-likes, and this was one of the more fun ones. A bit too samey in winning strategies, but that's been improving.`,
+                weight: 0,
+                variance: 1000,
+            },
+            10: {
+                name: `Octopticom`,
+                detail: `Aargon left quite an impression in me, so I'm always looking for laser puzzlers. This is a curious laser-programming mix, which I think got a bit too focused on computer-ing, but it does fine.`,
+                weight: 0,
+                variance: 1000,
+            },
+            11: {
+                name: `Spring Falls`,
+                detail: `A puzzle descent with the right slope, although maybe a bit filler-y. Beautiful presentation, and the mechanics sort of mean that it can't become particularly deep, but it does get satisfyingly difficult.`,
+                weight: 0,
+                variance: 1000,
+            },
+            12: {
+                name: `Carrion`,
+                detail: `ah, nom`,
+                weight: 0,
+                variance: 1000,
+            },
+            13: {
+                name: `Manifold Garden`,
+                detail: `Antichamber's counterpoint, in a way? In stead of closed spaces with unusual topology, you get open spaces with the topology laid bare. Not deeply puzzling, but hell of an atmosphere. Enjoy falling!`,
+                weight: 0,
+                variance: 1000,
+            },
+            14: {
+                name: `Ikenfell`,
+                detail: `A game that you wouldn't expect to have lyrics in its songs?! I have long thoughts about its combat, but it's still the best JRPG I've played this year, and it's far more accessible than the rest.`,
+                weight: 0,
+                variance: 1000,
+            },
+            15: {
+                name: `N-Step Steve (Part 1)`,
+                detail: `A surprising late comer! I can't wait for this to bloom to be the next great puzzle game, and as it is it's already an excellent (if difficult) puzzler.`,
+                weight: 0,
+                variance: 1000,
+            },
+            16: {
+                name: `Starcraft 2 (Legacy of the Void, sort of)`,
+                detail: `After a pretty long ride, major SC2 development has stopped, but before the end, the dev team dropped an extensive co-op patch. There's a lot more to play now. And it's free!`,
+                weight: 0,
+                variance: 1000,
+            },
+            17: {
+                name: `WitchWay`,
+                detail: `A cozy puzzle-platformer (puzzle first) with ~secrets~. It was initially planned to have a sequel, but it didn't work out -- but this still makes a complete package nonetheless.`,
+                weight: 0,
+                variance: 1000,
+            },
+        };
+
+        var codaArr = [
+            `numerous`,
+            `a lot`,
+            `please forgive me`,
+            `extensive`,
+            `boundless`,
+            `indescribable`,
+            `To be considered`,
+            `Good bye everyone!`,
+            `unassailable`,
+            `nope`,
+            `no thanks`,
+            `unseen`,
+            `plenty`,
+            `voluminous`,
+            `yes`,
+            `No`,
+            `uh-huh`,
+            `confirmed`,
+            `right over there`,
+            `huh.`,
+            `That which cannot die will never be slain`,
+            `*gasp*`,
+            `To be addressed`,
+        ];
+
+        var seed = getCookie('ord');
+        if(seed == '') {
+            seed = Math.seedrandom();
+            setCookie('ord', btoa(seed));
+        } else {
+            Math.seedrandom(atob(seed));
+        }
+
+        var ordlist = [];
+        for(let entry in list) {
+            let loc = Math.floor(list[entry].weight + Math.random() * list[entry].variance);
+            while(ordlist[loc]) { loc += 1; }
+            ordlist[loc] = {};
+            ordlist[loc].name = list[entry].name;
+            ordlist[loc].detail = list[entry].detail;
+        }
+
+        var countdown = 17;
+        let build = '';
+
+        //Randomized bits
+        let c = [];
+        //var hue = Math.random();
+        c = MHSYtoRGB([Math.random(), 1, 0.92 ** gamma]);
+        var colorBright = unGamma(c);
+        document.documentElement.style.setProperty('--color-custom-bright', `rgb(${255*colorBright[0]},${255*colorBright[1]},${255*colorBright[2]})`)
+        c = MHSYtoRGB([Math.random(), 1, 0.06 ** gamma]);
+        var colorDark = unGamma(c);
+        document.documentElement.style.setProperty('--color-custom-dark', `rgb(${255*colorDark[0]},${255*colorDark[1]},${255*colorDark[2]})`)
+
+        tag = "#1:";
+        ordlist.forEach( (o, i) => {
+            build += `<div class="item" style="margin-left: ${Math.random() * 15}%;"><div \><div class="slant"> ${tag} </div> <span class="itemtitle">${o.name}</span></div><div class="detail"">${o.detail}</div></div>`;
+
+            --countdown;
+            tag =  `(Tied) #1:`;
+        });
+        divList.innerHTML = build;
+        
+        backlogmsg.innerHTML = codaArr[Math.floor(Math.random() * codaArr.length)];
+    </script>
+</body>
+
+</html>
