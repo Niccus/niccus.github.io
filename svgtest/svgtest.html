@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<style>
+ .sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  color: #ddd;
+  overflow-x: hidden;
+  padding-top: 60px;
+  padding-left: 10px;
+  transition: 0.3s;
+}
+
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+#main {
+  transition: margin-left .3s;
+  padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+} 
+
+#svgcontent {
+  padding: 20px 0px;
+}
+
+</style>
+<head>
+  <title>SVG.js</title>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script> -->
+  <script src="./svg.min.js"></script>
+</head>
+<body>
+  <div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeBar()">&times;</a>
+    v0 - Get SVG.JS to work at all <br> <br>
+    Pending features, at some point, maybe: <br>
+    <ul>
+      <li>Color picker</li>
+      <li>Export to gif/layers</li>
+      <li>Some other gear crime</li>
+      <li>Make your computer less angry trying to animate this</li>
+    </ul>
+  </div>
+  <div id="main">
+    <button class="openbtn" onclick="openBar()">&#9776;</button>
+    <div id="svgcontent">
+    
+    </div>
+  </div>
+  <script>
+    var SIDEBAR_WIDTH = "400px";
+    var CENTER = { cx: 0, cy: 0};
+    var CIR_N = 9999;
+
+    var C_GEAR_RED = '#b42b29';
+    var C_GEAR_WHITE = '#ffffff';
+    var C_GEAR_YELLOW = '#f6b235';
+
+    var GEAR_INNER_OFFSET_X = 53;
+    var GEAR_INNER_OFFSET_Y = 72;
+    var GEAR_OUTER_COUNT = 14;
+    var GEAR_INNER_COUNT = 20;
+
+    var t = 0;
+    var t_r = 0;
+    function incFrame(time) {
+      ++t;
+      t_r = t / 2 / Math.PI / 14;
+      
+      //Ideally this is the way things are done, but it turns out re-drafting SVG per frame is slow as heck
+      //drawAll();
+      //window.requestAnimationFrame(incFrame);
+    }
+
+    window.requestAnimationFrame(incFrame);
+    drawAll();
+
+    //Clamp x to [a,b]
+    function clamp(x, a, b) {
+      return (Math.max(a, Math.min(x, b)));
+    }
+
+    //gear-sine -- sine/triangle wave of x, but with frequency f, scale factor s, and offset a
+    //Clamped to [0,1] 
+    function gin(x, f, s, a) {
+      return clamp(s * (a + Math.abs(((x + 1) * f % (2 * Math.PI)) - Math.PI)) / Math.PI, 0, 1);
+    }
+
+    //---
+
+    function openBar() {
+      document.getElementById("sidebar").style.width = SIDEBAR_WIDTH;
+      document.getElementById("main").style.marginLeft = SIDEBAR_WIDTH;
+    }
+    function closeBar() {
+      document.getElementById("sidebar").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+    }
+
+    var svgContent = document.getElementById('svgcontent');
+
+    function drawAll() {
+    
+    //svgContent.innerHTML = '';
+    
+    var draw = SVG().addTo('#svgcontent').size("600px", "600px");
+    draw.viewbox(-150, -150, 300, 300);
+    
+    let arr_coords;
+
+    var mask = draw.circle(166).attr(CENTER).fill('#fff');
+    var mask2 = draw.circle(166).attr(CENTER).fill('#fff');
+
+    arr_coords = [];
+    for(let i = 0; i < (CIR_N + 1); ++i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 50;
+      arr_coords.push([r*Math.cos(th) - GEAR_INNER_OFFSET_X, r * Math.sin(th) - GEAR_INNER_OFFSET_Y]);
+    }
+    for(let i = CIR_N; i >= 0; --i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 68 + 12 * gin(th + 0.1, GEAR_INNER_COUNT, 6, -1.3);
+      arr_coords.push([r*Math.cos(th) - GEAR_INNER_OFFSET_X, r * Math.sin(th) - GEAR_INNER_OFFSET_Y]);
+    }
+    var gear_inseam_upper = draw.polygon(arr_coords).fill(C_GEAR_RED).maskWith(mask);
+    gear_inseam_upper.animate(1000, 0, 'start').ease('-').loop().rotate(360 / GEAR_INNER_COUNT);
+
+    arr_coords = [];
+    for(let i = 0; i < (CIR_N + 1); ++i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 50;
+      arr_coords.push([r*Math.cos(th) + GEAR_INNER_OFFSET_X, r * Math.sin(th) + GEAR_INNER_OFFSET_Y]);
+    }
+    for(let i = CIR_N; i >= 0; --i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 68 + 12 * gin(th - 0.2, GEAR_INNER_COUNT, 6, -1.3);
+      arr_coords.push([r*Math.cos(th) + GEAR_INNER_OFFSET_X, r * Math.sin(th) + GEAR_INNER_OFFSET_Y]);
+    }
+    var gear_inseam_lower = draw.polygon(arr_coords).fill(C_GEAR_RED).maskWith(mask2);;
+    gear_inseam_lower.animate(1000, 0, 'start').ease('-').loop().rotate(360 / GEAR_INNER_COUNT);
+
+    arr_coords = [];
+    for(let i = 0; i < (CIR_N + 1); ++i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 100 + 20 * gin(th + t_r + Math.PI / GEAR_OUTER_COUNT / 7 * 3.5, GEAR_OUTER_COUNT, 6, -0.95);
+      arr_coords.push([r*Math.cos(th), r * Math.sin(th)]);
+    }
+    for(let i = CIR_N; i >= 0; --i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 92 + 20 * gin(th + t_r + Math.PI / GEAR_OUTER_COUNT / 7 * 3.5, GEAR_OUTER_COUNT, 8, -1.9);
+      arr_coords.push([r*Math.cos(th), r * Math.sin(th)]);
+    }
+    var gear_outer_border = draw.polygon(arr_coords).fill(C_GEAR_RED);
+    // .animate(1000, 0, 'now').ease('-').loop().rotate(360 / 14)
+
+    arr_coords = [];
+    for(let i = 0; i < (CIR_N + 1); ++i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 70;
+      arr_coords.push([r*Math.cos(th), r * Math.sin(th)]);
+    }
+    for(let i = CIR_N; i >= 0; --i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 92 + 20 * gin(th + Math.PI / GEAR_OUTER_COUNT / 7 * 3.5, GEAR_OUTER_COUNT, 8, -1.9);
+      arr_coords.push([r*Math.cos(th), r * Math.sin(th)]);
+    }
+    var gear_outer_fill = draw.polygon(arr_coords).fill(C_GEAR_YELLOW).animate(1000, 0, 'absolute').ease('-').loop().rotate(360 / GEAR_OUTER_COUNT);
+    gear_outer_border.animate(1000, 0, 'absolute').ease('-').loop().rotate(360 / GEAR_OUTER_COUNT);
+
+    arr_coords = [];
+    for(let i = 0; i < (CIR_N + 1); ++i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 70;
+      arr_coords.push([r*Math.cos(th), r * Math.sin(th)]);
+    }
+    for(let i = CIR_N; i >= 0; --i) {
+      let th = (i / CIR_N) * 2 * Math.PI;
+      let r = 60;
+      arr_coords.push([r*Math.cos(th), r * Math.sin(th)]);
+    }
+    var gear_outer_inborder = draw.polygon(arr_coords).fill(C_GEAR_RED);
+
+    } 
+
+  </script>
+</body>
+</html>
