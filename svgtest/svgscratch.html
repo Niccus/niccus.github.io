@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<style>
+ .sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  color: #ddd;
+  overflow-x: hidden;
+  padding-top: 60px;
+  padding-left: 10px;
+  transition: 0.3s;
+}
+
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+#main {
+  transition: margin-left .3s;
+  padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+} 
+
+#svgcontent {
+  padding: 20px 0px;
+}
+
+</style>
+<head>
+  <title>SVG.js</title>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script> -->
+  <script src="./svg.min.js"></script>
+</head>
+<body>
+  <div id="main">
+    <div id="svgcontent">
+    
+    </div>
+  </div>
+  <script>
+    var CENTER = { cx: 0, cy: 0};
+    var CIR_N = 9999;
+
+    var W_BASE = "#ffffff";
+    var W_FRONT = "#000000";
+
+    var GEAR_INNER_OFFSET_X = 53;
+    var GEAR_INNER_OFFSET_Y = 72;
+    var GEAR_OUTER_COUNT = 14;
+    var GEAR_INNER_COUNT = 20;
+
+    var t = 0;
+    var t_r = 0;
+    function incFrame(time) {
+      ++t;
+      t_r = t / 2 / Math.PI / 14;
+      
+      //Ideally this is the way things are done, but it turns out re-drafting SVG per frame is slow as heck
+      //drawAll();
+      //window.requestAnimationFrame(incFrame);
+    }
+
+    window.requestAnimationFrame(incFrame);
+    drawAll();
+
+    //Clamp x to [a,b]
+    function clamp(x, a, b) {
+      return (Math.max(a, Math.min(x, b)));
+    }
+
+    //gear-sine -- sine/triangle wave of x, but with frequency f, scale factor s, and offset a
+    //Clamped to [0,1] 
+    function gin(x, f, s, a) {
+      return clamp(s * (a + Math.abs(((x + 1) * f % (2 * Math.PI)) - Math.PI)) / Math.PI, 0, 1);
+    }
+
+    function encircle(arr, xoffset, xlim, rmin, rmax, cx, cy) {
+        cx = cx === undefined ? 0 : cx;
+        cy = cy === undefined ? 0 : cy;
+        for(i in arr) {
+            let xy = arr[i];
+            let theta = (xy[0] + xoffset) / xlim * 2 * Math.PI;
+            let r = rmin + xy[1] * (rmax - rmin);
+            arr[i] = [
+                r * Math.cos(theta) + cx,
+                r * Math.sin(theta) + cy
+            ];
+        }
+        return arr;
+    }
+
+    //---
+    var svgContent = document.getElementById('svgcontent');
+
+    function drawAll() {
+    
+    //svgContent.innerHTML = '';
+    
+    var draw = SVG().addTo('#svgcontent').size("600px", "600px");
+    draw.viewbox(-1, -1, 9, 2);
+    
+    let arr_coords;
+    arr_coords = [];
+    var REPCOUNT = 12;
+    var INCOUNT = 7;
+    var smoother = function(x) {
+        return (1 - Math.cos(x * Math.PI )) / 2;
+    };
+    smoother = (x => x);
+
+    function genWave(repcount, incount, smooth, w_high, w_low, nudge_to_peak) {
+        let arr_coords = [];
+        let w_ramp = (1 - w_high - w_low) * 0.5;
+        nudge_to_peak ||= false;
+
+        let ramp = [];
+        for(let inc = 0; inc < incount; ++inc) {
+            ramp.push(smooth((1 + inc) / (incount + 1)));
+        }
+        for(let rep = 0; rep < repcount; ++rep) {
+            //Climb
+            let x_left = rep - (nudge_to_peak ? (1 - w_low) / 2 : 0);
+            arr_coords.push([x_left,0]);
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + (w_ramp * interp), ramp[inc]]);
+            }
+            
+            //Plateau
+            x_left += w_ramp;
+            arr_coords.push([x_left,1]);
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + w_high * interp, 1])
+            }
+
+            //Unclimb
+            x_left += w_high;
+            arr_coords.push([x_left ,1]);
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + (w_ramp * interp), ramp[incount - inc - 1]]);
+                // ^^ In other contexts, it can be more appropriate to do (1 - interp(x)) instead of interp(1-x)
+            }
+
+            //Valley
+            x_left += w_ramp; // x_left == rep + (1 - w_low)
+            arr_coords.push([x_left,0])
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + w_low * interp, 0])
+            }
+        }
+        arr_coords.push([repcount, 0]);
+        return arr_coords;
+    }
+
+    let coords_outer = genWave(REPCOUNT, INCOUNT, smoother, 0.1, 0.5, true);
+    encircle(coords_outer, 0, REPCOUNT, 2, 3, 4, 0);
+
+    let coords_inner = genWave(REPCOUNT, INCOUNT, smoother, 0.0, 0.6, true);
+    coords_inner.reverse();
+    encircle(coords_inner, 0, REPCOUNT, 1.5, 2, 4, 0);
+
+    let coords_all = coords_outer.concat(coords_inner);
+    
+    var gear_outer_inborder = draw.polygon(coords_all).fill(W_FRONT).stroke("#808080").stroke({ width: 0.1 });
+    for(ac in coords_all) {
+        xy = coords_all[ac];
+        draw.circle(0.08).fill("#ff0000").attr({cx: xy[0], cy: xy[1]});
+    }
+
+    var cir = draw.circle(1).fill(W_FRONT).attr({cx:-1, cy:0});
+
+    }
+
+    if(Math.random() < 0.5) {
+        var elem = document.getElementById("main");
+        elem.innerHTML += "<br><br><br><br>🦊";
+    }
+
+  </script>
+</body>
+</html>
