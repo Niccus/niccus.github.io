@@ -197,7 +197,6 @@ body {
     <ul>
       <li>A *lot* more settings. Gear curve options, cursed tooth counts, antialiasing (for non-gif purposes), don't animate, image size, maybe more.</li>
       <li>Better palette nicknames and maybe more premade options</li>
-      <li>Minimal export/import for sharing and/or quick addition to palette library</li>
       <li>Put the functions in a reasonable order</li>
       <li>Full credits of all the technologies leveraged here</li>
       <li>Move the fox away</li>
@@ -270,6 +269,10 @@ body {
         </div>
 
       </div>
+      <button onclick="btnExport()">Export</button>
+      <button onclick="btnImport()">Import</button>
+      <input id="inoutbox" type="text">
+      <br />
       <br />
       <button onclick="testnav()">Test popup</button>
       <button onclick="genGif()">Send my computer to hell (and render GIF)</button>
@@ -471,6 +474,7 @@ body {
     var svgContent = document.getElementById('svgcontent');
     var optionboard = document.getElementById('optionBoard');
     var palettecontainer = document.getElementById('palette-picker');
+    var inoutbox = document.getElementById('inoutbox');
 
     //Sidebar in-out
     function openBar() {
@@ -513,7 +517,10 @@ body {
     }
 
     function setPalette(idx) {
-        let p = palettes[idx];
+      setColors(palettes[idx]);
+    }
+
+    function setColors(p) {
         curPalette.outer_border = colors.outer_border = p.outer_border;
         curPalette.outer_fill = colors.outer_fill = p.outer_fill
         curPalette.mid_border = colors.mid_border = p.mid_border
@@ -538,8 +545,14 @@ body {
 
         redraw();
 
-        curPalette.name = p.name;
-        curPalette.group = p.group;
+        if(p.name || p.group) {
+          curPalette.name = p.name;
+          curPalette.group = p.group;
+        } else {
+          curPalette.name = "Custom";
+          curPalette.group = "";
+        }
+
         prod();
     }
 
@@ -555,6 +568,24 @@ body {
       pickers.bg.jscolor.fromString(colors.transparency);
 
       redraw();
+    }
+    
+    function btnExport() {
+      inoutbox.value = JSON.stringify(colors);
+    }
+
+    function btnImport() {
+      let txt = inoutbox.value;
+      try {
+        let newColors = JSON.parse(txt);
+        for(let i in newColors) {
+          colors[i] = newColors[i];
+        }
+        setColors(newColors);
+      } catch {
+
+      }
+      //...Yeah, we'll just let bad things fall through
     }
     
     //Populate palette list
