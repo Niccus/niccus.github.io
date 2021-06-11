@@ -68,7 +68,7 @@
 <head>
   <title>SVG.js</title>
   <!-- <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script> -->
-  <script src="./svg.min.js"></script>
+  <script src="./include/svg.min.js"></script>
 </head>
 <body>
   <div id="main">
@@ -77,6 +77,66 @@
     </div>
   </div>
   <script>
+    const bolus =
+`"group","name","outer_border","outer_fill","mid_border","inner_fill","inner_gear"
+"Group/Team","Label","Outer Border","Outer Fill","Midborder","Inner Fill","Inner gear"
+"Core Mechanics","Core Values","b42b29","f6b235","b42b29","ffffff","b42b29"
+"Seattle Garages","","2b4075","ff2423","2b4075","ffffff","2b4075"
+"Baltimore Crabs","","593037","cd7672","593037","f7630c","593037"
+"Miami Dale","","bf00ff","fee020","33ffff","ff69b4","33ffff"
+"Chicago Firefighters","","400000","8c2a3e","400000","fce100","400000"
+"Boston Flowers","","9755a5","f7d1ff","4e5229","ec1c24","4e5229"
+"Hawai'i Fridays","","11a6c2","a4f566","e67575","3ee652","e67575"
+"Atlantis Georgias","","ffca18","8cfffb","ffca18","54cab0","ffca18"
+"Breckenridge Jazz Hands","","4e084d","7ba9d7","4e084d","f3ca40","4e084d"
+"Tokyo Lift","","90147b","e536c8","90147b","73feed","90147b"
+"San Francisco Lovers","","681800","d2264a","681800","f193b3","681800"
+"Yellowstone Magic","","ffaec9","bf0043","99d9ea","fff200","99d9ea"
+"New York Millennials","","585858","6bccf8","585858","ffaec8","585858"
+"Kansas City Breath Mints","","09852c","0ed145","ffffff","ec1c24","ffffff"
+"Canada Moist Talkers","","035597","3b97d3","ed1c24","ffffff","ed1c24"
+"Ohio Worms","","b97a56","f0ba9b","5d3d2b","b97a56","5d3d2b"
+"Philly Pies","","009f8c","ffcd4c","af0005","ffcc1b","af0005"
+"Houston Spies","","67556b","000000","67556b","000000","67556b"
+"Hellmouth Sunbeams","","ffc90d","fff9ab","ffc70c","fce100","ffc70c"
+"Dallas Steaks","","585858","c3c3c3","fdeca6","ec1c24","fdeca6"
+"Charleston Shoe Thieves","","156a96","ffce0a","156a96","fdfafb","156a96"
+"LA Unlimited Tacos","","0acc00","5b0070","000000","ffae00","000000"
+"Hades Tigers","","c32229","002229","c32229","faa623","c32229"
+"Mexico City Wild Wings","","006847","c64000","ffffff","d15700","ffffff"`;
+    var lines = bolus.split('\n');
+    var palettes = [];
+    var fields = [];
+    var labels = {};
+    for(let i in lines) {
+      let line = '[' + lines[i] + ']';
+      let arr = JSON.parse(line);
+      
+      switch(i) {
+        case '0':
+          //Position <-> field name
+          for(j in arr) {
+            fields.push(arr[j]);
+          }
+          console.log(JSON.stringify(fields));
+          break;
+        case '1':
+          for(j in arr) {
+            labels[fields[j]] = arr[j];
+          }
+          console.log(JSON.stringify(labels));
+          break;
+        default:
+          let p = {};
+          for(j in arr) {
+            p[fields[j]] = arr[j];
+          }
+          palettes.push(p);
+          break;
+      }
+    }
+    console.log(JSON.stringify(palettes, null, 2));
+
     var CENTER = { cx: 0, cy: 0};
     var CIR_N = 9999;
 
@@ -199,11 +259,22 @@
 
     let coords_inner = genWave(REPCOUNT, INCOUNT, smoother, 0.0, 0.6, true);
     coords_inner.reverse();
-    encircle(coords_inner, 0, REPCOUNT, 1.5, 2, 4, 0);
+    encircle(coords_inner, 0, REPCOUNT, 1.5, 1, 4, 0);
 
     let coords_all = coords_outer.concat(coords_inner);
     
-    var gear_outer_inborder = draw.polygon(coords_all).fill(W_FRONT).stroke("#808080").stroke({ width: 0.1 });
+    var filler = draw.gradient('linear', function(add) {
+      add.stop(0, '#f00');
+      add.stop(0.4, '#000');
+      add.stop(0.5, '#fff');
+      add.stop(1, '#0f0');
+    }).attr({
+      x1: 0,
+      y1: 0,
+      x2: 1,
+      y2: 1
+    });
+    var gear_outer_inborder = draw.polygon(coords_all).stroke("#808080").stroke({ width: 0.1 }).fill(filler);
     for(ac in coords_all) {
         xy = coords_all[ac];
         draw.circle(0.08).fill("#ff0000").attr({cx: xy[0], cy: xy[1]});

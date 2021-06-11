@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html ng-app="svg-gear">
+<style>
+
+body {
+    background-color: #fff;
+  /* background-image: url("./assets/transparent.png") */
+}
+
+ .sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  color: #ddd;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding-top: 60px;
+  transition: 0.3s;
+}
+
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.pickers {
+  padding: 30px 30px;
+}
+
+.picker-label {
+  text-align: right;
+}
+
+.picker-jscolor {
+  font-family: "Lucida Console", Courier, monospace;;
+}
+
+.paletteContainer {
+    border: 1px solid black;
+}
+
+.paletteCurrent {
+    position: relative;
+    display: flex;
+}
+
+.paletteEntry {
+    border: 1px dotted gray;
+    display: flex;
+    padding: 5px 5px;
+}
+
+.paletteGroup {
+    position: absolute;
+    line-height: 2em;
+    z-index: -1;
+    left: -1em;
+    top: -1.5em;
+    font-size: large;
+}
+
+.paletteLabel {
+    display: flex;
+    width: 60%;
+    height: 100%;
+    line-height: 1.9em;
+    margin-top: 2px;
+    padding-left: 0.3em;
+    background-color: #ffffffb0;
+    border: 1px solid black;
+}
+
+.paletteBox {
+    border: 2px dotted #40404040;
+    display: flex;
+    height: 2em;
+    width: 2em;
+    margin-top: 0.1em;
+}
+.palettePicker {
+    position: relative;
+    border-top: 1px solid black;
+    margin-top: 2em;
+}
+
+.plistingHeader {
+    position: relative;
+    z-index: -1;
+    margin-top: 1em;
+}
+
+.plistingGroup {
+    position: absolute;
+    font-size: 2em;
+    color: #444;
+    left: -0.6em;
+    top: -0.75em;
+}
+
+.plistingEntry {
+    display: flex;
+    padding: 5px 5px;
+}
+
+.plistingLabel {
+    display: flex;
+    width: 60%;
+    height: 100%;
+    line-height: 1.9em;
+    margin-top: 2px;
+    padding-left: 0.3em;
+    background-color: #ffffffb0;
+    border: 1px solid black;
+}
+
+.palettePickerEnabler {
+    position: sticky;
+    display: flex;
+    margin-left: auto;
+    top: 1em;
+    float: right;
+    z-index: 2;
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+#main {
+  transition: margin-left .3s;
+  padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+} 
+
+#svgcontent {
+    position: sticky;
+    padding: 20px 0px;
+    top: 0px;
+}
+
+#svgcontainer {
+  height: 600px;
+  width: 600px;
+}
+
+</style>
+<head>
+  <title>SVG.js</title>
+  <link rel="stylesheet" href="./include/bootstrap.min.css" />
+  <script src="./include/svg.min.js"></script>
+  <script src="./include/gif.js"></script>
+  <script src="./include/angular.min.js"></script>
+  <script src="./include/jscolor.js"></script>
+
+  <script src="./assets/palettes.js"></script>
+</head>
+<body ng-controller="GearController">
+  <div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeBar()">&times;</a>
+    This is entirely client-side. Attempts to break this will probably only break your own computer?
+    <br> <br>
+    v0.4a - Honestly, for most practical purposes, this is functionally complete. The rest of the features I'd want to put in should mostly just take busywork, so they stand a good chance of making it in. I wouldn't really mind sharing this version though.<br> <br>
+    Pending features, perhaps inevitable, but with no schedule: <br>
+    <ul>
+      <li>A *lot* more settings. Gear curve options, cursed tooth counts, antialiasing (for non-gif purposes), don't animate, image size, maybe more.</li>
+      <li>Better palette nicknames and maybe more premade options</li>
+      <li>Minimal export/import for sharing and/or quick addition to palette library</li>
+      <li>Put the functions in a reasonable order</li>
+      <li>Full credits of all the technologies leveraged here</li>
+      <li>Move the fox away</li>
+      <li>A whole host of possible things based on the first wave of feedback</li>
+    </ul>
+  </div>
+
+  <div class="row" id="main">
+    <div class="col-lg-6" id="optionBoard">
+        <div class="paletteContainer pickers" id="palette-container">
+            <div class="palettePickerEnabler">
+              <a id="palette-expander" class="btn btn-dark"  href="#" role="button" onclick="onClickPaletteExpander()" alt="Show">&#9660;</a>
+            </div>
+            <div class="paletteCurrent" id="palette-current">
+                <span class="paletteGroup">{{curPalette.group}}</span>
+                <span class="paletteLabel">{{curPalette.name ? curPalette.name : "Default"}}</span>
+                <div class="paletteBox" style="background-color: {{curPalette.outer_border}}"></div>
+                <div class="paletteBox" style="background-color: {{curPalette.outer_fill}}"></div>
+                <div class="paletteBox" style="background-color: {{curPalette.mid_border}}"></div>
+                <div class="paletteBox" style="background-color: {{curPalette.inner_fill}}"></div>
+                <div class="paletteBox" style="background-color: {{curPalette.inner_gear}}"></div>
+            </div>
+            <div class="palettePicker" id="palette-picker" ng-show="state.isPickingPalette"></div>
+        </div>
+      <div class="pickers row" id="pickers">
+          <span class="col-5 picker-label">Outer border color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'outer_border')" onInput="updateColor(this.jscolor, 'outer_border')" value="b42b29" data-jscolor="{}" id="picker-outer-border">
+          <span class="w-100"></span>
+          
+          <span class="col-5 picker-label">Outer fill color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'outer_fill')" onInput="updateColor(this.jscolor, 'outer_fill')" value="f6b235" data-jscolor="{}" id="picker-outer-fill">
+          <span class="w-100"></span>
+
+          <span class="col-5 picker-label">Divider border color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'mid_border')" onInput="updateColor(this.jscolor, 'mid_border')" value="b42b29" data-jscolor="{}" id="picker-mid-border">
+          <span class="w-100"></span>
+
+          <span class="col-5 picker-label">Inner fill color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'inner_fill')" onInput="updateColor(this.jscolor, 'inner_fill')" value="ffffff" data-jscolor="{}" id="picker-inner-fill">
+          <span class="w-100"></span>
+
+          <span class="col-5 picker-label">Inner gear color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'inner_gear')" onInput="updateColor(this.jscolor, 'inner_gear')" value="b42b29" data-jscolor="{}" id="picker-inner-gear">
+          <span class="w-100"></span>
+
+          <br />
+
+          <span class="col-4 picker-label">Background color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'bg')" onInput="updateColor(this.jscolor, 'bg')" value="ffffff" data-jscolor="{}" id="picker-bg">
+          <button class ="col-5" onclick="btnCopyT2BG()">Copy from Transparency</button>
+          <span class="w-100"></span>
+
+          <span class="col-4 picker-label">Transparency color:</span>
+          <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'transparency')" onInput="updateColor(this.jscolor, 'transparency')" value="ff00ff" data-jscolor="{}" id="picker-transparency">
+          <button class ="col-5" onclick="btnCopyBG2T()">Copy from Background</button>
+          <span class="w-100"></span>
+
+        <br />
+        <div class="row">
+          <span class="col-7 picker-label">Frames per cycle:</span>
+          <input class="col-2" onChange="updateSetting(this, 'frames_per_cycle')" onInput="updateSetting(this, 'frames_per_cycle')" value=45 type=text>
+          <span class="w-100"></span>
+
+          <span class="col-7 picker-label">Milliseconds per frame:</span>
+          <input class="col-2" onChange="updateSetting(this, 'ms_per_frame')" onInput="updateSetting(this, 'ms_per_frame')" value=16 type=text>
+          <span class="w-100"></span>
+
+          <span class="col-7 picker-label">Curve smoothness (0+):</span>
+          <input class="col-2" onChange="updateSetting(this, 'gear_interp_count')" onInput="updateSetting(this, 'gear_interp_count')" value=1 type=text>
+        </div>
+
+      </div>
+      <br />
+      <button onclick="testnav()">Test popup</button>
+      <button onclick="genGif()">Send my computer to hell (and render GIF)</button>
+      <br />
+      <button class="openbtn" onclick="openBar()">?</button> <br /> <br />
+    </div>
+    <div class="col-lg-6">
+      <div id="svgcontent"></div>
+    </div>
+  </div>
+
+  <div id="svgout" hidden=true></div>
+
+
+  <script>
+    if(Math.random() < 0.03) {
+        var elem = document.getElementById("main");
+        elem.innerHTML += "<br><br><br><br><br><br>🦊";
+    }
+
+    //To dump to nice structure:
+    //   console.log(JSON.stringify(curPalette, null, 2))
+
+    var app = angular.module('svg-gear', []);
+    var state = {};
+
+    var prodScope;
+    function prod() {
+        if(prodScope)
+            prodScope.$apply();
+    }
+
+    const SIDEBAR_WIDTH = '400px';
+    const CENTER = { cx: 0, cy: 0};
+    const ATTR_Default = {'shape-rendering': 'crispEdges'};
+
+    const C_GEAR_RED = '#b42b29';
+    const C_GEAR_WHITE = '#ffffff';
+    const C_GEAR_YELLOW = '#f6b235';
+
+    var CANVAS_WIDTH = 300;
+    var CANVAS_HEIGHT = 300;
+    var CANVAS_OFFSET_X = CANVAS_WIDTH / 2;
+    var CANVAS_OFFSET_Y = CANVAS_HEIGHT / 2;
+
+    var colors = {
+      outer_border: C_GEAR_RED,
+      outer_fill: C_GEAR_YELLOW,
+      mid_border: C_GEAR_RED,
+      inner_gear: C_GEAR_RED,
+      inner_fill: C_GEAR_WHITE,
+      bg: '#FFFFFF',
+      transparency: '#FF00FF'
+    };
+
+    var pickers = {
+      outer_border: document.getElementById('picker-outer-border'),
+      outer_fill: document.getElementById('picker-outer-fill'),
+      mid_border: document.getElementById('picker-mid-border'),
+      inner_gear: document.getElementById('picker-inner-gear'),
+      inner_fill: document.getElementById('picker-inner-fill'),
+      bg: document.getElementById('picker-bg'),
+      transparency: document.getElementById('picker-transparency'),
+    };
+
+    var options = {
+      frames_per_cycle: 45,
+      ms_per_frame: 16,
+      gear_inner_offset_x: 53,
+      gear_inner_offset_y: 72,
+      gear_inner_count: 20,
+      gear_outer_count: 14,
+      gear_interp_count: 1
+    };
+
+    var anim_draw;
+    state.isPickingPalette = false;
+    var isCustomPalette = false;
+    var curPalette = {
+        group: "Core Mechanics",
+        name: "Core Values",
+        outer_border: "#b42b29",
+        outer_fill: "#f6b235",
+        mid_border: "#b42b29",
+        inner_fill: "#ffffff",
+        inner_gear: "#b42b29"
+    };
+    var curPaletteDiv = genPaletteEntry(curPalette).outerHTML;
+    var paletteExpander = document.getElementById("palette-expander");
+
+    //var draw = drawAll(0, true);
+    var draw = drawAll(0, true);
+
+    function redraw() {
+      draw.remove();
+      draw = drawAll(0, true);
+    }
+
+    function updateColor(picker, label) {
+      colors[label] = picker.toHEXString();
+      redraw();
+
+      curPalette[label] = colors[label];
+      curPalette.name = "Custom";
+      curPalette.group = "Custom";
+      prod();
+    }
+
+    function updateSetting(input, label) {
+      options[label] = parseInt(input.value);
+      redraw();
+    }
+
+    //Clamp x to [a,b]
+    function clamp(x, a, b) {
+      return (Math.max(a, Math.min(x, b)));
+    }
+
+    //gear-sine -- sine/triangle wave of x, but with frequency f, scale factor s, and offset a
+    //Clamped to [0,1] 
+    function gin(x, f, s, a) {
+      return clamp(s * (a + Math.abs(((x + 1) * f % (2 * Math.PI)) - Math.PI)) / Math.PI, 0, 1);
+    }
+    
+    function smooth_cos(x) {
+        return (1 - Math.cos(x * Math.PI )) / 2;
+    };
+
+    function smooth_linear(x) {return x;};
+
+    function genWave(repcount, incount, smooth, w_high, w_low, nudge_to_peak) {
+        let arr_coords = [];
+        let w_ramp = (1 - w_high - w_low) * 0.5;
+        nudge_to_peak ||= false;
+        let nudge = (nudge_to_peak ? - (1 - w_low) / 2 : 0)
+
+        let ramp = [];
+        for(let inc = 0; inc < incount; ++inc) {
+            ramp.push(smooth((1 + inc) / (incount + 1)));
+        }
+        for(let rep = 0; rep < repcount; ++rep) {
+            //Climb
+            let x_left = rep + nudge;
+            arr_coords.push([x_left,0]);
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + (w_ramp * interp), ramp[inc]]);
+            }
+            
+            //Plateau
+            x_left += w_ramp;
+            arr_coords.push([x_left,1]);
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + w_high * interp, 1])
+            }
+
+            //Unclimb
+            x_left += w_high;
+            arr_coords.push([x_left ,1]);
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + (w_ramp * interp), ramp[incount - inc - 1]]);
+                // ^^ In other contexts, it can be more appropriate to do (1 - interp(x)) instead of interp(1-x)
+            }
+
+            //Valley
+            x_left += w_ramp; // x_left == rep + (1 - w_low) + nudge
+            arr_coords.push([x_left,0])
+            for(let inc = 0; inc < incount; ++inc) {
+                let interp = (1 + inc) / (incount + 1);
+                arr_coords.push([x_left + w_low * interp, 0])
+            }
+        }
+        arr_coords.push([repcount + nudge, 0]);
+        return arr_coords;
+    }
+
+    //Roll a [0..xlim] x [0..1] rectangle into a circle
+    function encircle(arr, xoffset, xlim, rmin, rmax, cx, cy) {
+        cx = cx === undefined ? 0 : cx;
+        cy = cy === undefined ? 0 : cy;
+        for(i in arr) {
+            let xy = arr[i];
+            let theta = (xy[0] + xoffset) / xlim * 2 * Math.PI;
+            let r = rmin + xy[1] * (rmax - rmin);
+            arr[i] = [
+                r * Math.cos(theta) + cx,
+                r * Math.sin(theta) + cy
+            ];
+        }
+        return arr;
+    }
+
+    const clone = (items) => items.map(item => Array.isArray(item) ? clone(item) : item);
+
+    //---
+
+    var svgContent = document.getElementById('svgcontent');
+    var optionboard = document.getElementById('optionBoard');
+    var palettecontainer = document.getElementById('palette-picker');
+
+    //Sidebar in-out
+    function openBar() {
+      let sidestyle = document.getElementById('sidebar').style;
+      if(sidestyle.width == 0 || sidestyle.width == "0px") {
+        sidestyle.width = SIDEBAR_WIDTH;
+        sidestyle.paddingLeft = "10px";
+        document.getElementById('optionBoard').classList.add('col-lg-12');
+        document.getElementById('main').style.marginLeft = SIDEBAR_WIDTH;
+      } else {
+        closeBar();
+      }
+    }
+    function closeBar() {
+      let sidestyle = document.getElementById('sidebar').style;
+      sidestyle.width = "0";
+      sidestyle.paddingLeft = "0";
+      document.getElementById('main').style.marginLeft = "0";
+      document.getElementById('optionBoard').classList.remove('col-lg-12');
+    }
+
+    //Gifs are delivered by a new tab/popup, and this is rightfully blocked by default. A sort of warning?
+    function testnav() {
+        window.open('popup.html');
+    }
+
+    function onClickPaletteExpander() {
+        //Is the expander already open?
+        if(state.isPickingPalette) {
+            state.isPickingPalette = false;
+            paletteExpander.classList.remove("btn-light");
+            paletteExpander.classList.add("btn-dark");
+            prod();
+        } else {
+            state.isPickingPalette = true;
+            paletteExpander.classList.remove("btn-dark");
+            paletteExpander.classList.add("btn-light");
+            prod();
+        }
+    }
+
+    function setPalette(idx) {
+        let p = palettes[idx];
+        curPalette.outer_border = colors.outer_border = p.outer_border;
+        curPalette.outer_fill = colors.outer_fill = p.outer_fill
+        curPalette.mid_border = colors.mid_border = p.mid_border
+        curPalette.inner_fill = colors.inner_fill = p.inner_fill
+        curPalette.inner_gear = colors.inner_gear = p.inner_gear
+
+        pickers.outer_border.jscolor.fromString(p.outer_border);
+        pickers.outer_fill.jscolor.fromString(p.outer_fill);
+        pickers.mid_border.jscolor.fromString(p.mid_border);
+        pickers.inner_fill.jscolor.fromString(p.inner_fill);
+        pickers.inner_gear.jscolor.fromString(p.inner_gear);
+
+        if(p.bg) {
+          colors.bg = p.bg;
+          pickers.bg.jscolor.fromString(p.bg);
+        }
+
+        if(p.transparency) {
+          colors.transparency = p.transparency;
+          pickers.transparency.jscolor.fromString(p.transparency);
+        }
+
+        redraw();
+
+        curPalette.name = p.name;
+        curPalette.group = p.group;
+        prod();
+    }
+
+    function btnCopyBG2T() {
+      colors.transparency = colors.bg;
+      pickers.transparency.jscolor.fromString(colors.bg);
+
+      redraw();
+    }
+
+    function btnCopyT2BG() {
+      colors.bg = colors.transparency;
+      pickers.bg.jscolor.fromString(colors.transparency);
+
+      redraw();
+    }
+    
+    //Populate palette list
+    let curGroup = "";
+    for(let i in palettes) {
+        let p = palettes[i];
+        if(p.group != curGroup) {
+            //if(curGroup != "") {
+                palettecontainer.appendChild(document.createElement('br'));
+            //}
+            curGroup = p.group;
+            let groupHeader = document.createElement('div');
+            groupHeader.classList.add('plistingHeader');
+            groupHeader.innerHTML = '<span class="plistingGroup">' + curGroup + '</span>';
+            palettecontainer.appendChild(groupHeader);
+        }
+        palettecontainer.appendChild(genPaletteEntry(p, i));
+    }
+
+    function genPaletteEntry(o, i) {
+        let elem = document.createElement('div');
+        elem.classList.add('plistingEntry');
+        elem.innerHTML = '<span class="plistingLabel">' + (o.name == "" ? "Default" : o.name) + '</span>';
+        elem.onclick = function() {
+            setPalette(i);
+        };
+
+        let box = document.createElement('div');
+        box.classList.add('paletteBox');
+        box.style.backgroundColor = o.outer_border;
+        elem.appendChild(box);
+
+        box = document.createElement('div');
+        box.classList.add('paletteBox');
+        box.style.backgroundColor = o.outer_fill;
+        elem.appendChild(box);
+
+        box = document.createElement('div');
+        box.classList.add('paletteBox');
+        box.style.backgroundColor = o.mid_border;
+        elem.appendChild(box);
+
+        box = document.createElement('div');
+        box.classList.add('paletteBox');
+        box.style.backgroundColor = o.inner_fill;
+        elem.appendChild(box);
+
+        box = document.createElement('div');
+        box.classList.add('paletteBox');
+        box.style.backgroundColor = o.inner_gear;
+        elem.appendChild(box);
+
+        return elem;
+    }
+
+    //Test-ish version of gif generation. In the end mostly complete?
+    function genGif() {
+      if(anim_draw) {
+        anim_draw.timeline().stop();
+      }
+
+      let xmlSerial = new XMLSerializer();
+      let dom = new DOMParser();
+      let gif = new GIF({
+          workers: 2,
+          quality: 10,
+          transparent: parseInt('0x' + colors.transparency.slice(1,7))
+      });
+
+      let draws = [];
+      let drawDoms = [];
+      let imgs = [];
+      let canvases = [];
+
+      //Listen to image render completion events, and construct gif after the last
+      let imgComplete = 0;
+      let gifTick = function(frame) {
+        ++imgComplete
+        console.log("Frame " + frame + " | Render " + imgComplete);
+        if(imgComplete === options.frames_per_cycle) {
+          for(let i = 0; i < options.frames_per_cycle; ++i) {
+            gif.addFrame(canvases[i], {delay: options.ms_per_frame});
+          }
+          gif.on('finished', function(blob) {
+            window.open(URL.createObjectURL(blob));
+          });
+          gif.render();
+        }
+      }
+
+      //Generate frames.
+      //Give each frame a canvas, generate svg for it, render, and wait.
+      for(let i = 0; i < options.frames_per_cycle; ++i) {
+        draws[i] = drawAll(i / options.frames_per_cycle, false, true);
+        drawDoms[i] = dom.parseFromString(draws[i].svg(), 'application/xml');
+        imgs[i] = new Image();
+        imgs[i].onload = function() {
+          let iCanvas = document.createElement('canvas');
+          iCanvas.hidden = true;
+          iCanvas.id = 'canvas' + i;
+          iCanvas.width = CANVAS_WIDTH*2;
+          iCanvas.height = CANVAS_HEIGHT*2;
+            
+          document.getElementById('svgout').appendChild(iCanvas);
+          iCanvas.getContext('2d').drawImage(imgs[i], 0, 0, CANVAS_WIDTH*2, CANVAS_HEIGHT*2);
+          canvases[i] = iCanvas;
+          gifTick(i);
+        };
+        imgs[i].src = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(xmlSerial.serializeToString(drawDoms[i]));
+      }
+    }
+
+    //TODO: In the different frames, all these points don't need to be generated again,
+    //  since different frames have to be generated by rotating the whole thing as a transform 
+    function drawAll(offset, is_anim, is_bg) {
+        offset ||= 0;
+        is_anim ||= false;
+        is_bg ||= false;
+
+        const GEAR_OUTER_COUNT = options.gear_outer_count;
+        const GEAR_INNER_COUNT = options.gear_inner_count;
+        const INCOUNT = options.gear_interp_count;
+
+        offset_gear = offset * 360 / GEAR_OUTER_COUNT;
+        offset_seam = offset * 360 / GEAR_INNER_COUNT;
+        
+        let draw;
+        if(!is_bg) {
+            draw = SVG().addTo('#svgcontent').size('600px', '600px');
+            draw.viewbox(-CANVAS_OFFSET_X, -CANVAS_OFFSET_Y, CANVAS_WIDTH, CANVAS_HEIGHT);
+        } else {
+            draw = SVG().size('1200px', '1200px');
+            draw.viewbox(-CANVAS_OFFSET_X, -CANVAS_OFFSET_Y, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+        
+        draw.rect(CANVAS_WIDTH, CANVAS_HEIGHT).attr({x: -CANVAS_OFFSET_X, y: -CANVAS_OFFSET_Y}).fill(colors.bg);
+        
+        let arr_coords;
+
+        //Fill inner circle
+        let infill = draw.circle(166).attr(CENTER).fill(colors.inner_fill);
+
+        //Draw inseam gears
+
+        var mask = draw.circle(166).attr(CENTER).fill('#fff');
+        var mask2 = draw.circle(166).attr(CENTER).fill('#fff');
+
+        let ingear_a_outer = genWave(GEAR_INNER_COUNT, INCOUNT, smooth_linear, 0.4, 0.4, true);
+        encircle(ingear_a_outer, offset, GEAR_INNER_COUNT, 68, 80, -options.gear_inner_offset_x, -options.gear_inner_offset_y);
+
+        let ingear_a_inner = genWave(GEAR_INNER_COUNT, INCOUNT, smooth_linear, 0, 0.5, true);
+        ingear_a_inner = ingear_a_inner.reverse();
+        encircle(ingear_a_inner, offset, GEAR_INNER_COUNT, 50, 50, -options.gear_inner_offset_x, -options.gear_inner_offset_y);
+
+        let ingear_a_all = ingear_a_outer.concat(ingear_a_inner);
+
+        var gear_inseam_upper = draw.polygon(ingear_a_all).fill(colors.inner_gear).clipWith(mask).attr(ATTR_Default);
+        if(is_anim) {
+            gear_inseam_upper.animate(1000, 0, 'start').ease('-').loop().rotate(360 / GEAR_INNER_COUNT);
+        } else {
+            //gear_inseam_upper.rotate(offset_seam);
+        }
+
+        let ingear_b_outer = genWave(GEAR_INNER_COUNT, INCOUNT, smooth_linear, 0.4, 0.4, true);
+        encircle(ingear_b_outer, offset, GEAR_INNER_COUNT, 68, 80, options.gear_inner_offset_x, options.gear_inner_offset_y);
+
+        let ingear_b_inner = genWave(GEAR_INNER_COUNT, INCOUNT, smooth_linear, 0, 0.5, true);
+        ingear_b_inner = ingear_b_inner.reverse();
+        encircle(ingear_b_inner, offset, GEAR_INNER_COUNT, 50, 50, options.gear_inner_offset_x, options.gear_inner_offset_y);
+
+        let ingear_b_all = ingear_b_outer.concat(ingear_b_inner);
+
+        var gear_inseam_lower = draw.polygon(ingear_b_all).fill(colors.inner_gear).clipWith(mask2).attr(ATTR_Default);
+        if(is_anim) {
+            gear_inseam_lower.animate(1000, 0, 'start').ease('-').loop().rotate(360 / GEAR_INNER_COUNT);
+        } else {
+            //gear_inseam_lower.rotate(offset_seam);
+        }
+
+        arr_coords = [];
+
+        //Fill outer gear
+
+        let infill_outer = genWave(GEAR_OUTER_COUNT, INCOUNT, smooth_linear, 0.26, 0.54, true);
+        encircle(infill_outer, 0, GEAR_OUTER_COUNT, 92, 114, 0, 0);
+
+        let infill_inner = genWave(GEAR_OUTER_COUNT, INCOUNT, smooth_linear, 0, 0.5, true);
+        infill_inner = infill_inner.reverse();
+        encircle(infill_inner, 0, GEAR_OUTER_COUNT, 68, 68, 0, 0);
+
+        let infill_all = infill_outer.concat(infill_inner);
+
+        var gear_outer_fill = draw.polygon(infill_all).fill(colors.outer_fill).attr(ATTR_Default);
+        if(is_anim) {
+            gear_outer_fill.animate(1000, 0, 'absolute').ease('-').loop().rotate(360 / GEAR_OUTER_COUNT);
+        } else {
+            gear_outer_fill.rotate(offset_gear);
+        }
+
+        //Outer gear inner border
+
+        let inborder_inner = genWave(GEAR_OUTER_COUNT, INCOUNT, smooth_linear, 0, 0.5, true);
+        encircle(inborder_inner, 0, GEAR_OUTER_COUNT, 60, 60, 0, 0);
+
+        let inborder_outer = genWave(GEAR_OUTER_COUNT, INCOUNT, smooth_linear, 0, 0.5, true);
+        inborder_outer = inborder_outer.reverse();
+        encircle(inborder_outer, 0, GEAR_OUTER_COUNT, 70, 70, 0, 0);
+
+        let inborder_all = inborder_outer.concat(inborder_inner);
+        var gear_outer_inborder = draw.polygon(inborder_all).fill(colors.mid_border).attr(ATTR_Default);
+
+        //Outer gear outer border
+
+        let outer_border_outer = genWave(GEAR_OUTER_COUNT, INCOUNT, smooth_linear, 0.5, 0.3, true);
+
+        encircle(outer_border_outer, 0, GEAR_OUTER_COUNT, 100, 120, 0, 0);
+        outer_border_outer.reverse();
+
+        let outer_border_inner = genWave(GEAR_OUTER_COUNT, INCOUNT, smooth_linear, 0.25, 0.55, true);
+        encircle(outer_border_inner, 0, GEAR_OUTER_COUNT, 92, 112, 0, 0);
+
+        let outer_border_all = outer_border_outer.concat(outer_border_inner);
+        
+        var gear_outer_border = draw.polygon(outer_border_all).fill(colors.outer_border).attr(ATTR_Default);
+        if(is_anim) {
+            gear_outer_border.animate(1000,0,'start').ease('-').loop().rotate(360 / GEAR_OUTER_COUNT);
+        } else {
+            gear_outer_border.rotate(offset_gear);
+        }
+
+        if(is_anim) {
+            anim_draw = draw;
+        }
+        return draw;
+    } 
+
+    app.controller('GearController', function GearController($scope) {
+        $scope.state = state;
+        $scope.curPalette = curPalette;
+
+        prodScope = $scope;
+
+        $scope.updateColor = function(picker, label) {
+            return;
+            colors[label] = picker.toHEXString();
+            redraw();
+
+            $scope.curPalette[label] = colors[label];
+        }
+
+    });
+
+  </script>
+</body>
+</html>
