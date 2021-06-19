@@ -190,9 +190,11 @@ body {
 <body ng-controller="GearController">
   <div id="sidebar" class="sidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeBar()">&times;</a>
-    This is entirely client-side. Attempts to break this will probably only break your own computer?
-    <br> <br>
-    v0.4a - Honestly, for most practical purposes, this is functionally complete. The rest of the features I'd want to put in should mostly just take busywork, so they stand a good chance of making it in. I wouldn't really mind sharing this version though.<br> <br>
+    This is entirely client-side. Attempts to break this will probably only break your own computer? <br>
+    Got palette suggestions/names/etc? Contact me in-discord at nic#0204 <br>
+    <br>
+    v0.4b - Sort of done...? But also, plenty to go.<br>
+    <br>
     Pending features, perhaps inevitable, but with no schedule: <br>
     <ul>
       <li>A *lot* more settings. Gear curve options, cursed tooth counts, antialiasing (for non-gif purposes), don't animate, image size, maybe more.</li>
@@ -252,6 +254,14 @@ body {
           <span class="col-4 picker-label">Transparency color:</span>
           <input class="col-3 picker-jscolor" onChange="updateColor(this.jscolor, 'transparency')" onInput="updateColor(this.jscolor, 'transparency')" value="ff00ff" data-jscolor="{}" id="picker-transparency">
           <button class ="col-5" onclick="btnCopyBG2T()">Copy from Background</button>
+          <span class="w-100"></span>
+
+          <span class="col-10"> &nbsp;</span>      
+          <span class="w-100"></span>
+
+          <span class="col-2"></span>
+          <button class ="col-5" onclick="btnSwapBorders()">Swap inner/outer borders</button>
+          <button class ="col-5" onclick="btnSwapFills()">Swap inner/outer fill</button>
           <span class="w-100"></span>
 
         <div>&nbsp;</div>
@@ -569,9 +579,36 @@ body {
 
       redraw();
     }
+
+    function btnSwapBorders() {
+      let next_out = colors.inner_gear;
+      let next_in = colors.outer_border;
+
+      colors.inner_gear = next_in;
+      pickers.inner_gear.jscolor.fromString(next_in);
+
+      colors.outer_border = next_out;
+      pickers.outer_border.jscolor.fromString(next_out);
+
+      redraw();
+    }
+
+    function btnSwapFills() {
+      let next_out = colors.inner_fill;
+      let next_in = colors.outer_fill;
+
+      colors.inner_fill = next_in;
+      pickers.inner_fill.jscolor.fromString(next_in);
+
+      colors.outer_fill = next_out;
+      pickers.outer_fill.jscolor.fromString(next_out);
+
+      redraw();
+    }
     
     function btnExport() {
       inoutbox.value = JSON.stringify(colors);
+      console.log(JSON.stringify(colors, null, 2));
     }
 
     function btnImport() {

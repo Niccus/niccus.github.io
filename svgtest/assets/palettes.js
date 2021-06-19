@@ -276,6 +276,132 @@ var palettes_raw = [
     "mid_border": "#671a8d",
     "inner_fill": "#ffffff",
     "inner_gear": "#271851"
+  },
+  {
+    "group": "Pride",
+    "name": "Agender",
+    "outer_border": "#000000",
+    "outer_fill": "#818285",
+    "mid_border": "#BBDA80",
+    "inner_gear": "#000000",
+    "inner_fill": "#FFFFFF"
+  },
+  {
+    "group": "Pride",
+    "name": "Aromantic",
+    "outer_border": "#000000",
+    "outer_fill": "#939598",
+    "mid_border": "#FFFFFF",
+    "inner_gear": "#C5DF9B",
+    "inner_fill": "#59A34F"
+  },
+  {
+    "group": "Pride",
+    "name": "Asexual",
+    "outer_border": "#642165",
+    "outer_fill": "#939598",
+    "mid_border": "#642165",
+    "inner_gear": "#642165",
+    "inner_fill": "#FFFFFF"
+  },
+  {
+    "group": "Pride",
+    "name": "Bisexual",
+    "outer_border": "#92278F",
+    "outer_fill": "#D91B5C",
+    "mid_border": "#92278F",
+    "inner_gear": "#92278F",
+    "inner_fill": "#283891"
+  },
+  {
+    "group": "Pride",
+    "name": "Genderfluid",
+    "outer_border": "#000000",
+    "outer_fill": "#3F4CA0",
+    "mid_border": "#BC47BB",
+    "inner_gear": "#FFFFFF",
+    "inner_fill": "#F175A3"
+  },
+  {
+    "group": "Pride",
+    "name": "Genderqueer",
+    "outer_border": "#E2EAF1",
+    "outer_fill": "#49833D",
+    "mid_border": "#E2EAF1",
+    "inner_gear": "#E2EAF1",
+    "inner_fill": "#A981BA"
+  },
+  {
+    "group": "Pride",
+    "name": "Intersex",
+    "outer_border": "#7D3B9B",
+    "outer_fill": "#FFF200",
+    "mid_border": "#7D3B9B",
+    "inner_gear": "#7D3B9B",
+    "inner_fill": "#FFF200"
+  },
+  {
+    "group": "Pride",
+    "name": "Lesbian",
+    "outer_border": "#D62D27",
+    "outer_fill": "#F89B58",
+    "mid_border": "#E2EAF1",
+    "inner_gear": "#A41F65",
+    "inner_fill": "#D261A5"
+  },
+  {
+    "group": "Pride",
+    "name": "Nonbinary",
+    "outer_border": "#000000",
+    "outer_fill": "#895EA8",
+    "mid_border": "#FFFFFF",
+    "inner_gear": "#3A3A3C",
+    "inner_fill": "#F7EF3D"
+  },
+  {
+    "group": "Pride",
+    "name": "Pansexual",
+    "outer_border": "#FFD53F",
+    "outer_fill": "#EC008C",
+    "mid_border": "#FFD53F",
+    "inner_gear": "#FFD53F",
+    "inner_fill": "#00AEEF"
+  },
+  {
+    "group": "Pride",
+    "name": "Polysexual",
+    "outer_border": "#49B965",
+    "outer_fill": "#D74398",
+    "mid_border": "#49B965",
+    "inner_gear": "#49B965",
+    "inner_fill": "#448BCA"
+  },
+  {
+    "group": "Pride",
+    "name": "Plural",
+    "outer_border": "#A957C5",
+    "outer_fill": "#5CDD5C",
+    "mid_border": "#FEF56A",
+    "inner_gear": "#BDBDEF",
+    "inner_fill": "#607EC6"
+  },
+  {
+    "group": "Pride",
+    "name": "Transgender (Blue Fill)",
+    "outer_border": "#F5A9B8",
+    "outer_fill": "#6CCFF6",
+    "mid_border": "#F5A9B8",
+    "inner_gear": "#F5A9B8",
+    "inner_fill": "#FFFFFF"
+  },
+  {
+    "group": "Pride",
+    "name": "Transgender (Pink Fill)",
+    "outer_border": "#6CCFF6",
+    "outer_fill": "#F5A9B8",
+    "mid_border": "#6CCFF6",
+    "inner_gear": "#6CCFF6",
+    "inner_fill": "#FFFFFF"
   }
 ]
 
