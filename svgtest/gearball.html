@@ -276,11 +276,11 @@ body {
           <span class="w-100"></span>
 
           <span class="col-7 picker-label">Milliseconds per frame:</span>
-          <input class="col-2" onChange="updateSetting(this, 'ms_per_frame')" onInput="updateSetting(this, 'ms_per_frame')" value=16 type=text>
+          <input class="col-2" onChange="updateSetting(this, 'ms_per_frame')" onInput="updateSetting(this, 'ms_per_frame')" value=15 type=text>
           <span class="w-100"></span>
 
           <span class="col-7 picker-label">Curve smoothness (0+):</span>
-          <input class="col-2" onChange="updateSetting(this, 'gear_interp_count')" onInput="updateSetting(this, 'gear_interp_count')" value=1 type=text>
+          <input class="col-2" onChange="updateSetting(this, 'gear_interp_count')" onInput="updateSetting(this, 'gear_interp_count')" value=3 type=text>
         </div>
 
       </div>
@@ -328,6 +328,8 @@ body {
     const C_GEAR_WHITE = '#ffffff';
     const C_GEAR_YELLOW = '#f6b235';
 
+    var RENDER_WIDTH = 300;
+    var RENDER_HEIGHT = 300;
     var CANVAS_WIDTH = 300;
     var CANVAS_HEIGHT = 300;
     var CANVAS_OFFSET_X = CANVAS_WIDTH / 2;
@@ -355,12 +357,12 @@ body {
 
     var options = {
       frames_per_cycle: 45,
-      ms_per_frame: 16,
+      ms_per_frame: 15,
       gear_inner_offset_x: 53,
       gear_inner_offset_y: 72,
       gear_inner_count: 20,
       gear_outer_count: 14,
-      gear_interp_count: 1
+      gear_interp_count: 3
     };
 
     var anim_draw;
@@ -691,11 +693,27 @@ body {
 
       let xmlSerial = new XMLSerializer();
       let dom = new DOMParser();
-      let gif = new GIF({
+
+      //I'm... doing this the hard way because it seems necessary
+      let hasTransparency = colors.transparency === colors.outer_border ||
+                            colors.transparency === colors.outer_fill ||
+                            colors.transparency === colors.mid_border ||
+                            colors.transparency === colors.inner_gear ||
+                            colors.transparency === colors.inner_fill ||
+                            colors.transparency === colors.bg;
+      let gif;
+      if(hasTransparency) {
+        gif = new GIF({
           workers: 2,
           quality: 10,
           transparent: parseInt('0x' + colors.transparency.slice(1,7))
-      });
+        });
+      } else {
+        gif = new GIF({
+          workers: 2,
+          quality: 10
+        });
+      }
 
       let draws = [];
       let drawDoms = [];
@@ -728,11 +746,11 @@ body {
           let iCanvas = document.createElement('canvas');
           iCanvas.hidden = true;
           iCanvas.id = 'canvas' + i;
-          iCanvas.width = CANVAS_WIDTH*2;
-          iCanvas.height = CANVAS_HEIGHT*2;
+          iCanvas.width = RENDER_WIDTH;
+          iCanvas.height = RENDER_HEIGHT;
             
           document.getElementById('svgout').appendChild(iCanvas);
-          iCanvas.getContext('2d').drawImage(imgs[i], 0, 0, CANVAS_WIDTH*2, CANVAS_HEIGHT*2);
+          iCanvas.getContext('2d').drawImage(imgs[i], 0, 0, RENDER_WIDTH, RENDER_HEIGHT);
           canvases[i] = iCanvas;
           gifTick(i);
         };
@@ -759,7 +777,7 @@ body {
             draw = SVG().addTo('#svgcontent').size('600px', '600px');
             draw.viewbox(-CANVAS_OFFSET_X, -CANVAS_OFFSET_Y, CANVAS_WIDTH, CANVAS_HEIGHT);
         } else {
-            draw = SVG().size('1200px', '1200px');
+            draw = SVG().size('800px', '800px');
             draw.viewbox(-CANVAS_OFFSET_X, -CANVAS_OFFSET_Y, CANVAS_WIDTH, CANVAS_HEIGHT);
         }
         
@@ -775,6 +793,11 @@ body {
         var mask = draw.circle(166).attr(CENTER).fill('#fff');
         var mask2 = draw.circle(166).attr(CENTER).fill('#fff');
 
+        if(is_anim) {
+          mask.animate(1000, 0, 'start').ease('-').loop().dmove(19,-18);
+          mask2.animate(1000, 0, 'start').ease('-').loop().dmove(-19,18);
+        }
+
         let ingear_a_outer = genWave(GEAR_INNER_COUNT, INCOUNT, smooth_linear, 0.4, 0.4, true);
         encircle(ingear_a_outer, offset, GEAR_INNER_COUNT, 68, 80, -options.gear_inner_offset_x, -options.gear_inner_offset_y);
 
@@ -783,13 +806,15 @@ body {
         encircle(ingear_a_inner, offset, GEAR_INNER_COUNT, 50, 50, -options.gear_inner_offset_x, -options.gear_inner_offset_y);
 
         let ingear_a_all = ingear_a_outer.concat(ingear_a_inner);
-
+        
+        //*
         var gear_inseam_upper = draw.polygon(ingear_a_all).fill(colors.inner_gear).clipWith(mask).attr(ATTR_Default);
         if(is_anim) {
             gear_inseam_upper.animate(1000, 0, 'start').ease('-').loop().rotate(360 / GEAR_INNER_COUNT);
         } else {
             //gear_inseam_upper.rotate(offset_seam);
         }
+        //*/
 
         let ingear_b_outer = genWave(GEAR_INNER_COUNT, INCOUNT, smooth_linear, 0.4, 0.4, true);
         encircle(ingear_b_outer, offset, GEAR_INNER_COUNT, 68, 80, options.gear_inner_offset_x, options.gear_inner_offset_y);
@@ -800,12 +825,14 @@ body {
 
         let ingear_b_all = ingear_b_outer.concat(ingear_b_inner);
 
+        //*
         var gear_inseam_lower = draw.polygon(ingear_b_all).fill(colors.inner_gear).clipWith(mask2).attr(ATTR_Default);
         if(is_anim) {
             gear_inseam_lower.animate(1000, 0, 'start').ease('-').loop().rotate(360 / GEAR_INNER_COUNT);
         } else {
             //gear_inseam_lower.rotate(offset_seam);
         }
+        //*/
 
         arr_coords = [];
 
@@ -820,12 +847,14 @@ body {
 
         let infill_all = infill_outer.concat(infill_inner);
 
+        //*
         var gear_outer_fill = draw.polygon(infill_all).fill(colors.outer_fill).attr(ATTR_Default);
         if(is_anim) {
             gear_outer_fill.animate(1000, 0, 'absolute').ease('-').loop().rotate(360 / GEAR_OUTER_COUNT);
         } else {
             gear_outer_fill.rotate(offset_gear);
         }
+        //*/
 
         //Outer gear inner border
 
@@ -836,8 +865,10 @@ body {
         inborder_outer = inborder_outer.reverse();
         encircle(inborder_outer, 0, GEAR_OUTER_COUNT, 70, 70, 0, 0);
 
+        //*
         let inborder_all = inborder_outer.concat(inborder_inner);
         var gear_outer_inborder = draw.polygon(inborder_all).fill(colors.mid_border).attr(ATTR_Default);
+        //*/
 
         //Outer gear outer border
 
@@ -851,12 +882,14 @@ body {
 
         let outer_border_all = outer_border_outer.concat(outer_border_inner);
         
+        //*
         var gear_outer_border = draw.polygon(outer_border_all).fill(colors.outer_border).attr(ATTR_Default);
         if(is_anim) {
             gear_outer_border.animate(1000,0,'start').ease('-').loop().rotate(360 / GEAR_OUTER_COUNT);
         } else {
             gear_outer_border.rotate(offset_gear);
         }
+        //*/
 
         if(is_anim) {
             anim_draw = draw;

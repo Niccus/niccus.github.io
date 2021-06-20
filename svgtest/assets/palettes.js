@@ -192,7 +192,7 @@ var palettes_raw = [
     "inner_fill": "#040404",
     "inner_gear": "#67556b"
   },
-  {
+  /*{ // Discord doesn't like these anymore, rip
     "group": "Houston Spies",
     "name": "Full Stealth (Discord Dark)",
     "outer_border": "#37393e",
@@ -213,7 +213,7 @@ var palettes_raw = [
     "inner_gear": "#ffffff",
     "bg": "#000000",
     "transparency": "#000000"
-  },
+  },*/
   {
     "group": "Hellmouth Sunbeams",
     "name": "Luminance",
