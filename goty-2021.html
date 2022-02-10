@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <title class="titlewave">nic's absolutely unambiguously canonical ordering of games of tyool 2021</title>
+    <style>
+        * {
+            /*top: 0px;*/
+            left: 0px;
+            padding-top: 1%;
+            padding-left: 1%;
+            position: static;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .detail {
+            width: 50%;
+            font-size:18px;
+        }
+
+        img {
+            max-width: 900px;
+        }
+        
+        .titlewave {
+            position: relative;
+        }
+  
+        .titlewave span {
+            position: relative;
+            display: inline-block;
+            color: #fff;
+            font-size: 0.2em;
+            text-transform: uppercase;
+            animation: animwave 2s ease-in-out infinite;
+            animation-delay: calc(-2s + 0.2s * var(--i));
+        }
+  
+        @keyframes animwave {
+            0% {
+                transform: translateY(0px);
+            }
+  
+            50% {
+                transform: translateY(-10px);
+            }
+  
+            100% {
+                transform: translateY(0px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width: 99%; position: absolute; top: 0px; font-size: 40px; color: #eee; background-color: #222;">
+        <div id="topseparator"></div>
+        <div id="prelude">
+        <div class="titlewave">
+            <span style="--i:1">2</span>
+            <span style="--i:2">0</span>
+            <span style="--i:3">2</span>
+            <span style="--i:4">1</span>
+            <span style="--i:5"> </span>
+            <span style="--i:6">w</span>
+            <span style="--i:7">a</span>
+            <span style="--i:8">s</span>
+            <span style="--i:9"> </span>
+            <span style="--i:10">a</span>
+            <span style="--i:11"> </span>
+            <span style="--i:12">y</span>
+            <span style="--i:13">e</span>
+            <span style="--i:14">a</span>
+            <span style="--i:15">r</span>
+        </div>
+            This ordering etc etc arbitrary etc etc canonical etc etc may change upon reobservation.
+            <br />
+        </div>
+        <div id="list">
+
+        </div>
+        <div id="midseparator" style="margin-top: 100px; margin-bottom: 200px;"></div>
+        <div id="botseparator"></div>
+    </div>
+    <script>
+        const divList = document.getElementById('list');
+
+        //Functions straight up copied from w3school
+        function setCookie(cname, cvalue) {
+            document.cookie = cname + "=" + cvalue + ";path=/";
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        //http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html
+        !function(a,b,c,d,e,f,g,h,i){function j(a){var b,c=a.length,e=this,f=0,g=e.i=e.j=0,h=e.S=[];for(c||(a=[c++]);d>f;)h[f]=f++;for(f=0;d>f;f++)h[f]=h[g=s&g+a[f%c]+(b=h[f])],h[g]=b;(e.g=function(a){for(var b,c=0,f=e.i,g=e.j,h=e.S;a--;)b=h[f=s&f+1],c=c*d+h[s&(h[f]=h[g=s&g+b])+(h[g]=b)];return e.i=f,e.j=g,c})(d)}function k(a,b){var c,d=[],e=typeof a;if(b&&"object"==e)for(c in a)try{d.push(k(a[c],b-1))}catch(f){}return d.length?d:"string"==e?a:a+"\0"}function l(a,b){for(var c,d=a+"",e=0;e<d.length;)b[s&e]=s&(c^=19*b[s&e])+d.charCodeAt(e++);return n(b)}function m(c){try{return o?n(o.randomBytes(d)):(a.crypto.getRandomValues(c=new Uint8Array(d)),n(c))}catch(e){return[+new Date,a,(c=a.navigator)&&c.plugins,a.screen,n(b)]}}function n(a){return String.fromCharCode.apply(0,a)}var o,p=c.pow(d,e),q=c.pow(2,f),r=2*q,s=d-1,t=c["seed"+i]=function(a,f,g){var h=[];f=1==f?{entropy:!0}:f||{};var o=l(k(f.entropy?[a,n(b)]:null==a?m():a,3),h),s=new j(h);return l(n(s.S),b),(f.pass||g||function(a,b,d){return d?(c[i]=a,b):a})(function(){for(var a=s.g(e),b=p,c=0;q>a;)a=(a+c)*d,b*=d,c=s.g(1);for(;a>=r;)a/=2,b/=2,c>>>=1;return(a+c)/b},o,"global"in f?f.global:this==c)};if(l(c[i](),b),g&&g.exports){g.exports=t;try{o=require("crypto")}catch(u){}}else h&&h.amd&&h(function(){return t})}(this,[],Math,256,6,52,"object"==typeof module&&module,"function"==typeof define&&define,"random");
+        //string Math.seedrandom(string _);
+        //float-[0,1) Math.random();
+
+        var list = {
+            13: {
+                name: `Monster Train: The Last Divinity`,
+                detail: `A good expansion for a game that ultimately didn't grab me as hard as all the other infinite games. `,
+                weight: 30,
+                variance: 95,
+            },
+            12: {
+                name: `Tactical Nexus`,
+                detail: `This is too much, with a meta game that's probably way too big and grindy for my own good. Sequestered away for my own safety.`,
+                weight: 60,
+                variance: 90,
+            },
+            11: {
+                name: `Binding of Isaac: Repentance`,
+                detail: `It's twice as big! Oh god, it's twice as big. Still great, even greater, but this doesn't need a highlight. I see myself completing this... eventually... in the far future...`,
+                weight: 90,
+                variance: 85,
+            },
+            10: {
+                name: `Creeper World 4`,
+                detail: `Creeper goes fourth, largely unchanged from 3... but with 3D! I feel like the new perspective does make the scale of the battle way more clear, so this is probably the best entry point thus far.`,
+                weight: 120,
+                variance: 80,
+            },
+            9: {
+                name: `Gone Home`,
+                detail: `Finally got around to this, on a nice rainy night. You know what this is.`,
+                weight: 150,
+                variance: 75,
+            },
+            8: {
+                name: `Frog Fractions: Hop's Iconic Cap DLC`,
+                detail: `A nice little romp. An epilogue, why not?`,
+                weight: 180,
+                variance: 70,
+            },
+            7: {
+                name: `Room to Grow`,
+                detail: `It's your tile-based puzzle game of the year! Not as long as expected, but there's still plenty of concepts to explore.`,
+                weight: 210,
+                variance: 65,
+            },
+            6: {
+                name: `Intergalactic Fishing`,
+                detail: `Just fish. No, really, just fish. It ranks this high with just fish.`,
+                weight: 240,
+                variance: 60,
+            },
+            5: {
+                name: `Horizon's Gate`,
+                detail: `Really lives up to distant childhood memories of Uncharted Waters. Both bigger and smaller than expected? Comes along with a further refinement (but still very close) of the tactical system of the series.`,
+                weight: 270,
+                variance: 55,
+            },
+            4: {
+                name: `Bug Fables`,
+                detail: `A fun one of those, with ok story and a few surprisingly good story beats. I have no idea how this hits for people who have played paper mario games, but evidently it's gone well.`,
+                weight: 300,
+                variance: 50,
+            },
+            3: {
+                name: `Deltarune Ch. 2`,
+                detail: `Gamers, searching for consequences, found them.`,
+                weight: 400,
+                variance: 50,
+            },
+            2: {
+                name: `Inscryption`,
+                detail: `Daniel Mullins finally gets a popular hit, but also, I hope we see more condensed deckbuilding experiences out there. I have no idea how this hits for people who haven't played his other games, but evidently it's gone well.`,
+                weight: 450,
+                variance: 50,
+            },
+            1: {
+                name: `Outer Wilds: Echoes of the Eye`,
+                detail: `It's at least as strong as the base game, and it explores remarkable new ways of knowledge gating. Get to really know a stranger.`,
+                weight: 500,
+                variance: 70,
+            },
+        };
+
+        var seed = getCookie('ord2021');
+        if(seed == '') {
+            seed = Math.seedrandom();
+            setCookie('ord2021', btoa(seed));
+        } else {
+            Math.seedrandom(atob(seed));
+        }
+
+        var ordlist = [];
+        for(let entry in list) {
+            let loc = Math.floor(list[entry].weight + Math.random() * list[entry].variance);
+            while(ordlist[loc]) { loc += 1; }
+            ordlist[loc] = {};
+            ordlist[loc].name = list[entry].name;
+            ordlist[loc].detail = list[entry].detail;
+        }
+
+        let countdown = 0; for(let o in list) { countdown++; };
+        let build = '';
+        //console.log(ordlist);
+        ordlist.forEach( (o, i) => {
+            //console.log(`${i} - ${val}`)
+            build += `<div style="margin-top: 250px; margin-left: ${Math.random() * 25}%;"><div>${countdown}: ${o.name}</div><div class="detail"">${o.detail}</div></div>`;
+
+            --countdown;
+        });
+        divList.innerHTML = build;
+
+    </script>
+</body>
+
+</html>
