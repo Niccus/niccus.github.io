@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <title class="titlewave">nic's absolutely unambiguously unassailable canonical ordering of games of tyool 2022</title>
+    <style>
+        * {
+            /*top: 0px;*/
+            left: 0px;
+            padding-top: 1%;
+            padding-left: 1%;
+            padding-bottom: 1%;
+            position: static;
+            font-family: 'Lato', sans-serif;
+        }
+
+        p {
+            padding: 0.25em;
+            margin: 0px;
+        }
+
+        img {
+            max-width: 900px;
+        }
+
+        #prelude {
+            margin-bottom: 100px;
+            width: 75%;
+            background-color: rgba(0,0,0, 0.5);
+        }
+
+        .desc {
+            padding-top: 250px;
+            padding-bottom: 0.2em;
+            border-left: 15px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .list {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+        }
+
+        .list .listEntry {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 10px groove rgba(255,255,255, 0.1);
+
+            padding-top: 0.5em;
+            padding-bottom: 1em;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .list .listTitle {
+            position: relative;
+            z-index: 2;
+            background-color: #050505;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .list .listGenre {
+            position: relative;
+            top: -5px;
+            z-index: 1;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 15px;
+            color: #222;
+            background-color: #ddd;
+            width: fit-content;
+            padding-top: 5px;
+            border-top: 10px groove rgba(0, 0, 0, 0.6);
+        }
+        
+        .listGenre:hover {
+            z-index: 3;
+        }
+
+        .list .listDetail {
+            background-color: #050505;
+            position: relative;
+            width: 50%;
+            font-size:18px;
+            z-index: 0;
+            padding-bottom: 10px;
+        }
+
+        .listDetail:hover {
+            z-index: 3;
+        }
+
+        .tooPopular {
+            background-color: rgba(255, 0, 0, 0.05);
+        }
+
+        .tooPopular .listGenre {
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .small {
+            background-color: rgba(0, 255, 48, 0.05);
+        }
+
+        .small .listGenre {
+            border-color: rgba(0, 255, 48, 0.5);
+        }
+
+        .main {
+            background-color: rgba(40, 6, 255, 0.1);
+        }
+
+        .main .listGenre {
+            border-color: rgba(40, 6, 255, 0.5);
+        }
+
+        .closeBacklog {
+            background-color: rgba(192, 64, 0, 0.05);
+        }
+
+        .closeBacklog .listGenre {
+            border-color: rgba(192, 64, 0, 0.5);
+        }
+
+        .marquee {
+            position: relative;
+            width: 10vw;
+            height: 2em;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .track {
+            position: absolute;
+            white-space: nowrap;
+            will-change: transform;
+            animation: marquee 4s linear infinite;
+        }
+
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width: 99%; position: absolute; top: 0px; font-size: 25px; color: #eee; background-color: #222;">
+        <div id="topseparator"></div>
+        <div id="prelude">
+            <!--
+            2022 was a different year for me -- for Reasons I didn't have my (relatively old but more capable than my laptop) desktop computer for a few years, and now I'm back to being able to play games which are more than vaguely hardware-demanding. <br />
+            I'm well set up again, and I've got a lot of backlog to chew through. <br />
+            A lot of the games you'll see here are from previous years... but there are still some more recent entrants hanging around. <br />
+            This ordering is arbitrary but canonical, but may change upon reobservation. <br />
+            Poke me on discord or something if your interest is piqued and you want some clarification on the various comments here. <br />
+            (hover over bits if other bits are overlapping) <br />
+            -nic <br />
+            -->
+            <p>2022 was a different year for me -- for Reasons I didn't have my (relatively old but more capable than my laptop) desktop computer for a few years, and now I'm back to being able to play games which are more than vaguely hardware-demanding. </p>
+            <p>I'm well set up again, and I've got a lot of backlog to chew through. </p>
+            <p>A lot of the games you'll see here are from previous years... but there are still some more recent entrants hanging around. </p>
+            <p>This ordering is arbitrary but canonical, but may change upon reobservation. </p>
+            <p>Poke me on discord or something if your interest is piqued and you want some clarification on the various comments here. </p>
+            <p>(hover over bits if other bits are overlapping) </p>
+            <p>-nic </p>
+        </div>
+        <div id="desctooPopular" class="desc tooPopular">
+            <p>...I also might have gotten myself a console, so I'm slowly poking my way back into mainstream games.</p>
+            <p>First, here are games which are already too popular for me to explicitly recommend.</p>
+            <p>These are unordered</p>
+        </div>
+        <div id="listtooPopular" class="list tooPopular">
+        
+        </div>
+        <div id="descsmall"  class="desc small">
+            <p>Before we get to the main list, here are some smaller games I've played that don't really fit into full reviews or ranking.</p>
+            <p>These are also unordered.</p>
+        </div>
+        <div id="listsmall"  class="list small">
+        
+        </div>
+        <div id="descmain" class="desc main">
+            <p>This is it! *The* list! You should assume that these are in the correct order.</p>
+        </div>
+        <div id="listmain" class="list main">
+        
+        </div>
+        <div id="desccloseBacklog" class="desc closeBacklog">
+            <p>...And to close things out, a list of games that barely escaped this year's list and are at the top of my backlog.</p>
+        </div>
+        <div id="listcloseBacklog" class="list closeBacklog">
+        
+        </div>
+        <div id="midseparator" style="margin-top: 100px; margin-bottom: 100px;"></div>
+        <div id="botseparator"></div>
+        <div style="font-size: 8px;">hey there.</div>
+    </div>
+    <script>
+        const listNames = {
+            "tooPopular": document.getElementById('listtooPopular'),
+            "small": document.getElementById('listsmall'),
+            "main": document.getElementById('listmain'),
+            "closeBacklog": document.getElementById('listcloseBacklog'),
+        };
+
+        //Functions straight up copied from w3school
+        function setCookie(cname, cvalue) {
+            document.cookie = cname + "=" + cvalue + ";path=/";
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        //http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html
+        Math.oldrandom = Math.random;
+        !function(a,b,c,d,e,f,g,h,i){function j(a){var b,c=a.length,e=this,f=0,g=e.i=e.j=0,h=e.S=[];for(c||(a=[c++]);d>f;)h[f]=f++;for(f=0;d>f;f++)h[f]=h[g=s&g+a[f%c]+(b=h[f])],h[g]=b;(e.g=function(a){for(var b,c=0,f=e.i,g=e.j,h=e.S;a--;)b=h[f=s&f+1],c=c*d+h[s&(h[f]=h[g=s&g+b])+(h[g]=b)];return e.i=f,e.j=g,c})(d)}function k(a,b){var c,d=[],e=typeof a;if(b&&"object"==e)for(c in a)try{d.push(k(a[c],b-1))}catch(f){}return d.length?d:"string"==e?a:a+"\0"}function l(a,b){for(var c,d=a+"",e=0;e<d.length;)b[s&e]=s&(c^=19*b[s&e])+d.charCodeAt(e++);return n(b)}function m(c){try{return o?n(o.randomBytes(d)):(a.crypto.getRandomValues(c=new Uint8Array(d)),n(c))}catch(e){return[+new Date,a,(c=a.navigator)&&c.plugins,a.screen,n(b)]}}function n(a){return String.fromCharCode.apply(0,a)}var o,p=c.pow(d,e),q=c.pow(2,f),r=2*q,s=d-1,t=c["seed"+i]=function(a,f,g){var h=[];f=1==f?{entropy:!0}:f||{};var o=l(k(f.entropy?[a,n(b)]:null==a?m():a,3),h),s=new j(h);return l(n(s.S),b),(f.pass||g||function(a,b,d){return d?(c[i]=a,b):a})(function(){for(var a=s.g(e),b=p,c=0;q>a;)a=(a+c)*d,b*=d,c=s.g(1);for(;a>=r;)a/=2,b/=2,c>>>=1;return(a+c)/b},o,"global"in f?f.global:this==c)};if(l(c[i](),b),g&&g.exports){g.exports=t;try{o=require("crypto")}catch(u){}}else h&&h.amd&&h(function(){return t})}(this,[],Math,256,6,52,"object"==typeof module&&module,"function"==typeof define&&define,"random");
+        //string Math.seedrandom(string _);
+        //float-[0,1) Math.random();
+        
+        var lists = {
+            tooPopular: {
+                1:{
+                    name: `Astro's Playroom`,
+                    genre: `3D Platformer`,
+                    detail: `Sony knew they had a hell of a controller and got themselves an excellent demo for it. It's... mostly only ok, but more importantly, it makes the controller feel good.`,
+                    weight: 300,
+                    variance: 300,
+                },
+                2:{
+                    name: `Disco Elysium`,
+                    genre: `IF/Adventure/Intrusive Thought Simulator`,
+                    detail: `come on now`,
+                    weight: 300,
+                    variance: 300,
+                },
+                3:{
+                    name: `Ratchet & Clank: Rift Apart`,
+                    genre: `3D Run-and-gun Platformer`,
+                    detail: `A reasonable entrance of Ratchet to a new era of consoles... but I'm not sure there's that much gas left?`,
+                    weight: 300,
+                    variance: 300,
+                },
+                4:{
+                    name: `Stanley Parable Ultra Deluxe`,
+                    genre: `<div class="marquee"><div class="track"><div class="content">the end is never the end is never the end is never the end is never </div></div></div>`,
+                    detail: `'tis good spud`,
+                    weight: 300,
+                    variance: 300,
+                },
+            },
+
+            small: {
+                1:{
+                    name: `6180 The Moon`,
+                    genre: `Platformer`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                2:{
+                    name: `Atuel`,
+                    genre: `Documentary`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                3:{
+                    name: `Chook & Sosig: Walk the Plank`,
+                    genre: `Point-and-click Adventure`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                4:{
+                    name: `Hyperbolica`,
+                    genre: `Mathematical Adventure`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                5:{
+                    name: `A Normal Lost Phone 1/2`,
+                    genre: `IF/Adventure`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                6:{
+                    name: `Shephy`,
+                    genre: `Solitary Card`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                7:{
+                    name: `Subsurface Circular`,
+                    genre: `Visual IF`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                8:{
+                    name: `CosmOS 9 (IFO, TENDY: Robot Gardener, Space Ducks, Frequency Dissonance, Triga, Linelith, Gordianaut, Aqorel, We are definitely the baddies)`,
+                    genre: `Various (mostly Logical Puzzle, some Strategy)`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                9:{
+                    name: `Chessformer`,
+                    genre: `Logical Puzzle`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+            },
+
+            main: {
+                1:{
+                    name: `A Day of Maintenance`,
+                    genre: `IF/Simulation`,
+                    detail: `Gay robots at work, work chats, and heavy machinery simulating.`,
+                    weight: 3150,
+                    variance: 50,
+                },
+                2:{
+                    name: `Yugo Puzzle`,
+                    genre: `Logical Puzzle`,
+                    detail: `qrostar at it again! Expect the usual combination of elegance and difficulty.`,
+                    weight: 3100,
+                    variance: 50,
+                },
+                3:{
+                    name: `Fuser`,
+                    genre: `DJ Simulator`,
+                    detail: `The threat to pull the game off stores finally lit a fire under my ass to try it out, and yeah, this makes it surprisingly easy to run into great-sounding crimes.`,
+                    weight: 3050,
+                    variance: 60,
+                },
+                4:{
+                    name: `Bonfire Peaks`,
+                    genre: `Logical Puzzle`,
+                    detail: `Probably Corey Martin's most accessible and atmospheric game. Despite the possible complexity, almost all the puzzles are focused and compact.`,
+                    weight: 3000,
+                    variance: 65,
+                },
+                5:{
+                    name: `In Other Waters`,
+                    genre: `IF/Interface Simulation`,
+                    detail: `I guess I'm one game behind the train, but on the plus side, I'm clearing a lot of backlog. A shortish vibe game with pristine aesthetic.`,
+                    weight: 2900,
+                    variance: 70,
+                },
+                6:{
+                    name: `The Forgotten City`,
+                    genre: `Time-loop Puzzlebox (with a bit of shooty)`,
+                    detail: `A little less meaty than expected, but still a good time of finding out what's what with everyone. Maybe ends a tad too conveniently cleanly...`,
+                    weight: 2800,
+                    variance: 70,
+                },
+                7:{
+                    name: `FixFox`,
+                    genre: `Walker/Packrat/Handiwork Simulation`,
+                    detail: `A surprisingly pleasant surprise. Maybe a bit twee, but eventually explains itself. Live the life of having a self-inflicted backpack full of garbage and unpack yourself.`,
+                    weight: 2700,
+                    variance: 70,
+                },
+                8:{
+                    name: `Where Cards Fall`,
+                    genre: `Logical Puzzle`,
+                    detail: `...yes, i'm mostly led this way due to Blaseball, but this turned out to be a surprisingly strong puzzler.`,
+                    weight: 2600,
+                    variance: 70,
+                },
+                9:{
+                    name: `Room to Grow`,
+                    genre: `Logical Puzzle`,
+                    detail: `A cactus grows... A fairly difficult one of those, and i'm concerned that some of the harder puzzles aren't *really* crackable by insight, but I'd still say this is a strong entry.`,
+                    weight: 2500,
+                    variance: 70,
+                },
+                10:{
+                    name: `In?ight/Insight`,
+                    genre: `Lateral Logical Puzzle`,
+                    detail: `I ended up trying a few Witness-likes this year, and this one ended up being the most palatable one. Not perfect, but had reasonable balance in how interesting the rules are, how reasonable the rules are, and puzzle quality.`,
+                    weight: 2400,
+                    variance: 70,
+                },
+                11:{
+                    name: `OneShot`,
+                    genre: `Player-included Adventure`,
+                    detail: `Finally got around to it, and it's neat! I haven't checked out World Machine Edition, but it has to be pretty good, right?`,
+                    weight: 2300,
+                    variance: 70,
+                },
+                12:{
+                    name: `Spiritfarer`,
+                    genre: `City Crafter`,
+                    detail: `More oriented around busiwork than expected, but also a lot of a sort of positively melancholic writing that I don't think you can easily find elsewhere. A lot of baggage to let go.`,
+                    weight: 2200,
+                    variance: 70,
+                },
+                13:{
+                    name: `Bloodstained: Ritual of the Night`,
+                    genre: `Complete-a-thon Metroidvania`,
+                    detail: ` Maybe a bit too much to do... An enjoyable trip nonetheless.`,
+                    weight: 2100,
+                    variance: 80,
+                },
+                14:{
+                    name: `Recompile`,
+                    genre: `Metroidvania`,
+                    detail: `(Eventually) excellent sense of progression and a nice AI-personhood story to boot, but getting to the end does involve quite a lot of fiddly platforming with less-than-clear signage...`,
+                    weight: 2000,
+                    variance: 80,
+                },
+                15:{
+                    name: `A Forgetful Loop`,
+                    genre: `Looping Worker Management`,
+                    detail: `A surprisingly fun pseudo-RTS built around small, puzzle-like looping levels.`,
+                    weight: 1900,
+                    variance: 100,
+                },
+                16:{
+                    name: `Intergalactic Fishing`,
+                    genre: `Fishing`,
+                    detail: `Fishing eternally. The galaxy is there for you`,
+                    weight: 1800,
+                    variance: 100,
+                },
+                17:{
+                    name: `Altered`,
+                    genre: `Logical Puzzle`,
+                    detail: `A challenging and not-too-long puzzle game. The puzzles get less tight towards the end, but the unique movement mechanic works out throughout.`,
+                    weight: 1700,
+                    variance: 100,
+                },
+                18:{
+                    name: `Carto`,
+                    genre: `Lateral Puzzle`,
+                    detail: `Figure, ground, and the context that matters`,
+                    weight: 1600,
+                    variance: 100,
+                },
+                19:{
+                    name: `Taiji`,
+                    genre: `Logical/Lateral Puzzle`,
+                    detail: `A decent tribute to The Witness, although probably worth the same level of concern about cultural appropriation. Main puzzles are thematically united and aren't overly lateral. The post/meta-game layer is nice and condensed. Difficulty a bit uneven?`,
+                    weight: 1500,
+                    variance: 100,
+                },
+                20:{
+                    name: `UnderMine`,
+                    genre: `Incremental Roguelite`,
+                    detail: `A relatively melee-focused Binding-of-Isaac-like. More supportive of runaway combos than most others, but still pretty sedate. A lot of incremental progress and ascending for the dedicated.`,
+                    weight: 1300,
+                    variance: 150,
+                },
+                21:{
+                    name: `Loop Hero`,
+                    genre: `Incremental Incremental Roguelite`,
+                    detail: `Roguelite progression on idler-like sessions. Not... actually idle-able though, it's still very hands-on. It strikes a decent medium between progression of mechanics and incremental power. Maybe a little too cryptic for its own good?`,
+                    weight: 1200,
+                    variance: 150,
+                },
+                22:{
+                    name: `Supraland`,
+                    genre: `Metroidvania`,
+                    detail: `A very uneven mix of awkward combat, good progression, annoying puzzles, great end-of-game lifting-of-restrictions, very annoying item hunting, and strange writing. I liked it in the end?`,
+                    weight: 1100,
+                    variance: 150,
+                },
+                23:{
+                    name: `Little Square Things`,
+                    genre: `Logical Puzzle`,
+                    detail: `A tribute to early (well, not *that* early) days of gaming, maybe to a fault (sometimes those graphics are way too crunchy). Decent puzzles, but I'll always carry a dispreference for when step counts come into play. Like a condensed/refined version of Chip's Challenge.`,
+                    weight: 1000,
+                    variance: 150,
+                },
+                24:{
+                    name: `Jelly Is Sticky`,
+                    genre: `Logical Puzzle`,
+                    detail: `A bit messier and less reason-able than the other logical puzzles on this list, but still pretty good. Enjoy some block mechanisms`,
+                    weight: 900,
+                    variance: 200,
+                },
+                25:{
+                    name: `Ynglet`,
+                    genre: `2D Platformer?`,
+                    detail: `A pretty fun time bouncing around. A bit like the segments in Ecco with floating water? Very dutch.`,
+                    weight: 800,
+                    variance: 200,
+                },
+                26:{
+                    name: `Filament`,
+                    genre: `Logical/Lateral Puzzle`,
+                    detail: `Mostly a logical puzzle, with an overworld layer that was probably inspired by Witness. Neat story, but these puzzles don't seem to be reason-able at all. Well-realized setting but with puzzles that feel a tad rough.`,
+                    weight: 700,
+                    variance: 200,
+                },
+                27:{
+                    name: `Riftbound`,
+                    genre: `Tower Defense/PvZ-like`,
+                    detail: `It's reasonably well-made, but it's also still quite a long ways away from getting "there"... It's got PvZ mechanics down pat for the most part, but there's not enough personality put back in after the shift in theme. Incremental progression is light (good!) but not exciting. It's fine, but a bit difficult to recommend. Things are hard when you aim for a star.`,
+                    weight: 600,
+                    variance: 150,
+                },
+                28:{
+                    name: `Mu Cartographer`,
+                    genre: `IF/Interface Simulation`,
+                    detail: `A very vibes-oriented... toy-thing compared to In Other Waters's more up-front story. Once you scrute whatever the hell is going on, there's weirdly a large amount of cleanup to do, but before then, it's quite the experience to be this lost.`,
+                    weight: 500,
+                    variance: 100,
+                },
+                29:{
+                    name: `My Time At Portia`,
+                    genre: `Craft-oriented Farmlike`,
+                    detail: `A reasonably enjoyable timefilling One of Those but centered around crafting, but also it's got a *lot* of jank from being built on an ex-MMO-engine and having a, uh, quirky story and setting. A lot of busiwork for when you're looking for some.`,
+                    weight: 400,
+                    variance: 300,
+                },
+                30:{
+                    name: `Mages of Mystralia`,
+                    genre: `Reconfigurable Action Adventure`,
+                    detail: `An *ok* action adventure with a very customizable attack system which eventually becomes pretty fun to tinker with. That process does take a while, though...`,
+                    weight: 300,
+                    variance: 300,
+                },
+                31:{
+                    name: `Magnibox`,
+                    genre: `Logical Puzzle`,
+                    detail: `A pretty good puzzler! Levels are generally small enough that you can reason about the puzzles well.`,
+                    weight: 300,
+                    variance: 300,
+                },
+                32:{
+                    name: `Earthlock`,
+                    genre: `Linear-ish JRPG`,
+                    detail: `Robust combat system but not really backed by a breakout story or something. It's fine.`,
+                    weight: 300,
+                    variance: 300,
+                },
+                33:{
+                    name: `Semblance`,
+                    genre: `2D Puzzle Platformer`,
+                    detail: `The floor is jelly. The wall is jelly too. More plastic than elastic, compared to The Floor Is Jelly.`,
+                    weight: 300,
+                    variance: 300,
+                }
+            },
+
+            closeBacklog: {
+                1:{
+                    name: `Bean and Nothingness`,
+                    genre: `Logical Puzzle`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                2:{
+                    name: `The Golem`,
+                    genre: `Logical Puzzle`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                3:{
+                    name: `No Anglerfish`,
+                    genre: `Logical Puzzle`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+                4:{
+                    name: `Solas 128`,
+                    genre: `Logical/Lateral Puzzle`,
+                    detail: ``,
+                    weight: 300,
+                    variance: 300,
+                },
+            },
+        };
+
+        var seed = getCookie('ord2022');
+        if(seed == '') {
+            seed = Math.seedrandom();
+            setCookie('ord2022', btoa(seed));
+        } else {
+            Math.seedrandom(atob(seed));
+        }
+
+        var ords = {};
+        for(let listName in lists) {
+            let list = lists[listName];
+            ords[listName] = {};
+            for(let entry in list) {
+                let loc = Math.floor(list[entry].weight + (Math.random() + 0.25 * Math.oldrandom()) * list[entry].variance);
+                while(ords[listName][loc]) { loc += 1; }
+                ords[listName][loc] = entry;
+            }
+        }
+        
+        for(let listName in lists) {
+            let list = lists[listName];
+            let ordList = ords[listName];
+            let countdown = 0; for(let o in list) { countdown++; };
+            let build = '';
+            Object.entries(ordList).forEach( (oid, i) => {
+                let o = list[oid[1]];
+                build += `<div class="listEntry" style="margin-left: ${Math.random() * 25}%;"><div class="listTitle">${countdown}: ${o.name}</div><div style="margin-left: ${10 + Math.oldrandom()*8}%; transform: rotate(${(Math.oldrandom()-0.5)*o.genre.length}deg);" class="listGenre">${o.genre}</div><div class="listDetail">${o.detail}</div></div>`;
+                --countdown;
+            });
+            listNames[listName].innerHTML += build;
+        }
+
+    </script>
+</body>
+
+</html>
