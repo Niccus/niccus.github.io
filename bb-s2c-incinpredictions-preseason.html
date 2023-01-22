@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<!-- oh god don't look -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+
+    <title>Season 2-Coronation, Incineration Predictions, Preseason Standings</title>
+    <style>
+        body {
+            font-family: 'Lora', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            /*rgb(63, 81, 181) rgb(217, 220, 240)*/
+            background-color: rgb(217, 220, 240);
+            padding: 0.5em;
+        }
+
+        .section {
+            background-color: rgb(255,255,255);
+            padding: 0.5em;
+            padding-top: 2em;
+            margin-top: 3em;
+            margin-bottom: 5em;
+            position: relative;
+        }
+
+        .sectionHeader {
+            background-color: rgb(63,81,181);
+            color: #fff;
+            border-radius: 0.5em;
+
+            position: absolute;
+            width: 30em;
+            top: -2em;
+            padding: 0.5em;
+        }
+
+        .sectionQuestion {
+            font-style: italic;
+        }
+        
+        .section p {
+            padding-left: 1em;
+        }
+
+        .quickstats {
+            position: absolute;
+            border: 1px solid black;
+            padding: 0.3em;
+
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            background-color: rgb(217, 220, 240);
+        }
+
+        #hide {
+            color: #fff;
+            background-color: #fff;
+        }
+        
+        #hide a {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Blaseball Season 2 (NEW) Incineration Predictions, Pre-season Round-up</h1>
+    <p>Three significant figures generally used. Images created courtesy of LibreOffice Calc. <br>
+    Information gathered from enterprising individuals of the Blaseball Maincord and SIBR discord.</p>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 1: Incinerations, Main Season
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                How many players will be incinerated from active play, from the 24 teams, during the main 90 days of the season?
+                This will only count incinerations in specific. New and innovative ways to die will not be counted, and I will assume that incinerations are lethal.<br>
+                <br>
+                In Season 2β, 16 players from 20 teams were incinerated over 99 days.<br>
+                In Season 3β, 26 players from 20 teams were incinerated over 99 days.<br>
+            </p>
+            <img class="sectionImg" src="./images/2c-incin-incincount-long.png" alt="Histogram of the predictions for the number of main-season incinerations" title="A wide swath of predictions, just under 100 in count. Major peaks are at 12, 14, and 24 incinerations, each with about 10 predictions. There's an outlier at 90.">
+            <div class="quickstats" style="left: 870px; top: 185px">
+                Minimum: 0 <br>
+                Maximum: 90 <br>
+                Mean: 17.6 <br>
+                Median: 15.5 <br>
+                Mode: 24 <br>
+                σ: 11.1
+            </div>
+            <p>I would argue that this is unimodal around one-team's-worth-of-incinerating, but with the odd spike at 24.</p>
+            <p>There are interesting gaps at some odd numbers, but I think it's the small sample size. Not sure what's up with 13.</p>
+        </div>
+    </div>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 2: Incinerations, Bonus
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                How many players will be incinerated over season 2 (NEW), outside of the main season? <br>
+                This will primarily count the postseason and election results.
+            </p>
+            <img src="./images/2c-incin-offcincount.png" alt="Histogram of the predictions for the number of other incinerations" title="A relatively tight set of predictions, peaking at 2, mostly in the range of 0 to 7. There are some guesses in the 10s, and a few bold predictions at 20, 25, and 27.">
+            <div class="quickstats" style="left: 554px; top: 120px">
+                Minimum: 0 <br>
+                Maximum: 27 <br>
+                Mean: 4.60 <br>
+                Median: 3 <br>
+                Mode: 2 <br>
+                σ: 5.16
+            </div>
+            <p>A much tighter set of predictions. After all, there aren't many opportunities for death outside the main season.</p>
+            <p>That said, some are predicting... maybe one or two whole teams being incinerated? Who knows. Maybe each team gets some fun in the elections.</p>
+        </div>
+    </div>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 3: Alternations
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                Star player Terrell Bradley's alternate is called. <br>
+                How many players in active play will become alternated over the 90 days of the main season?
+            </p>
+            <img src="./images/2c-incin-altcount.png" alt="Histogram of the predictions for the number of alternations" title="There is a fairly uniform spread of guesses between 1 and 15 at about 3-5 each, but there's a distinct peak at 15 guesses of 0 alternations. A few high-end guesses exist at 20, 23, and 28.">
+            <div class="quickstats" style="left: 554px; top: 145px">
+                Minimum: 0 <br>
+                Maximum: 28 <br>
+                Mean: 6.17 <br>
+                Median: 5 <br>
+                Mode: 0 <br>
+                σ: 5.90
+            </div>
+            <p>That's almost uniform between 1 and 15! A plurality of people picked 0 alternations though.</p>
+        </div>
+    </div>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 4: Zephyr McCloud Is Hecking Cursed
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                Star player Zephyr McCloud is Cursed. <br>
+                How many deaths will be directly attributable to Zephyr McCloud over the 90 days of the main season?
+            </p>
+            <img src="./images/2c-incin-zephyrcount.png" alt="Histogram of the predictions for the number of deaths attributable to Zephyr McCloud" title="Most (?) people (38 of them) guessed 0 direct deaths, and a scattering of people guessed between 1 and 10. There's an outlier guess at 45. There's a way-out-lier guess at 180.">
+            <div class="quickstats" style="left: 397px; top: 285px">
+                Minimum: 0 <br>
+                Maximum: 45 or 180, depending on taste <br>
+                Mean: 3.32 <br>
+                Median: 1 <br>
+                Mode: 0 <br>
+                σ: 6.14
+            </div>
+            <p>By <em>far</em> the most popular theory is that Zephyr will feedback onto the winning team, so the most popular guess is that Zephyr won't kill anyone.</p>
+            <p>But... what if Zephyr incinerates someone whenever the Tigers lose? (the 45 guess). What if... what if... Well, I don't know how you get to 180. Please call me.</p>
+        </div>
+    </div>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 5: Shadows
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                Star player Simon Haley Swears in. <br>
+                How many players will enter the shadows from active play over the 90 days of the main season?
+            </p>
+            <img src="./images/2c-incin-shadowcount.png" alt="Histogram of the predictions for the number of shadowings" title="Another very scattered set of guesses. There are two leading guesses at 0 and 10 (11 guesses each). About 30 guesses are spread between 2 and 8, about 10 are spread between 11 and 20. There are outlier guesses at 34, 36, and 37.">
+            <div class="quickstats" style="left: 705px; top: 130px">
+                Minimum: 0 <br>
+                Maximum: 37 <br>
+                Mean: 8.96 <br>
+                Median: 6 <br>
+                Mode: 0 <br>
+                σ: 8.41
+            </div>
+            <p>Nine people were collided into the shadows this past season (well OK, one was in the postseason), and... surprisingly, that's also the average of the predictions for next season? And yet, <em>nobody</em> picked exactly nine.</p>
+            <p>I'll claim that most people think there won't be that many additional shadowings, and that the bigger factor is weathers other than Horizon finally appearing.</p>
+        </div>
+    </div>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 6: Vibes and Jazz Hands
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                Breckenridge Breaks. <br>
+                What's your vibe on Jazz Hands' calamitous fate over the course of the next season?
+            </p>
+            <img src="./images/2c-incin-viberating.png" alt="Histogram of the predictions for vibes on the upcoming fate of the Jazz Hands, on a scale from 1 (Normal) to 10 (Oh god, oh no)" title="About half the guesses are in the 1-3 range, and the other half are in the 4-10 range. There is a plurality of 17 guesses on a vibe of 3 out of 10.">
+            <div class="quickstats" style="left: 657px; top: 215px">
+                Scale of 1 to 10 <br>
+                Mean: 4.51 <br>
+                Median: 3 <br>
+                Mode: 3 <br>
+                σ: 2.96
+            </div>
+            <p>Best of luck, Jazz Hands. Get well soon, Sim permitting.</p>
+        </div>
+    </div>
+    <div class="section">
+        <h2 class="sectionHeader">
+            Prediction 7: Free-for-all
+        </h2>
+        <div class="sectionContent">
+            <p class="sectionQuestion">
+                Free form prediction, 60 character limit. Make it hot, no scope, aim high.
+            </p>
+            <p>Withheld until end of season, but shoutouts to this one extra-specific prediction:</p>
+            <img style="margin-left: 20px;" src="./images/2c-incin-shelled.png" alt="kevelyn jeff <SHELLED>ing dies" title="hee hee">
+            <p>Good luck, Parker the first!</p>
+        </div>
+    </div>
+</body>
+</html>
