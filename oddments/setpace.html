@@ -1,0 +1,247 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <title>Set Pace</title>
+  <meta name="<CONTENT HERE> but faster, on demand" content="Metered noise dispensary">
+
+  <style>
+    * {
+        margin: 2px;
+    }
+
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted gray;
+    }
+
+    .tooltip .tooltipText {
+        width: 200px;
+        background-color: white;
+        color: #000;
+        padding: 5px 3px;
+        border-radius: 3px;
+        border: 1px solid black;
+        visibility: hidden;
+        text-align: center;
+        position: absolute;
+        z-index: 1;
+    }
+
+    .tooltip:hover .tooltipText {
+        visibility: visible;
+    }
+
+    #presetsContainer {
+        border: 1px solid black;
+        background-color: #fafafa;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .preset {
+        position: relative;
+        width: 200px;
+    }
+    .presetSpeedText {
+        width: 50px;
+    }
+    .presetVolumeText {
+        width: 50px;
+    }
+
+    .preset.presetcur {
+        background-color: #d8ffff;
+        background: repeating-linear-gradient( 39deg, #e4ecff, #e4ecff 5px, #d8ffff 5px, #d8ffff 25px );
+    }
+
+  </style>
+</head>
+<body>
+  <div id="info" style="margin-bottom: 10px;">
+    <button id="infoButton" onclick="infoToggle()" type="button">What is this?</button>
+    <div id="infoBox" style="display: none; padding: 5px;">
+      This page runs a script that pokes at an audio element. <br>
+      When you press the appropriate buttons, the page will nudge the audio player into different playback settings. <br>
+    </div>
+  </div>
+  <div id="main">
+    <div id="inputs">
+        <input type="file" id="upload" /> <br />
+        <input type="button" id="mainRestart" value="Restart" onclick="playGo()"/>
+        <input type="button" id="mainStop" value="Stop!" onclick="playStop()"/>
+        <div>
+            <input type="checkbox" id="mainLoop" value="1" checked onchange="playLoopCheck(this)"/>
+            <span>Loop</span>
+        </div>
+        <div>
+            <input type="checkbox" id="mainPitchable" value="0" onchange="playPitchableCheck(this)"/>
+            <span class="tooltip">Allow Pitch Change
+                <span class="tooltipText">If checked, the pitch of the audio will change according to its speed -- like vinyls and other old-timey speed controls.</span>
+            </span>
+        </div>
+        <div id="audios">
+            <audio id="audio" controls loop="true">
+              <source src="" id="src" />
+            </audio>
+        </div>
+        <fieldset id="audioCurrentAttr">
+            <legend>Currently at...</legend>
+            <div>Speed: <span id="curSpeed">1x</span></div>
+            <div>Volume: <span id="curVolume">100%</span></div>
+        </fieldset>
+        <input type="button" id="addPreset" value="More Presets" onclick="addPreset()"/>
+        <div id="presetsContainer">
+            <fieldset class="preset" id="preset0" data-id="0" style="display: none">
+                <legend id="presetTitle0">Preset 0</legend>
+                <input type="button" id="presetActivate0" value="Activate" onclick="presetActivate(this)">
+                <br>
+                <span id="presetSpeedLabel0">Speed:</span>
+                <br>
+                <input type="range" min="0.25" max="4" value="1" step="0.05" class="presetSpeedSlider" id="presetSpeedSliderInput0">
+                <input type="number" min="0.065" max="4" value="1" step="0.005" class="presetSpeedText" id="presetSpeedTextInput0">
+                <br>
+                <span id="presetVolumeLabel0">Volume:</span>
+                <br>
+                <input type="range" min="0" max="100" value="100" class="presetVolumeSlider" id="presetVolumeSliderInput0">
+                <input type="number" min="0" max="100" value="100" class="presetVolumeText" id="presetVolumeTextInput0">
+            </fieldset>
+        </div>
+    </div>
+  </div>
+  
+  <script>
+    //main
+    let elemAudio = document.getElementById("audio");
+    let elemAudioSpeedLabel = document.getElementById("curSpeed");
+    let elemAudioVolLabel = document.getElementById("curVolume");
+    let elemPresetsContainer = document.getElementById("presetsContainer");
+    let elemBasePreset = document.getElementById("preset0");
+    let elemBasePresetDummy = document.getElementById("presetActivate0");
+    let selectedPresetID = 0;
+    let nextPresetID = 1;
+    let expectedSpeed, expectedVolume; // Workaround for weird event cascading
+
+    document.getElementById("upload").addEventListener("change", handleFiles, false);
+    elemAudio.addEventListener('ratechange', handleAudioRateChange);
+    elemAudio.addEventListener('volumechange', handleAudioVolChange);
+
+    function handleFiles(event) {
+        var files = event.target.files;
+        $("#src").attr("src", URL.createObjectURL(files[0]));
+        document.getElementById("audio").load();
+    }
+
+    function handleAudioRateChange(e) {
+      elemAudioSpeedLabel.innerText = e.target.playbackRate.toFixed(2) + "x";
+      if(elemAudio.playbackRate != expectedSpeed)
+        { presetActivate(elemBasePresetDummy, true); }
+    }
+    function handleAudioVolChange(e) {
+      elemAudioVolLabel.innerText = (e.target.muted ? 0 : e.target.volume * 100).toFixed(0) + "%";
+      if(elemAudio.volume != expectedVolume)
+        { presetActivate(elemBasePresetDummy, true); }
+    }
+
+    function playGo() {
+        let inpFile = document.getElementById("upload").files[0];
+
+        if (inpFile == null) {
+            return;
+        }
+
+        elemAudio.play();
+    }
+
+    function playStop() {
+      elemAudio.pause();
+      elemAudio.currentTime = 0;
+    }
+
+    function playLoopCheck(o) {
+      elemAudio.loop = o.checked;
+    }
+
+    function playPitchableCheck(o) {
+      elemAudio.preservesPitch = !o.checked;
+    }
+
+    function addPreset(startSpeed = 1, startVol = 100) {
+      let newPreset = elemBasePreset.cloneNode(true);
+      newPreset.id = "preset" + nextPresetID;
+      newPreset.dataset.id = nextPresetID;
+      newPreset.childNodes[1].innerText = "Preset " + nextPresetID;
+      newPreset.style = "";
+
+      elemPresetsContainer.appendChild(newPreset);
+      setupPreset(nextPresetID, startSpeed, startVol);
+
+      nextPresetID += 1;
+    }
+    addPreset(1, 100);
+    addPreset(1.25, 100);
+    addPreset(1.5, 100);
+
+    function setupPreset(id, startSpeed = 1, startVol = 100) {
+      let presetContainer = document.getElementById("preset" + id);
+      let elems = presetContainer.elements;
+      elems[1].value = startSpeed;
+      elems[2].value = startSpeed;
+      elems[3].value = startVol;
+      elems[4].value = startVol;
+      elems[1].addEventListener('input', function (e) {elems[2].value = e.target.value;});
+      elems[2].addEventListener('input', function (e) {elems[1].value = e.target.value;});
+      elems[3].addEventListener('input', function (e) {elems[4].value = e.target.value;});
+      elems[4].addEventListener('input', function (e) {elems[3].value = e.target.value;});
+    }
+    setupPreset(0);
+
+    function presetActivate(e, quiet = false) {
+      let parent = e.parentNode;
+      let id = e.parentNode.dataset.id - 0;
+      let prevPreset = selectedPresetID;
+      selectedPresetID = id;
+
+      if(!quiet) {
+        if(parent.elements[2].value < 0.065) {
+          parent.elements[2].value = 0.065;
+        }
+        
+        //Commit preset values
+        elemAudio.playbackRate = parent.elements[2].value;
+        elemAudio.volume = parent.elements[4].value * 0.01;
+
+        expectedSpeed = elemAudio.playbackRate;
+        expectedVolume = elemAudio.volume;
+      }
+
+      //Visible confirmation
+      let prevPresetElem = document.getElementById("preset" + prevPreset);
+      let nextPresetElem = document.getElementById("preset" + selectedPresetID);
+      if(prevPresetElem) { prevPresetElem.classList.remove("presetcur") };
+      if(nextPresetElem) { nextPresetElem.classList.add("presetcur") };
+    }
+
+    //Info
+    let infoButton = document.getElementById("infoButton");
+    let infoBox = document.getElementById("infoBox");
+    let infoIsVisible = false;
+
+    function infoToggle() {
+      if(infoIsVisible) {
+        infoIsVisible = false;
+        infoBox.style.display = "none";
+        infoButton.textContent = "What is this?"
+      } else {
+        infoIsVisible = true;
+        infoBox.style.display = "block";
+        infoButton.textContent = "None of this."
+      }
+    }
+  </script>
+</body>
+</html>
