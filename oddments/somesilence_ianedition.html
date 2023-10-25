@@ -1,0 +1,98 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <title>Silence, sometimes interrupted</title>
+  <meta name="Indefinite amounts of silence, occasionally interrupted with <CONTENT HERE>" content="Unreliable noise dispensary">
+
+  <style>
+  </style>
+</head>
+<body>
+  <div id="info" style="margin-bottom: 10px;">
+    <button id="infoButton" onclick="infoToggle()" type="button">What is this?</button>
+    <div id="infoBox" style="display: none; padding: 5px;">
+      This page runs a script that pokes at an audio element. <br>
+      Every once in a while, the script makes the audio play. <br>
+      Any volume or speed adjustment will be preserved. <br>
+      -=Special Ian Edition=- <br>
+    </div>
+  </div>
+  <div id="main">
+    <div id="inputs">
+        <label for="endlo" title="in seconds">Minimum delay:</label> <input type="number" id="endlo" value="60" min="0.1" step="0.1"/><br />
+        <label for="endhi" title="in seconds">Maximum delay:</label> <input type="number" id="endhi" value="1200" step="0.1"/><br />
+
+        <input type="button" id="go" value="Go!" onclick="go()"/>
+        <input type="button" id="stop" value="Stop!" onclick="stop()"/>
+    </div>
+    <div id="audios">
+
+        <audio id="audio" controls>
+          <source src="./ian.wav" id="src" />
+        </audio>
+    </div>
+  </div>
+  
+  <script>
+    //main
+    var cur = 0;
+
+    function go() {
+        let inpLo = parseFloat(document.getElementById("endlo").value);
+        let inpHi = parseFloat(document.getElementById("endhi").value);
+        let elemAudio = document.getElementById("audio");
+
+        if (isNaN(inpLo) || isNaN(inpHi) || inpLo >= inpHi) {
+            return;
+        }
+
+        let delay = ((Math.random() * (inpHi - inpLo)) + inpLo) * 1000;
+
+        setTimeout(looper, delay, cur, inpLo, inpHi, elemAudio);
+    }
+
+    function stop() {
+        ++cur;
+    }
+
+    function looper(id, limLo, limHi, elemAudio) {
+        if (id != cur) {
+            return;
+        }
+
+        elemAudio.currentTime = 0;
+        elemAudio.play();
+
+        let delay = ((Math.random() * (limHi - limLo + 1)) + limLo) * 1000;
+
+        setTimeout(looper, delay, id, limLo, limHi, elemAudio);
+    }
+
+    
+    
+    //UI hooks
+
+    //Info
+    let infoButton = document.getElementById("infoButton");
+    let infoBox = document.getElementById("infoBox");
+    let infoIsVisible = false;
+
+    function infoToggle() {
+      if(infoIsVisible) {
+        infoIsVisible = false;
+        infoBox.style.display = "none";
+        infoButton.textContent = "What is this?"
+      } else {
+        infoIsVisible = true;
+        infoBox.style.display = "block";
+        infoButton.textContent = "None of this."
+      }
+    }
+
+  </script>
+</body>
+</html>
