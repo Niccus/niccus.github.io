@@ -1,0 +1,262 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  <title>Silence, sometimes interrupted</title>
+  <meta name="Indefinite amounts of silence, occasionally interrupted with <CONTENT HERE>" content="Unreliable noise dispensary">
+
+  <meta property="og:title" content="Unreliable Noise Dispensary" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://niccus.github.io/oddments/somesilence.html" />
+  <meta property="og:description" content="Indefinite amounts of silence, occasionally interrupted with <CONTENT HERE>" />
+  <meta name="theme-color" content="#3010C0">
+
+  <style>
+  </style>
+</head>
+<body>
+  <div id="info" style="margin-bottom: 10px;">
+    <button id="infoButton" onclick="infoToggle()" type="button">What is this? (long)</button>
+    <br>
+    <div id="infoBox" style="display: none; padding: 5px;">
+      This page runs a script that pokes at an audio player. <br>
+      If you choose a file, it doesn't actually upload it anywhere. The webpage will play it locally. <br>
+      Every once in a while, the script presses the play button. <br>
+      The default interval is a random pick between 60 seconds and 20 minutes. <br>
+      Fractions of seconds are allowed, but the timer might not be that accurate. The sound *will* reset if it tries to play again too early. <br>
+      Any adjustments to the player (volume or speed) will be respected. <br>
+      This page only handles one track at a time. Open more tabs for more noises. <br>
+      <br>
+      Feedback? File an issue at: <a href=https://github.com/Niccus/niccus.github.io>https://github.com/Niccus/niccus.github.io</a>
+    </div>
+    <br>
+    <div id="presetBox">
+      Serving suggestions:
+      <button id="presetGoose" onclick="preset('goose')" type="button">Honk</button> 
+      <button id="presetIan" onclick="preset('ian')" type="button">Ian</button>
+      <button id="presetTails" onclick="preset('tails')" type="button">Dead</button>
+      <button id="presetDisturbed" onclick="preset('disturbed')" type="button">Sickness</button>
+      <button id="presetThwomp" onclick="preset('thwomp')" type="button">Thwomp</button>
+      <button id="presetCRT" onclick="preset('crt')" type="button">CRT</button>
+      <button id="presetPipe" onclick="preset('pipe')" type="button">Pipe</button>
+      <button id="presetShowEvil" onclick="evilToggle()" type="button" style="background-color: #fdd;">Evil Sounds</button>
+      <div id="presetEvilBox" style="display: none; margin: 5px; padding: 5px; border: 1px solid black; background-color: #fbb">
+        <button id="presetDMsg" onclick="preset('dmsg')" type="button">Discord Msg</button> 
+        <button id="presetDJoin" onclick="preset('djoin')" type="button">Discord Join</button> 
+        <button id="presetUSBOn" onclick="preset('usbon')" type="button">USB Connect</button> 
+        <button id="presetUSBOff" onclick="preset('usboff')" type="button">USB Disconnect</button> 
+        <button id="presetDrown" onclick="preset('drown')" type="button">Drown</button>
+      </div>
+    </div>
+  </div>
+  <div id="main">
+    <div id="inputs">
+        Or choose your own file instead: <input type="file" id="upload" /> <br>
+        <label for="endlo" title="in seconds">Minimum delay:</label> <input type="number" id="endlo" value="60" min="0.1" step="0.1"/><br>
+        <label for="endhi" title="in seconds">Maximum delay:</label> <input type="number" id="endhi" value="1200" step="0.1"/><br>
+        <br>
+        <br>
+        <br>
+        <input type="button" id="go" value="Go!" onclick="go()"/>
+        <input type="button" id="stop" value="Stop!" onclick="stop()"/>
+    </div>
+    <br>
+    <div id="audios">
+        <audio id="audio" controls>
+          <source src="" id="src" />
+        </audio>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div id="producerContainer">
+      Enable spoiler/producer view: <button id="showProducerButton" onclick="producerToggle()" type="button">Toggle</button>
+      <div id="producer" style="display: none; padding: 5px;">
+        Randomly picked delay: <span id="producerInterval"></span> <br>
+        Approximate time left: <span id="producerRemain"></span> <br>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    //mess level: medium
+
+    document.getElementById("upload").addEventListener("change", handleFiles, false);
+    const elemAudio = document.getElementById("audio");
+    const elemAudioSrc = $("#src");
+
+    const elemDbgInterval = document.getElementById("producerInterval");
+    const elemDbgRemain = document.getElementById("producerRemain");
+
+    function setAudioSrc(src) {
+      elemAudioSrc.attr("src", src);
+      elemAudio.load();
+      elemAudio.volume = 0.5;
+
+      stop();
+    }
+
+    function handleFiles(event) {
+        var files = event.target.files;
+        setAudioSrc(URL.createObjectURL(files[0]));
+    }
+
+    function preset(preset) {
+      switch(preset) {
+        case "goose":
+          setAudioSrc("./honk.wav");
+          break;
+        case "ian":
+          setAudioSrc("./ian.wav");
+          break;
+        case "tails":
+          setAudioSrc("./dead.wav");
+          break;
+        case "disturbed":
+          setAudioSrc("./sickness.wav");
+          break;
+        case "thwomp":
+          setAudioSrc("./thwomp.wav");
+          break;
+        case "drown":
+          setAudioSrc("./drowning.wav");
+          break;
+        case "crt":
+          setAudioSrc("./crt.wav");
+          break;
+        case "pipe":
+          setAudioSrc("./pipe.wav");
+          break;
+        case "dmsg":
+          setAudioSrc("./discordmsg.wav");
+          break;
+        case "djoin":
+          setAudioSrc("./discordjoin.wav");
+          break;
+        case "usbon":
+          setAudioSrc("./usbconnect.wav");
+          break;
+        case "usboff":
+          setAudioSrc("./usbdisconnect.wav");
+          break;
+        default:
+      }
+    }
+
+    var cur = 0; // "id" to let running loops know if a new loop started
+    var lastDelay = 0;
+    var lastGoDatetime = 0;
+
+    function updateDebug(delay) {
+      lastDelay = delay;
+      lastGoDatetime = Date.now();
+      elemDbgInterval.innerHTML = (delay/1000).toFixed(2).toString();
+    }
+
+    setTimeout(looperChecker, 999);
+    function go() {
+        ++cur;
+        let inpFile = document.getElementById("upload").files[0];
+        let inpLo = parseFloat(document.getElementById("endlo").value);
+        let inpHi = parseFloat(document.getElementById("endhi").value);
+        let elemAudio = document.getElementById("audio");
+
+        if (isNaN(inpLo) || isNaN(inpHi) || inpLo >= inpHi) {
+            return;
+        }
+
+        let delay = ((Math.random() * (inpHi - inpLo)) + inpLo) * 1000;
+        updateDebug(delay);
+
+        setTimeout(looper, delay, cur, inpLo, inpHi, elemAudio);
+    }
+
+    function stop() {
+        ++cur;
+        elemAudio.pause();
+        lastDelay = 0;
+        lastGoDatetime = 0;
+    }
+
+    function looper(id, limLo, limHi, elemAudio) {
+        if (id != cur) {
+            return;
+        }
+
+        elemAudio.currentTime = 0;
+        elemAudio.play();
+
+        let delay = ((Math.random() * (Math.max(limHi, limLo) - limLo)) + limLo) * 1000;
+        updateDebug(delay);
+
+        setTimeout(looper, delay, id, limLo, limHi, elemAudio);
+    }
+
+    function looperChecker() {
+      let now = Date.now();
+      if(lastGoDatetime > 0) {
+        elemDbgRemain.innerHTML = ((lastDelay - (now - lastGoDatetime))/1000).toFixed(1);
+      }
+      if(producerIsVisible) {
+        setTimeout(looperChecker, 111);
+      } else {
+        setTimeout(looperChecker, 1000);
+      }
+    }
+
+    //Info
+    let infoButton = document.getElementById("infoButton");
+    let infoBox = document.getElementById("infoBox");
+    let infoIsVisible = false;
+
+    function infoToggle() {
+      if(infoIsVisible) {
+        infoIsVisible = false;
+        infoBox.style.display = "none";
+        infoButton.textContent = "What is this? (long)"
+      } else {
+        infoIsVisible = true;
+        infoBox.style.display = "block";
+        infoButton.textContent = "None of this."
+      }
+    }
+
+    function evilToggle() {
+      let evilnote = [
+        "Sorry.",
+        "Your funeral.",
+        "Good luck.",
+        "You asked for it.",
+        "Are you sure?",
+        "You didn't need to know.",
+        "An error.",
+        "Bad idea."
+      ];
+
+      //No take-backs
+      let button = document.getElementById("presetShowEvil");
+      button.textContent = evilnote[Math.floor(Math.random() * evilnote.length)];
+      document.getElementById("presetEvilBox").style.display = "block";
+
+      setTimeout(function() {button.style.display = "none";}, 500);
+    }
+
+    //Debug/producer view
+    var producerIsVisible = false;
+    var producerBox = document.getElementById("producer");
+    function producerToggle() {
+      if(producerIsVisible) {
+        producerIsVisible = false;
+        producerBox.style.display = "none";
+      } else {
+        producerIsVisible = true;
+        producerBox.style.display = "block";
+      }
+    }
+
+  </script>
+</body>
+</html>
