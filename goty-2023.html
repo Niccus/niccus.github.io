@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@500&family=Lato&display=swap" rel="stylesheet">
+    <title>nic's utterly complete non-omissive backlog-free canonical ordering of games of tyool 2023</title>
+    <meta property="og:title" content="nic's utterly complete non-omissive backlog-free canonical ordering of games of tyool 2023">
+    <meta property="og:description" content="(more games were played but even more games entered backlog)">
+    <style>
+        * {
+            /*top: 0px;*/
+            left: 0px;
+            padding-top: 1%;
+            padding-left: 1%;
+            padding-bottom: 1%;
+            position: static;
+            font-family: 'Lato', sans-serif;
+        }
+
+        p {
+            padding: 0.25em;
+            margin: 0px;
+        }
+
+        img {
+            max-width: 900px;
+        }
+
+        em, s, a { /*I have definitely made a mistake*/
+            padding: 0;
+        }
+
+        #mulligan {
+            padding: 5px 5px;
+            margin: 5px 5px;
+        }
+
+        .list {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(90deg, transparent 0%, #000b 100%);
+
+            &::before {
+                background-image: url("/images/squaregradientalt.png");
+                background-size: 150px 150px;
+                
+                content: "";
+                position: absolute;
+                width: 500%;
+                height: 500%;
+                top: -250%;
+                left: -250%;
+                z-index: 0;
+                opacity: 0.03;
+                transform: rotate(7deg);
+            }
+        }
+
+        #prelude {
+            margin-bottom: 100px;
+            width: 75%;
+            background-color: rgba(0,0,0, 0.5);
+        }
+
+        .desc {
+            margin-top: 200px;
+            padding-bottom: 0.2em;
+            border-left: 15px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .list {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+        }
+
+        .list .listEntry {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 10px groove rgba(255,255,255, 0.1);
+            z-index: 2;
+            position:relative;
+
+            padding-top: 0.5em;
+            padding-bottom: 1em;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .list .listTitle {
+            position: relative;
+            z-index: 3;
+            background-color: #050505;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .list .listGenre {
+            font-family: 'Aleo', serif;
+            position: relative;
+            top: -5px;
+            z-index: 2;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 15px;
+            color: #222;
+            background-color: #ddd;
+            width: fit-content;
+            padding-top: 5px;
+            border-top: 10px groove rgba(0, 0, 0, 0.6);
+        }
+        
+        .listGenre:hover {
+            z-index: 4;
+        }
+
+        .list .listDetail {
+            background-color: #050505;
+            position: relative;
+            width: 50%;
+            font-size:18px;
+            z-index: 1;
+            padding-bottom: 10px;
+            padding-right: 10px;
+        }
+
+        .listDetail:hover {
+            z-index: 4;
+        }
+
+        .tooPopular {
+            background-color: rgba(255, 0, 0, 0.05);
+        }
+
+        .tooPopular .listGenre {
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .small {
+            background-color: rgba(0, 255, 48, 0.05);
+        }
+
+        .small .listGenre {
+            border-color: rgba(0, 255, 48, 0.5);
+        }
+
+        .main {
+            background-color: rgba(40, 6, 255, 0.1);
+        }
+
+        .main .listGenre {
+            border-color: rgba(40, 6, 255, 0.5);
+        }
+
+        .closeBacklog {
+            background-color: rgba(192, 64, 0, 0.05);
+        }
+
+        .closeBacklog .listGenre {
+            border-color: rgba(192, 64, 0, 0.5);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width: 99%; position: absolute; top: 0px; font-size: 25px; color: #eee; background-color: #222;">
+        <div id="topseparator"></div>
+        <button id="mulligan" onclick="mulligan()" type="button">Mulligan</button>
+        <br>
+        <div id="prelude">
+
+            <p>2023 started as a busy gaming year... and then work picked up, and I had to manage a big move, and I settled into a more busy schedule. Still got a lot of things processed, just... not timely things.</p>
+            <p>And through all this, my backlog situation has only gotten more heinous.</p>
+            <p>As usual, the ordering is pretty soft (there's even a mulligan button this time!), but more importantly, if you see a game on this list, then even if it placed pretty low, I think it's worth a look for some reason.</p>
+            <p>...that said, for a game to appear here, I do have to finish it.</p>
+            <p>Also, bonus! I also eeked out a strange little tool: <a style="color: #88f" href="./oddments/somesilence/somesilence.html" target="_blank" rel="noopener noreferrer">it makes noises!</a></p>
+            <p>Poke me on discord or something if your interest is piqued and you want some clarification on the various comments here.</p>
+            <p>-nic</p>
+            <p>(hover over bits if other bits are overlapping)</p>
+        </div>
+        <div id="desctooPopular" class="desc tooPopular">
+            <p>First, some honorable mentions of games that are too mainstream to need my further recommendations.</p>
+            <p>These are entirely unordered.</p>
+        </div>
+        <div id="listtooPopular" class="list tooPopular">
+        
+        </div>
+        <div id="descsmall"  class="desc small">
+            <p>Next, some further honorable mentions of some smaller games I've played that don't really fit into full reviews or ranking.</p>
+            <p>These are also unordered.</p>
+        </div>
+        <div id="listsmall"  class="list small">
+        
+        </div>
+        <div id="descmain" class="desc main">
+            <p>This is it! *The* list! The correctly ordered list. The ground truth. The incomparable, compared.</p>
+        </div>
+        <div id="listmain" class="list main">
+        
+        </div>
+        <div id="desccloseBacklog" class="desc closeBacklog">
+            <p>oh god the backlog is too big to mention</p>
+        </div>
+        
+        <div id="midseparator" style="margin-top: 30px; margin-bottom: 30px;"></div>
+        <div id="postlude">
+            <p>That's all! Thanks for reading. Ask me anything at your leisure.</p>
+            <br>
+            <p>Hopefully I can remember this for next year: I really got to take more screenshots.</p>
+        </div>
+        <div id="botseparator" style="margin-top: 250px; margin-bottom: 250px;"></div>
+        <div style="font-size: 8px;">hey there.</div>
+    </div>
+    <script>
+        const listNames = {
+            "tooPopular": document.getElementById('listtooPopular'),
+            "small": document.getElementById('listsmall'),
+            "main": document.getElementById('listmain'),
+        };
+
+        //Functions straight up copied from w3school
+        function setCookie(cname, cvalue) {
+            document.cookie = cname + "=" + cvalue + ";path=/";
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function mulligan() {
+            setCookie('ord2023', "");
+            location.reload();
+        }
+
+        //http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html
+        Math.oldrandom = Math.random;
+        !function(a,b,c,d,e,f,g,h,i){function j(a){var b,c=a.length,e=this,f=0,g=e.i=e.j=0,h=e.S=[];for(c||(a=[c++]);d>f;)h[f]=f++;for(f=0;d>f;f++)h[f]=h[g=s&g+a[f%c]+(b=h[f])],h[g]=b;(e.g=function(a){for(var b,c=0,f=e.i,g=e.j,h=e.S;a--;)b=h[f=s&f+1],c=c*d+h[s&(h[f]=h[g=s&g+b])+(h[g]=b)];return e.i=f,e.j=g,c})(d)}function k(a,b){var c,d=[],e=typeof a;if(b&&"object"==e)for(c in a)try{d.push(k(a[c],b-1))}catch(f){}return d.length?d:"string"==e?a:a+"\0"}function l(a,b){for(var c,d=a+"",e=0;e<d.length;)b[s&e]=s&(c^=19*b[s&e])+d.charCodeAt(e++);return n(b)}function m(c){try{return o?n(o.randomBytes(d)):(a.crypto.getRandomValues(c=new Uint8Array(d)),n(c))}catch(e){return[+new Date,a,(c=a.navigator)&&c.plugins,a.screen,n(b)]}}function n(a){return String.fromCharCode.apply(0,a)}var o,p=c.pow(d,e),q=c.pow(2,f),r=2*q,s=d-1,t=c["seed"+i]=function(a,f,g){var h=[];f=1==f?{entropy:!0}:f||{};var o=l(k(f.entropy?[a,n(b)]:null==a?m():a,3),h),s=new j(h);return l(n(s.S),b),(f.pass||g||function(a,b,d){return d?(c[i]=a,b):a})(function(){for(var a=s.g(e),b=p,c=0;q>a;)a=(a+c)*d,b*=d,c=s.g(1);for(;a>=r;)a/=2,b/=2,c>>>=1;return(a+c)/b},o,"global"in f?f.global:this==c)};if(l(c[i](),b),g&&g.exports){g.exports=t;try{o=require("crypto")}catch(u){}}else h&&h.amd&&h(function(){return t})}(this,[],Math,256,6,52,"object"==typeof module&&module,"function"==typeof define&&define,"random");
+        //string Math.seedrandom(string _);
+        //float-[0,1) Math.random();
+        
+        //This year i'm just making a spreadsheet and not bothering with having to do json syntax by hand
+        var listStrings = {
+            tooPopular: "arbid|name|genre|weight|variance|detail;1|NEO The World Ends With You|Wizardry, on a weird axis|300|300|I'm not sure this plane landed, but it's still a reasonably good time.;2|Pillars of Eternity|Reincarnation Simulator|300|300|I somehow managed to miss Edér until after I finished Defiance Bay.;3|Ghost Trick|Physics-Suggested Point and Click|300|300|It arrived to a new generation, pristine, almost to a fault.;4|AI: The Somnium Files|Immersive Horndog Sim (not that kind of immersive)|300|300|I had an OK time with this, but not OK enough to have any urge to visit the second game.;5|Warframe|Paracausal Shlooter|300|300|they added another disaster family, papa",
+            small: "arbid|name|genre|weight|variance|detail;1|Throbax TD|Tower Defense (circular or otherwise)|300|300|;2|Plants vs Zombies 2 mods (Reflourished, AltverZ, Eclise)|Defensive Tower Defense|300|300|;3|Wide Ocean Big Jacket|Hangout Simulator|300|300|;4|Maptroid Worlds|Metroidvania Minus Metroid Minus Castlevania|300|300|;5|Rytmos|Puzzle Music Box|300|300|",
+            main: "arbid|softid|name|genre|weight|variance|detail;29|1|The Forest Cathedral|Pedestrianlike|500|295|I- <em>really</em>? You're tackling <em>that</em>, and you're doing it <em>this way</em>? A brief ball of bafflement. If nothing else, it's an impetus to look up the actual known history.;24|2|Looper Tactics|Spirelike Battlegrounds|600|290|One among the first wave of rogue-autochess-lites, one I happened to pick, this one leaning closest to Hearthstone Battlegrounds. It's… ok? Story doesn't really go anywhere… Portent of the long shadow of Inscryption?;3|3|Everything|Everything Simulator|700|285|I mean, it's everything;19|4|Event[0]|Talking Sim|800|280|Fascinating to play this side of the chatbot apocalypse. A lot less capable than you might hope these days (and surprisingly short), but maybe that's a good thing?;23|5|The Sojourn|Portallike|900|275|A very straightforward and linear One of Those, maybe more porous than it thinks? The plot is… nothing, but the puzzles are a pretty strong go at the polarity/parallel-worlds thing.;6|6|Salamander County Public Television|Minigame Buffet|1000|270|Best time you'll have filling in everything for a local news network?;5|7|Roguebook|Spirelike|1100|265|It's fine? It's fine.;9|8|All Our Asias|Landscape Walker|1200|260|Sometimes it's clearly too late for closure, but you have to try anyways, you know?;4|9|Later, Alligator|Adventure Potluck|1300|255|Best time you'll have getting too close with an entire family tree?;13|10|Rhythm Sprout|Rhythm|1400|250|Nowadays it's surprising to find the odd note highway rhythm game that's not a microtransaction vehicle. Like many rhythm games, a hard sell for its length, but it's a pretty good medium-difficulty one.;20|11|Linelight|Pseudopuzzleplatformer|1500|245|What bucket <em>does</em> this go in? I'd say its lineage is closest to puzzle platformers, but it's sure flat to the ground.;21|12|Viewfinder|Portallike|1600|240|Viewfinder feels like a game about itself, about large and compelling ideas that lead to dead ends. The central mechanic is inherently very good at destroying authorial intent. The central verb is too powerful yet fiddly to make lengthy puzzles, but it also requires the expensive task of making objects that have some semblance of cross-sections. Maybe too smooth of an experience for a world that should be examined.;25|13|Snaliens|Puzzler|1700|235|A usual blockpusher. I think it's got the bones to be a much more imposing game, but it has opted to be a reasonable snack.;1|14|The Pedestrian|Plateformer|1800|230|It's about the context, you know? Also, weirdly, maybe the best treatment we've had of the often-revisited theme of panel-based platforming;14|15|Overpass|Rhythm|1900|225|Like what happened to a particular half of Stepmania continuity, this is a rhythm game all about unconventional sightreading. It does limit itself with what's possible with notes, and that means sometimes it relies on pretty unfair note hiding, but there's nothing too egregious. I don't quite gel with its level/completion structure, but it's a pretty formidable rhythm game regardless.;18|16|Stuffo the Puzzle Bot|Puzzler|2000|220|Maybe a grown-up version of good ol' Block Dude for the TI-84, and then some. Doesn't get too too hard, very snackable.;30|17|Before the Green Moon|Make-work|2100|215|Really, really condensed form of farm simming. Do you want a short one of those, with no RPG elements and with a more forward recognition of the economic system involved? Maybe not deep deep?;8|18|Garden Story|Village Fixer|2200|210|A bit of an odd duck in <em>sort of</em> having the trappings of a village-farmy game, but having a much shorter action-adventure scope than those usually have.;26|19|Exo One|Momentum Traveler|2300|205|You just vibe. You go real fast across big big landscapes and it's a good time. It's a game that's often not concerned with being a gamey game.;28|20|Princess Castle Quest|Chip's Challenger|2400|200|This was weirdly hardware-demanding for what kind of game it is, but maybe that was my specific hardware's problem? I'm not sure about having secrets this way, but overall, this is a pretty capable chip-like. I would have liked a step-by-step option, but fortunately it doesn't come up too much. Maybe aching for workshop support?;16|21|Humanity|Puzzle-RTS|2500|195|Huh, surprised to see another puzzle game get a pretty large amount of promotion, let alone with its kind of soundtrack, and it's pretty good, too. Eventually leans into actiony-rts-y stuff later on, but its strictly puzzling parts are no slouch either. Try that soundtrack! <a href='https://jemapur.bandcamp.com/album/humanity-original-soundtrack' style='color: #88f' target='_blank' rel='noopener noreferrer'>https://jemapur.bandcamp.com/album/humanity-original-soundtrack</a>;2|22|Slice & Dice|Rougliette (is this anything)|2600|190|A pretty good showing for getting a roguelike frame going with pretty minimal interface, without being overly lite. Maybe a little too stingy with items to be offering a certain class of items it does, but there's still plenty of medium synergies to create.;10|23|Anodyne 2|Scaleful Action|2700|185|Oh, it's very different from 1, but the throughline is clearly there. Much better bound together. It's intimate this time?;31|24|Lingo|Open-word Riddler|2800|180|A game that really needs to decide if it's a puzzle game or if it's a scavenger hunt. It's fun, but also, 100%ing it is a <em>hell</em> of a busywork. It's expanded a lot since I played it, so it's one way to get a lot of puzzle in one go if you like word riddles.;27|25|Hypnospace Outlaw|Internet Explorer|2900|175|A tribute to that era of internet, maybe to a fault (in visual strain and how hard it can be to keep oriented), but to good effect. I'm never going to say no to games with an itty bit of forum dynamics.;11|26|Patrick's Parabox|Fixed-point Puzzler|3000|170|While the game gives an initial impression of a full-on puzzle sicko game, I think it's more interested in getting its ideas/consequences across than in making difficult puzzles. More approachable than you think, but you do have to grok the recursion thing…;22|28|Dungeon Drafters|Deckbuilding Dungeon Diver|3100|165|It's so refreshing to find one of these that really lets you deckbuild and doesn't go full roguelike. There's definitely something rogueish with the progress crank, but it's more of a dungeon run structure, with most of the dungeons not being all that long. I don't know if it succeeds with how it implements color restrictions and its push and pull with bonuses, but it's not remotely bad at it. Weirdly closest to Necrodancer in combat mechanics and HP scale?;7|27|N-Step Steve Pt. 2|Flat-world Puzzler|3200|160|This is definitely a lot less… structured than the usual goty puzzle games, and it's a hell of a lake to dip into without playing part 1, but it's a fine example of using every last part of the mechanics set forward in a game.;15|29|Bugsnax|Therapy Collector|3300|155|<s>bro ur gay</s> Muppets are <em>so</em> rare out there in video games, cherish the ones you got. As you may have heard plenty, contains surprisingly evocative body horror--no, not quite talking about the body part swapping part.;17|30|Chicory|Therapy Collector|3700|150|<s>bro ur sad</s> Representing impostor syndrome and career regrets is a tall order for a video game, but this makes a hell of a stab at it. Yes, go into an art class while painting with analog sticks, it'll work out…;12|31|Can of Wormholes|Sausage Puzzler|3800|150|Probably the puzzle game this year with the clearest lineage from Sausage Roll, with a similar interest in mechanical exploration and a continued pattern of interacting with old things in new ways. Now with a slightly open world and a currently-unique hint system. Less minced, more turducken. How do you feel about worms?",
+        };
+
+        const DELIM_MAJOR = ";";
+        const DELIM_MINOR = "|";
+        function enlist(str) {
+            var retObj = {};
+            let lines = str.split(DELIM_MAJOR);
+            let labels = lines[0].split(DELIM_MINOR);
+            
+            for(let line = 1; line < lines.length; ++line) {
+                let inFields = lines[line].split(DELIM_MINOR);
+                let lineObj = {};
+                for(let field = 0; field < labels.length; ++field) {
+                    lineObj[labels[field]] = inFields[field];
+                }
+                retObj[lineObj.arbid] = lineObj;
+            }
+            return retObj;
+        }
+        var lists = {
+            tooPopular: enlist(listStrings.tooPopular),
+            small: enlist(listStrings.small),
+            main: enlist(listStrings.main)
+        }
+
+        var seed = getCookie('ord2023');
+        if(seed == '') {
+            seed = Math.seedrandom();
+            setCookie('ord2023', btoa(seed));
+        } else {
+            Math.seedrandom(atob(seed));
+        }
+
+        var ords = {};
+        for(let listName in lists) {
+            let list = lists[listName];
+            ords[listName] = {};
+            for(let entry in list) {
+                let loc = Math.floor(parseInt(list[entry].weight) + Math.random() * parseInt(list[entry].variance));
+                while(ords[listName][loc]) { loc += 1; }
+                ords[listName][loc] = entry;
+            }
+        }
+        
+        for(let listName in lists) {
+            let list = lists[listName];
+            let ordList = ords[listName];
+            let countdown = 0; for(let o in list) { countdown++; };
+            let build = '';
+            Object.entries(ordList).forEach( (oid, i) => {
+                let o = list[oid[1]];
+                build += `<div class="listEntry" style="margin-left: ${Math.random() * 25}%;"><div class="listTitle">${o["softid"] ? countdown+": " : ""}${o.name}</div><div style="margin-left: ${10 + Math.oldrandom()*8}%; transform: rotate(${(Math.oldrandom()-0.5)*o.genre.length}deg);" class="listGenre">${o.genre}</div>${o.detail ? '<div class="listDetail">' + o.detail + '</div>' : ''}</div>`;
+                --countdown;
+            });
+            listNames[listName].innerHTML += build;
+        }
+
+    </script>
+</body>
+
+</html>
