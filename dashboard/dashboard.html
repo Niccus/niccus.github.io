@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+    <title>Website</title>
+</head>
+<body>
+    <div id="body">
+        <!-- proto-1 : just div with objects
+        <div class="popup">
+            <div class="popup-header noselect">O</div>
+            <div class="popup-square">
+                <!- 0.5 + 0.4*cos(theta), or sin ->
+
+                <!- Axes ->
+                <span class="relcenter" style="top: 90%; left: 50%;">6</span>
+                <span class="relcenter" style="top: 10%; left: 50%;">12</span>
+                <span class="relcenter" style="top: 50%; left: 90%;">3</span>
+                <span class="relcenter" style="top: 50%; left: 10%;">9</span>
+
+                <!- in-betweens ->
+                <span class="relcenter" style="top: 84.6%; left: 70%;">5</span>
+                <span class="relcenter" style="top: 70%; left: 84.6%;">4</span>
+                <span class="relcenter" style="top: 15.36%; left: 30%;">10</span>
+                <span class="relcenter" style="top: 30%; left: 15.36%;">11</span>
+                <span class="relcenter" style="top: 84.6%; left: 30%;">7</span>
+                <span class="relcenter" style="top: 30%; left: 84.6%;">2</span>
+                <span class="relcenter" style="top: 15.36%; left: 70%;">1</span>
+                <span class="relcenter" style="top: 70%; left: 15.36%;">8</span>
+
+                <span id="clockhour" class="relcenter">H</span>
+                <span id="clockminute" class="relcenter">M</span>
+                <span id="clocksecond" class="relcenter">S</span>
+            </div>
+        </div>
+        -->
+
+        <div id="sqweather" class="popup" style="left:300px; top: 300px; width: 1000px;">
+            <div class="popup-square status-overlay" id="weatherstatus">
+                ⟳ <span class="status-overlay-timestamp" id="weatherstatus_timestamp">12:00:00</span>
+            </div>
+            <!-- <div class="popup-header noselect">O</div> -->
+                <!-- <canvas id="canvas" width="600" height="600" style="border: 10px solid black;background-color: burlywood;"></canvas> -->
+            <div class="popup-square weather-square" id="weathertest">
+                <br>
+                <br>
+                <span id="weather_details">
+                    lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}
+                </span>
+                <br>
+                <img id="weather_icon" src="" alt="">
+                <br>
+                <span id="calendar_month" class="calendar-month"></span>
+                <br>
+                <span id="calendar_date" class="calendar-date"></span>
+                <br>
+                <span id="calendar_day" class="calendar-day"></span>
+                <br>
+            </div>
+        </div>
+
+        <div id="sqclock" class="popup" style="left:0px; top: 0px; width: 1000px;">
+            <!-- <div class="popup-header noselect">O</div> -->
+                <!-- <canvas id="canvas" width="600" height="600" style="border: 10px solid black;background-color: burlywood;"></canvas> -->
+            <div class="popup-square">
+                <canvas id="canvas" style="border:1px solid black; background-color:#eee; width:100%; height:100%;"></canvas>
+                <!-- <div style="background-color: #f0f; height: 100%; width: 100%;"></div> -->
+            </div>
+        </div>
+
+        <div id="sqdoodle" class="popup" style="left:0px; top:0px; width:1000px;">
+            <div class="popup-square">
+                <canvas id="doodle" style="border:1px solid black; background-color:#fff; width:100%; height:100%;"></canvas>
+            </div>
+        </div>
+
+        <div id="sqplaceholder1" class="popup" style="left:75px; top: 75px; width: 1000px;">
+            <!-- <div class="popup-header noselect">O</div> -->
+            <div class="popup-square">
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js" integrity="sha512-zInFF17qBFVvvvFpIfeBzo7Tj7+rQxLeTJDmbxjBz5/zIr89YVbTNelNhdTT+/DCrxoVzBeUPVFJsczKbB7sew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="./nonsharables/passkey.js"></script>
+<script src="dashboard.js"></script>
+</html>
+
+
+
