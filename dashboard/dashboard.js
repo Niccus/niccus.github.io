@@ -1,10 +1,18 @@
-const _CELL_LARGE_W = 1000;
-const _CELL_LARGE_H = 1000;
-const _CELL_SMALL_W = 150;
-const _CELL_SMALL_H = 150;
+const _CELL_LARGE_W = 1080;
+const _CELL_LARGE_H = 1080;
+const _CELL_SMALL_W = 270;
+const _CELL_SMALL_H = 270;
+
+const _CELL_COL_LIMIT = 4; // should be floor(_LARGE / _SMALL)
 
 const _CELLTYPE_LARGE = Symbol("_CELLTYPE_LARGE");
 const _CELLTYPE_SMALL = Symbol("_CELLTYPE_SMALL");
+
+var _COLOR_VIVID = chroma.oklch(0.85, 0.18, 0);
+var _COLOR_FADED = chroma.oklch(0.96, 0.04, 0);
+var _COLOR_DARK  = chroma.oklch(0.09, 0.10, 0);
+
+//
 
 const _CLOCK_LENHOUR = 0.25;
 const _CLOCK_LENMINUTE = 0.42;
@@ -13,53 +21,175 @@ const _CLOCK_SCALEHOUR = 0.4;
 const _CLOCK_SCALEMINUTE = 0.5;
 const _CLOCK_SCALESECOND = 0.6;
 
-const _CLOCK_SCALELIMIT = 0.002;
-const _CLOCK_DEPTHLIMIT = 7;
+const _CLOCK_SCALELIMIT = 0.01;
+const _CLOCK_SCALELIMIT_SMALL = 0.04;
+const _CLOCK_DEPTHLIMIT = 10;
 
 const _HAND_HOUR = 1;
 const _HAND_MINUTE = 2;
 const _HAND_SECOND = 3;
 
+//const _DATE_FREQ // Not necessary, set update time to midnight
 const _STR_DAY = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const _STR_DAY_SHORT = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const _STR_MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const _STR_MONTH_SHORT = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
+const _WEATHER_FREQ_FAST = 600_000; //10min -- Temperature doesn't update that often.
+const _WEATHER_FREQ_SLOW = 1200_000; //20min -- I assumed _fast was remotely fast, probably not needed. //TODO: Remove this?
+//TODO: Separate timer for OAuth refresh and token lifetime?
+
+const _DOODLE_WIDTH_BASE = 10;
+const _DOODLE_WIDTH_THIN = 3;
+const _DOODLE_WIDTH_MEDIUM = 10;
+const _DOODLE_WIDTH_THICK = 30;
+const _DOODLE_WIDTH_ERASE = 85;
+
+const _MOON_FREQ = 3600_000; //1hr, pending other details in the full size version.
+
+const _ERCOT_PRICE_IDX = 5;
+const _ERCOT_FREQ = 900_000; //15min, may need to time to sync windows
+//TODO: Separate timer for OAuth refresh and token lifetime?
+
+const _SEVERE_FREQ = 3600_000; //1hr, TODO: Check API limits. Faster is better for severe warnings. Maybe two freqs for clear vs alert to look out for warnings?
+
+//const _THUNDER_FREQ //How will this work? If can embed, not a problem, just use severe alerts to listen for when this should be live.
+
+//
+
+// localstorage consts?
+
+//doodle_canvas - canvas persistence for whiteboard
+
+
 /*
 
 todo:
+    * How does each brick prevent burn-in?
+        Whole-screen sweep on the hour w/ time
     Bricks:
         Status/timestamp overlay for things that pull data + Default timestamp debug messages
-        Scheduling for data pulls
+        Scheduling for data pulls, caching pulls if refreshing too much
         Fractclock
             Alt palettes?
-            Chances to grow/not grow?
+            Per-branch chances to grow/not grow?
         Weather
-            use openweather API + icons?
-            Current weather
+            Split from calendar
             Forecast?
         Severe weather alert as separate brick?
         Thunder map?
         Sunrise, sunset
-        Phase of moon
         Random visualizers/screensavers like glowy lines, plasma ball, etc
         Whiteboard
             Restrict usage to when big (also indicator that it's not ready yet (maybe the transform needs to be faster))
             Change color scheme
             Hideable toolbar for buttons w/ color options + eraser
+        ERCOT hourly
 
     Features:
+        Make each brick's update frequency depend on the content... probably only the clock should update per frame.
         Brick movement
             Should ignore input while moving around
-            Move to CSS animation instead?
         burn-in prevention
-        autozoom? brick request to zoom?
+        autozoom? brick itself requests to zoom?
         autoscroll
         manual scroll and zoom
+        Regular self-change of palette (night palette?)
+        Fetch google calendar for holidays and astronomical events?
+        Settings brick?
+
+    ---
+
+    Checklisting:
+    Remaining issue list:
+        - SIZE - behave as expected big vs small
+        - BURN - have no static spots over a day
+        - UPDATE - needs an actual update schedule instead of refreshing
+        - CACHE - should it save anything to disc?
+        - FOCUS - when does it take control on its own? how should it alert if it can't take priority?
+        - STOP - does it support stop (and maybe other debug features)?
+
+    Brick/Issue  SIZE  BURN  UPDT  CACHE FOCUS STOP  
+    Clock        done        done  n/a         done 
+    Date         n/a               n/a   n/a        
+    Time         n/a   n/a?  n/a   n/a   n/a        
+    Weather                                         
+    Doodle       done  n/a?! n/a                    
+    Moon                                            
+    ERCOT                                           
+    Severe                                          
+    Thunder                                         
+
+clock
+date
+time
+weather
+doodle
+moon
+ercot
+severe
+thunder
 
 */
 
-var PI = Math.PI;
+//
+
+/** @type {HTMLCanvasElement} */
+let notifStopped = document.getElementById("notif_stopped");
+
+let squareClock = document.getElementById("sqclock");
+
+let squareClockdigit = document.getElementById("sqclockdigit");
+let squareClockdigit_hour = document.getElementById("clockdigit_hour");
+let squareClockdigit_minute = document.getElementById("clockdigit_minute");
+let squareClockdigit_second = document.getElementById("clockdigit_second");
+
+let squareWeather = document.getElementById("weathertest");
+let squareWeather_details = document.getElementById("weather_details");
+let squareWeather_icon = document.getElementById("weather_icon");
+let cache_weather_data;
+let cache_weather_data_time;
+
+let squareMoon = document.getElementById("sqmoon");
+let squareMoon_icon = document.getElementById("moon_icon");
+let squareMoon_caption = document.getElementById("moon_caption");
+let squareMoon_numphase = document.getElementById("moon_numphase");
+let squareMoon_image = document.getElementById("moon_img");
+
+let squareCalendar_month = document.getElementById("calendar_month");
+let squareCalendar_date = document.getElementById("calendar_date");
+let squareCalendar_day = document.getElementById("calendar_day");
+
+let dCanvas = document.getElementById("doodle");
+/** @type {CanvasRenderingContext2D} */
+let dCtx = dCanvas.getContext("2d");
+
+let squareErcot = document.getElementById("sqercot");
+let squareErcot_label = document.getElementById("ercot_label");
+let cache_ercot_idtoken;
+//let cache_ercot_refreshtoken; //Maybe this is a small enough context that refresh tokens are too much trouble...
+let cache_ercot_expires;
+
+
+const ow_requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+};
+
+const ercot_init_requestOptions = {
+    method: 'POST',
+    redirect: 'follow'
+}
+
+var ercot_headers = new Headers();
+const ercot_query_requestOptions = {
+    method: "GET",
+    headers: ercot_headers,
+    redirect: "follow"
+}
+
+const PI = Math.PI;
+const _DUR_DAY = 86_400_000;
 
 /* Utility Funcs */
 
@@ -99,6 +229,73 @@ function depix(str) {
     return  str.slice(0, str.length - 2) - 0;
 }
 
+// Lune thoughts -- Lune with 1/4 area appears to be with a circle centered 0.621184 away from the circle with radius 1 (it should have radius = sqrt(1 + 0.621184^2))
+// https://www.desmos.com/calculator/m1yhxauivs
+//Mostly copy-pasted from Dither's https://gist.github.com/Dither/d2801f7b22d5602fff38821c2177e301
+function moonphase(date = new Date(), type = 0) {
+    let year = date.getFullYear(),
+        month = date.getMonth(),
+        day = date.getDate();
+
+    let jd, phase;
+
+    if (month < 3) {
+        --year;
+        month += 12;
+    }
+
+    ++month;
+
+    jd = 365.25 * year + 30.6 * month + day - 694039.09; // jd is total days elapsed
+    jd /= 29.53; // divide by the moon cycle (29.53 days)
+    phase = parseInt(jd, 10); // int(jd) -> phase, take integer part of jd
+    jd -= phase; // subtract integer part to leave fractional part of original jd
+
+    jd *= 8;
+
+    if(type <= 0.0001) {
+        return jd;
+    }
+
+    phase = Math.ceil(jd); // scale fraction from 0-8 and round by adding 0.5
+    phase = phase & 7; // 0 and 8 are the same so turn 8 into 0
+
+    if(type <= 1.0001) {
+        return phase;
+    }
+    
+    let text;
+    switch (phase) {
+        case 0: text = "New Moon"; break;
+        case 1: text = "Waxing Crescent"; break;
+        case 2: text = "Quarter Moon"; break;
+        case 3: text = "Waxing Gibbous"; break;
+        case 4: text = "Full Moon"; break;
+        case 5: text = "Waning Gibbous"; break;
+        case 6: text = "Last Quarter"; break;
+        case 7: text = "Waning Crescent"; break;
+    }
+    if(type <= 2.0001) {
+        return text;
+    } else {
+        var o = {};
+        o.id = phase;
+        o.text = text;
+        o.float = jd;
+        return o;
+    }
+}
+
+function updateColors(in_hue) {
+    let hue = in_hue === undefined ? Math.random()*360 : in_hue;
+    _COLOR_VIVID = chroma.oklch(0.80, 0.18, hue);
+    _COLOR_FADED = chroma.oklch(0.96, 0.04, hue);
+    _COLOR_DARK  = chroma.oklch(0.12, 0.10, hue);
+
+    document.documentElement.style.setProperty('--main-bg-color-vivid', _COLOR_VIVID);
+    document.documentElement.style.setProperty('--main-bg-color-faded', _COLOR_FADED);
+    document.documentElement.style.setProperty('--main-bg-color-dark', _COLOR_DARK);
+}
 
 
 
@@ -108,40 +305,80 @@ var elem_clockhour;
 var elem_clockminute;
 var elem_clocksecond;
 
+var doodleWidth = _DOODLE_WIDTH_BASE;
+var doodleColorStr = "#000";
+
 var is_stop = false;
 
-window.onload = function () {
-    initDragElement();
+window.onload = function() {
+    scaleCell(ctx, _CELLTYPE_LARGE);
+    updateColors(); //TODO: Replace random assignment with something more... intentional?
+    init_wakeLocker();
+    init_dragElement();
 
-    /*
-    elem_clockhour = document.getElementById("clockhour");
-    elem_clockminute = document.getElementById("clockminute");
-    elem_clocksecond = document.getElementById("clocksecond");
+    loop_clock();
+    init_calendar();
+    loop_fillClockdigit();
+    init_weather();
+    init_doodle();
+    //TODO: where should this go?
+    fillMoon();
+    loop_ercot();
 
-    setTimeout(simpleUpdateClock, 100);
-    */
+    loop_slowUpdates();
+    SquareManager();
 
-    //Split to own function:
-    //initWhiteboardElement();
-    
+    //Disable page move
+    document.body.addEventListener('touchmove', function(evt) {
+        evt.preventDefault();
+    }, false);
+};
+
+// TODO: Save other bits of settings, too. Maybe query data so refreshing doesn't spam API requests?
+window.onbeforeunload = function() { // TODO: Hardcode storage item name as a constant
+    window.localStorage.setItem('weather_data', cache_weather_data);
+    window.localStorage.setItem('weather_data_time', cache_weather_data_time);
+
+    window.localStorage.setItem('doodle_canvas', dCanvas.toDataURL());
+    // color setting?
+
+    //moon?
+
+    //ercot
+    window.localStorage.setItem('ercot_idtoken', cache_ercot_idtoken);
+    window.localStorage.setItem('ercot_expires', cache_ercot_expires);
+
+    //severe?
+
+    //thunder?
+}
+
+function init_doodle() {
     //from https://codepen.io/michaelsboost/pen/kQmwyq
-    let dCanvas = document.getElementById("doodle");
-    /** @type {CanvasRenderingContext2D} */
-    let dCtx = dCanvas.getContext("2d");
 
     // Fill Window Width and Height
-    dCanvas.width = 1000;
-    dCanvas.height = 1000;
+    dCanvas.width = _CELL_LARGE_W;
+    dCanvas.height = _CELL_LARGE_H;
 
     //Set background color
     dCtx.fillStyle="#fff";
     dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
 
+    //Load cached canvas data
+    let dataURL = window.localStorage.getItem('doodle_canvas');
+    if(dataURL != null) {
+        let img = new Image;
+        img.src = dataURL;
+        img.onload = function () {
+            dCtx.drawImage(img, 0, 0);
+        };
+    }
+
     //Mouse event handlers
     if(dCanvas) {
         var isDown = false;
         var canvasX, canvasY;
-        dCtx.lineWidth = 5;
+        dCtx.lineWidth = doodleWidth;
 
         dCanvas.addEventListener("mousedown", function(e){
             isDown = true;
@@ -156,7 +393,9 @@ window.onload = function () {
                 canvasX = e.pageX - dCanvas.offsetLeft;
                 canvasY = e.pageY - dCanvas.offsetTop;
                 dCtx.lineTo(canvasX, canvasY);
-                dCtx.strokeStyle = "#000";
+                dCtx.strokeStyle = doodleColorStr;
+                dCtx.lineWidth = doodleWidth;
+                dCtx.lineCap = "round";
                 dCtx.stroke();
             }
         }); 
@@ -186,8 +425,9 @@ window.onload = function () {
                     evt.touches[0].pageY
                 );
 
-                dCtx.strokeStyle = "#000";
-                dCtx.linewidth = 5;
+                dCtx.strokeStyle = doodleColorStr;
+                dCtx.lineWidth = doodleWidth;
+                dCtx.lineCap = "round";
                 dCtx.stroke();
             }
         },
@@ -200,16 +440,58 @@ window.onload = function () {
     dCanvas.addEventListener('touchstart', draw.start, false);
     dCanvas.addEventListener('touchend', draw.end, false);
     dCanvas.addEventListener('touchmove', draw.move, false);
+}
 
-    //Disable page move
-    document.body.addEventListener('touchmove', function(evt) {
-        evt.preventDefault();
-    }, false);
-};
+function loop_slowUpdates() {
+    //What fills here?
+    //update_date();
+    update_weather();
+    //update_moon();
+    //update_severe();
+    //update_thunder();
+
+    setTimeout(loop_slowUpdates, 10000);
+}
+
+// TODO: Where... does this go?
+// TODO: Right now going off erase mode takes two clicks. Will take a lot of work, but make it more natural.
+//       Maybe highlight current setting, and swap between erase/nonerase modes?
+//       Maybe have small and large erasers?
+function doodleTool(button) {
+    switch(button) {
+        case "eraser":
+            doodleWidth = _DOODLE_WIDTH_ERASE;
+            doodleColorStr = "#fff";
+            break;
+        case "thin":
+            doodleWidth = _DOODLE_WIDTH_THIN;
+            break;
+        case "med":
+            doodleWidth = _DOODLE_WIDTH_MEDIUM;
+            break;
+        case "thick":
+            doodleWidth = _DOODLE_WIDTH_THICK;
+            break;
+        case "black":
+            doodleColorStr = "#000";
+            break;
+        case "red":
+            doodleColorStr = "#f00";
+            break;
+        case "green":
+            doodleColorStr = "#0f0";
+            break;
+        case "blue":
+            doodleColorStr = "#00f";
+            break;
+        case "new":
+            //TODO
+            break;
+    }
+} 
 
 //catch keys for debug
 document.onkeydown = function(evt) {
-    evt = evt || window.event;
     var isEscape = false;
     if ("key" in evt) {
         isEscape = (evt.key === "Escape" || evt.key === "Esc");
@@ -217,47 +499,154 @@ document.onkeydown = function(evt) {
         isEscape = (evt.keyCode === 27);
     }
     if (isEscape) {
-        is_stop = !is_stop;
+        if(is_stop) {
+            is_stop = false;
+            notifStopped.classList.add("hidden");
+        } else { //if !is_stop
+            is_stop = true;
+            notifStopped.classList.remove("hidden");
+        }
     }
 };
 
 //
 
-/** @type {HTMLCanvasElement} */
-let squareWeather = document.getElementById("weathertest");
-let squareWeather_details = document.getElementById("weather_details");
-let squareWeather_icon = document.getElementById("weather_icon");
-
-let calendar_month = document.getElementById("calendar_month");
-let calendar_date = document.getElementById("calendar_date");
-let calendar_day = document.getElementById("calendar_day");
-
-var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-};
-
-fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${OW_LAT}&lon=${OW_LONG}&appid=${KEY_OPENWEATHER}&units=imperial`, requestOptions)
-    .then(response => response.json())
-    .then(result => {
-        console.log(result);
-        fillWeather(result);
-    })
-    .catch(error => console.log('error', error));
-
-
-
-function fillWeather(o) {
+function init_calendar() {
     let curDate = new Date();
+    squareCalendar_month.innerText = _STR_MONTH[curDate.getMonth()];
+    squareCalendar_date.innerText = curDate.getDate();
+    squareCalendar_day.innerText = _STR_DAY[curDate.getDay()];
+}
+
+function init_weather() {
+    cache_weather_data = window.localStorage.getItem('weather_data');
+    cache_weather_data_time = window.localStorage.getItem('weather_data_time');
+
+    update_weather(true);
+}
+
+function update_weather(force = false) {
+    //TODO: There may be more kinds of weather info getting fetched. Fetch those, use different frequencies, etc.
+    if(cache_weather_data_time != null && cache_weather_data_time > (Date.now() - _WEATHER_FREQ_FAST )) {
+        if(force) {
+            console.log('cached weather data loaded');
+            console.log(cache_weather_data);
+            fillWeather(JSON.parse(cache_weather_data));
+        }
+    } else {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${OW_LAT}&lon=${OW_LONG}&appid=${KEY_OPENWEATHER}&units=imperial`, ow_requestOptions)
+        .then(response => response.json())
+        .then(result => {
+            console.log('openweather data fetched')
+            console.log(result);
+            fillWeather(result);
+            cache_weather_data = JSON.stringify(result);
+            cache_weather_data_time = Date.now();
+        })
+        .catch(error => console.log('error OW fetch', error));
+    }
+}
+
+//TODO: Move calendar filling to its own function
+function fillWeather(o) {
     squareWeather_details.innerHTML = `lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}`;
     squareWeather_icon.src = `./nonsharables/${o.weather[0].icon}.png`;
     squareWeather_icon.alt = `${o.weather[0].main}`;
+}
 
-    calendar_month.innerText = _STR_MONTH[curDate.getMonth()];
-    calendar_date.innerText = curDate.getDate();
-    calendar_day.innerText = _STR_DAY[curDate.getDay()];
+//TODO: Add sunset/sunrise info, only in fullsize. Weirdly, already available from openweather data...
+function fillMoon() {
+    let oPhase = moonphase(new Date(), 3);
 
-    squareWeather.style = `background-color: ${chroma.oklch(0.8, 0.2, Math.random()*360)}`;
+    squareMoon_image.src = `./nonsharables/moon-${oPhase.id}.svg`;
+    squareMoon_image.alt = oPhase.text;
+    squareMoon_image.title = oPhase.text;
+    squareMoon_caption.innerHTML = oPhase.text;
+    squareMoon_numphase.innerHTML = oPhase.float.toFixed(3) + " / 8";
+}
+
+async function loop_ercot() {
+    //Test OAuth fetch. Must be redone with proper handling of access tokens, etc.
+    //TODO: above, and maybe make this not a nested fetch
+
+    //if(cache_ercot_idtoken == null || Date.now() > cache_ercot_expires) {
+        await ercot_fetchtoken();
+    //}
+    await ercot_fetchprice();
+    //.then(() => ercot_updatesq())
+
+    //TODO: Wait to ~10 minutes after 15-minute blocks
+    let now = Date.now();
+    let hourOffset = ((now - 150_000) % 3600_000);
+    let hourBase = now - hourOffset;
+    let nearestQuarter = Math.floor(hourOffset/900_000);
+    let target = hourBase + (nearestQuarter + 1)*900_000 + 450_000;
+    setTimeout(loop_ercot, target - now);
+}
+
+async function ercot_fetchtoken() {
+    return fetch(`https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token?username=${ERCOT_UNAME}&password=${ERCOT_PASS}&grant_type=password&scope=openid+fec253ea-0d06-4272-a5e6-b478baeecd70+offline_access&client_id=fec253ea-0d06-4272-a5e6-b478baeecd70&response_type=id_token`, ercot_init_requestOptions)
+    .then(response => response.json())
+    .then(result => {
+        console.log('ercot oauth');
+        //console.log(result);
+        //console.log(JSON.stringify(result));
+
+        cache_ercot_idtoken = result.id_token;
+        cache_ercot_expires = Date.now() + result.expires_in * 1000;
+    })
+    .catch(error => console.log('error ercot oauth', error))
+    ;
+}
+
+async function ercot_fetchprice() {
+    let now = new Date(Date.now() - 900_000); //Zoom 15min back. The data is weird...
+    let now_y = now.getFullYear();
+    let now_m = (now.getMonth() + 1).toString().padStart(2, '0');
+    let now_d = now.getDate().toString().padStart(2, '0');
+    let now_str = `${now_y}-${now_m}-${now_d}`;
+
+    ercot_headers.set("Ocp-Apim-Subscription-Key", ERCOT_SUBKEY);
+    ercot_headers.set("Authorization", `Bearer ${cache_ercot_idtoken}`);
+
+    return fetch(`https://api.ercot.com/api/public-reports/np6-905-cd/spp_node_zone_hub?settlementPoint=${ERCOT_SP}&deliveryDateFrom=${now_str}&deliveryDateTo=${now_str}`, ercot_query_requestOptions)
+    .then(response => response.json())
+    .then(innerResult => {
+        console.log('ercot content');
+        console.log(innerResult);
+        //console.log(JSON.stringify(innerResult));
+
+        //Calc index?
+        //let now_h = now.getHours();
+        //let now_q = Math.floor(now.getMinutes() / 15);
+        //let idx = now_h*4 + now_q;
+        //console.log(idx);
+
+        //...or just use last
+        let idx = innerResult.data.length - 1;
+        console.log(innerResult.data[idx][_ERCOT_PRICE_IDX]);
+
+        //TODO: This doesn't work on the first data point of the day/midnight. Should it try to fall back to previous day? The offset "now" seems to just work...
+    })
+    .catch(error => console.log('error ercot price fetching', error))
+    ;
+}
+
+//TODO: God damn it, maybe just put each digit in its own div so i can pretend it's monospaced and it can be aligned like:
+//   19  
+//    47 
+//     41
+function loop_fillClockdigit() {
+    let dt = new Date();
+    let msec = dt.getTime() % 1000;
+    let delay = 1001 - msec;
+    if(delay < 100) { delay += 1000; }
+
+    squareClockdigit_hour.innerText = (""+dt.getHours()).padStart(2, '0');
+    squareClockdigit_minute.innerText = (""+dt.getMinutes()).padStart(2, '0');
+    squareClockdigit_second.innerText = (""+dt.getSeconds()).padStart(2, '0');
+
+    setTimeout(loop_fillClockdigit, delay);
 }
 
 //
@@ -269,22 +658,16 @@ var ctx = canvas.getContext("2d");
 canvas.width = _CELL_LARGE_W;
 canvas.height = _CELL_LARGE_H;
 var radius = canvas.height / 2;
-ctx.translate(radius, radius * 1.2);
+ctx.translate(radius, radius);
 radius = radius * 0.90;
 
-function dashboardSetup() {
-    scaleCell(ctx, _CELLTYPE_LARGE);
-
-    Clock();
-    SquareManager();
-}
-
-function Clock() {
+function loop_clock() {
     if(is_stop) {
-        setTimeout(Clock, 60);
+        setTimeout(loop_clock, 60);
         return;
     }
 
+    /* // I don't remember what this was for but it doesn't appear anymore
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     ctx.lineWidth = 15;
@@ -293,20 +676,23 @@ function Clock() {
     ctx.stroke();
     ctx.fillStyle = "#dddddd";
     ctx.fill();
+    */
     
+    //Outside-inside of clock base
     ctx.beginPath();
     ctx.arc(0, 0, 1, 0, 2 * Math.PI);
     ctx.lineWidth = 5;
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = _COLOR_FADED;
     ctx.closePath();
     ctx.stroke();
-    ctx.fillStyle = "#402040";
+    ctx.fillStyle = _COLOR_DARK;
     ctx.fill();
 
-    ctx.fillStyle = "green";
-    ctx.fillRect( 0.9, 0.9, 0.2, 0.2);
-    ctx.fillStyle = "magenta";
-    ctx.fillRect( -1.1, -1.1, 0.2, 0.2);
+    //Markers for far corners
+    //ctx.fillStyle = "green";
+    //ctx.fillRect( 0.9, 0.9, 0.2, 0.2);
+    //ctx.fillStyle = "magenta";
+    //ctx.fillRect( -1.1, -1.1, 0.2, 0.2);
 
     let curDate = new Date();
 
@@ -317,6 +703,8 @@ function Clock() {
     let cur_mdeg = cur_m / 60 * 2 * PI;
     let cur_h = curDate.getHours() + (cur_m / 60);
     let cur_hdeg = cur_h / 12.0 * 2 * PI;
+
+    let cur_scalelimit = squareClock.classList.contains("focus") ? _CLOCK_SCALELIMIT : _CLOCK_SCALELIMIT_SMALL;
 
     ctx.beginPath();
     //ctx.strokeStyle = "#f00";
@@ -356,7 +744,7 @@ function Clock() {
     }
     //let palette = ["rgb(128,128,128)","rgb(255,64,64)","rgb(64,255,64)","rgb(64,64,255)"]
     let palette = ["", pal_h, pal_m, pal_s];
-    let widths = ["0.3","0.35","0.14","0.10"];
+    let widths = ["0.3","0.35","0.18","0.08"];
 
     // Layer 0 -- Guide lines
     
@@ -427,7 +815,7 @@ function Clock() {
         let scaleMinute = scale * _CLOCK_SCALEMINUTE;
         let scaleSecond = scale * _CLOCK_SCALESECOND;
         let nextX, nextY, curDeg;
-        if(scaleHour > _CLOCK_SCALELIMIT && depth <= _CLOCK_DEPTHLIMIT) {
+        if(scaleHour > cur_scalelimit && depth <= _CLOCK_DEPTHLIMIT) {
             curDeg = startDeg + cur_hdeg;
             //ctx.moveTo(startX, startY);
             nextX = startX + scale*_CLOCK_LENHOUR*Math.sin(curDeg);
@@ -440,7 +828,7 @@ function Clock() {
         }
 
         //minute
-        if(scaleMinute > _CLOCK_SCALELIMIT && depth <= _CLOCK_DEPTHLIMIT) {
+        if(scaleMinute > cur_scalelimit && depth <= _CLOCK_DEPTHLIMIT) {
             curDeg = startDeg + cur_mdeg;
             //ctx.moveTo(startX, startY);
             nextX = startX + scale*_CLOCK_LENMINUTE*Math.sin(curDeg);
@@ -453,7 +841,7 @@ function Clock() {
         }
 
         //second
-        if(scaleSecond > _CLOCK_SCALELIMIT && depth <= _CLOCK_DEPTHLIMIT) {
+        if(scaleSecond > cur_scalelimit && depth <= _CLOCK_DEPTHLIMIT) {
             curDeg = startDeg + cur_sdeg;
             //ctx.moveTo(startX, startY);
             nextX = startX + scale*_CLOCK_LENSECOND*Math.sin(curDeg);
@@ -470,7 +858,30 @@ function Clock() {
     }
 
     //and now draw
-    for(cur = drawQueue.length - 1; cur >= 0; --cur) {
+
+    //Shadow. Maybe enable with settings, it's expensive.
+    /*
+    for(cur = 0; cur < drawQueue.length; ++cur) {
+        let startX, startY, endX, endY, typeIdx;
+        [startX, startY, endX, endY, typeIdx] = drawQueue[cur];
+        let dist = Math.sqrt((endX - startX)*(endX - startX) + (endY - startY)*(endY - startY));
+        //let shade = dist * 800;
+        let shade = 255 * Math.pow((drawQueue.length - cur) / drawQueue.length, 8);
+
+        ctx.beginPath();
+        //ctx.strokeStyle = `rgb(${shade},${shade},${shade})`;
+        ctx.strokeStyle = "#000000f0";
+        //ctx.lineWidth = 0.004 + dist * 0.1;
+        ctx.lineWidth = widths[typeIdx] * (0.02 + dist);
+        
+        ctx.moveTo(startX + 0.015, startY + 0.015);
+        ctx.lineTo(endX + 0.015, endY + 0.015);
+        ctx.stroke();
+    }
+    */
+
+    //for(cur = drawQueue.length - 1; cur >= 0; --cur) {
+    for(cur = 0; cur < drawQueue.length; ++cur) {
         let startX, startY, endX, endY, typeIdx;
         [startX, startY, endX, endY, typeIdx] = drawQueue[cur];
         let dist = Math.sqrt((endX - startX)*(endX - startX) + (endY - startY)*(endY - startY));
@@ -544,16 +955,14 @@ function Clock() {
     ctx.stroke();
     */
 
-    setTimeout(Clock, 60);
+    setTimeout(loop_clock, 60);
 }
 
-//Convert this to CSS animation?
-var focusedSquare = "0";
+//TODO: Now that the animation is desynced, change this to onclick events instead of frame loop. See where focusedSquare is changed.
+var focusedSquare = "1";
 var squarePositions;
-const defaultLabels = ["sqclock", "sqweather", "sqdoodle", "sqplaceholder1"]; //Add new elements here
+const defaultLabels = ["sqcalendar", "sqclock", "sqclockdigit", "sqweather", "sqdoodle", "sqmoon", "sqplaceholder1", "sqplaceholder2"]; //Add new elements here
 var windowHandles;
-var animStart;
-var animEnd;
 var initFlag;
 function SquareManager() {
     if(is_stop) {
@@ -587,60 +996,42 @@ function SquareManager() {
         animStart = now;
         animEnd = animStart + 6000;
 
+        let nextX, nextY, nextW;
+
         let columnIdx = 0;
         for(i in windowHandles) {
             let sq = squarePositions[i];
             let sqRef = windowHandles[i];
-            sq.x = depix(sqRef.style.left);
-            sq.y = depix(sqRef.style.top);
-            sq.w = depix(sqRef.style.width);
+            //sq.x = depix(sqRef.style.left);
+            //sq.y = depix(sqRef.style.top);
+            //sq.w = depix(sqRef.style.width);
 
             if(i === focusedSquare) {
-                sq.nextX = 0;
-                sq.nextY = 0;
-                sq.nextW = 1000;
+                nextX = 0;
+                nextY = 0;
+                nextW = _CELL_LARGE_W;
                 windowHandles[i].style.zIndex = "2";
+                windowHandles[i].classList.add("focus");
             } else {
-                sq.nextX = 1010;
-                sq.nextY = columnIdx * (250);
-                sq.nextW = 250;
+                let idRow = columnIdx % _CELL_COL_LIMIT;
+                let idCol = Math.floor(columnIdx / _CELL_COL_LIMIT);
+
+                nextX = _CELL_LARGE_W + idCol*_CELL_SMALL_W + 10; // TODO: const this margin
+                nextY = idRow * (_CELL_SMALL_H);
+                nextW = _CELL_SMALL_W;
                 windowHandles[i].style.zIndex = "1";
+                windowHandles[i].classList.remove("focus");
                 columnIdx += 1;
             }
 
-            //TODO: testing: css anims
-            let elem = windowHandles[i];
-            elem.style.left = sq.nextX + "px";
-            elem.style.top =  sq.nextY + "px";
-            elem.style.width = sq.nextW + "px";
-            elem.style.height = sq.nextW + "px";
+            sqRef.style.left = nextX + "px";
+            sqRef.style.top =  nextY + "px";
+            sqRef.style.width = nextW + "px";
+            sqRef.style.height = nextW + "px";
 
-        }
-    }
-
-    if(animStart) {
-        let a = progress(animStart, animEnd, now);
-        for(i in windowHandles) {
-            let elem = windowHandles[i];
-            let sq = squarePositions[i];
-            //TODO: Testing: css anims
-            /*
-            elem.style.left = lerp(sq.x, sq.nextX, a) + "px";
-            elem.style.top = lerp(sq.y, sq.nextY, a) + "px";
-            elem.style.width = lerp(sq.w, sq.nextW, a) + "px";
-            elem.style.height = lerp(sq.w, sq.nextW, a) + "px";
-            */
-        }
-
-        if(now > animEnd) {
-            for(i in windowHandles) {
-                let sq = squarePositions[i];
-                sq.x = sq.nextX;
-                sq.y = sq.nextY;
-                sq.w = sq.nextW;
-            }
-            animStart = undefined;
-            animEnd = undefined;
+            sq.x = nextX;
+            sq.y = nextY;
+            sq.w = nextW;
         }
     }
 
@@ -652,32 +1043,20 @@ function clickBox(id, ref) {
     initFlag = false;
 }
 
-function simpleUpdateClock() {
-    /*
-    let curDate = new Date();
-
-    let cur_ms = curDate.getMilliseconds();
-    let cur_s = curDate.getSeconds() + (cur_ms / 1000);
-    let cur_sdeg = cur_s / 60 * 2 * PI;
-    let cur_m = curDate.getMinutes() + (cur_s / 60);
-    let cur_mdeg = cur_m / 60 * 2 * PI;
-    let cur_h = curDate.getHours() + (cur_m / 60);
-    let cur_hdeg = cur_h / 12.0 * 2 * PI;
-    
-
-    elem_clockhour.style.top    = (50 - 30 * Math.cos(cur_hdeg)) + "%";
-    elem_clockhour.style.left   = (50 + 30 * Math.sin(cur_hdeg)) + "%";
-    elem_clockminute.style.top  = (50 - 30 * Math.cos(cur_mdeg)) + "%";
-    elem_clockminute.style.left = (50 + 30 * Math.sin(cur_mdeg)) + "%";
-    elem_clocksecond.style.top  = (50 - 30 * Math.cos(cur_sdeg)) + "%";
-    elem_clocksecond.style.left = (50 + 30 * Math.sin(cur_sdeg)) + "%";
-
-    setTimeout(simpleUpdateClock, 120);
-    */
+var wakeLock;
+async function init_wakeLocker() {
+    wakeLock = null;
+    if ("wakeLock" in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+        } catch (err) {
+            console.log(`${err.name}, ${err.message}`);
+        }
+    }
 }
 
 /* draggable handler. taken from https://codepen.io/jkasun/pen/QrLjXP -- thanks jkasun */
-function initDragElement() {
+function init_dragElement() {
     var pos1 = 0,
         pos2 = 0,
         pos3 = 0,
@@ -723,8 +1102,8 @@ function initDragElement() {
         pos3 = e.clientX;
         pos4 = e.clientY;
         // set the element's new position:
-        elmnt.style.top = elmnt.offsetTop - pos2 + "px";
-        elmnt.style.left = elmnt.offsetLeft - pos1 + "px";
+        elmnt.style.top = clamp(0, _CELL_LARGE_H - elmnt.clientHeight, elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = clamp(0, _CELL_LARGE_W - elmnt.clientWidth, elmnt.offsetLeft - pos1) + "px";
     }
 
     function closeDragElement() {
@@ -743,9 +1122,3 @@ function initDragElement() {
         return null;
     }
 }
-
-
-
-//Run
-
-dashboardSetup();

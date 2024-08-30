@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="dashboard.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&display=swap" rel="stylesheet"> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"> -->
 
     <title>Website</title>
 </head>
 <body>
+    <div id="notif_stopped" class="hidden">*STOPPED*</div>
     <div id="body">
         <!-- proto-1 : just div with objects
         <div class="popup">
@@ -43,12 +44,60 @@
         </div>
         -->
 
-        <div id="sqweather" class="popup" style="left:300px; top: 300px; width: 1000px;">
+        <div id="sqcalendar" class="square" style="left:300px; top: 300px; width: 1000px;">
+            <div id="calendar_content">
+                <span id="calendar_month" class="calendar-month"></span>
+                <br>
+                <span id="calendar_date" class="calendar-date"></span>
+                <br>
+                <span id="calendar_day" class="calendar-day"></span>
+            </div>
+        </div>
+
+        <div id="sqclock" class="square" style="left:0px; top: 0px; width: 1000px;">
+            <canvas id="canvas" style="background-color:#eee; width:100%; height:100%;"></canvas>
+        </div>
+
+        <div id="sqclockdigit" class="square">
+            <div id="clockdigit_hour"></div>
+            <div id="clockdigit_minute"></div>
+            <div id="clockdigit_second"></div>
+        </div>
+
+        <div id="sqdoodle" class="square" style="left:0px; top:0px; width:1000px;">
+            <canvas id="doodle" style="border:1px solid black; background-color:#fff; width:100%; height:100%;"></canvas>
+            <div id="doodle_toolbox" class="popup">
+                <div class="popup-header noselect">O</div>
+                
+                <input type="image" class="doodle_tool" id="doodle_tool_eraser" src="./nonsharables/doodle-eraser.svg" alt="eraser" onclick="doodleTool('eraser')">
+                <input type="image" class="doodle_tool" id="doodle_tool_thin"   src="./nonsharables/doodle-thin.png"   alt="thin"   onclick="doodleTool('thin')"  >
+                <input type="image" class="doodle_tool" id="doodle_tool_med"    src="./nonsharables/doodle-med.png"    alt="medium" onclick="doodleTool('med')"   >
+                <input type="image" class="doodle_tool" id="doodle_tool_thick"  src="./nonsharables/doodle-thick.png"  alt="thick"  onclick="doodleTool('thick')" >
+                <!-- TODO: dividers -->
+                <input type="image" class="doodle_tool" id="doodle_tool_black"  src="./nonsharables/doodle-black.png"  alt="black"  onclick="doodleTool('black')" >
+                <input type="image" class="doodle_tool" id="doodle_tool_red"    src="./nonsharables/doodle-red.png"    alt="medium" onclick="doodleTool('red')"   >
+                <input type="image" class="doodle_tool" id="doodle_tool_green"  src="./nonsharables/doodle-green.png"  alt="green"  onclick="doodleTool('green')" >
+                <input type="image" class="doodle_tool" id="doodle_tool_blue"   src="./nonsharables/doodle-blue.png"   alt="blue"   onclick="doodleTool('blue')"  >
+                <!-- TODO: Colorpicker -->
+                 <input type="color" value="#4488ff" class="doodle_tool" id="doodle_tool_customcolor" alt="custom color" onclick="doodleTool('customcolor')">
+                <!-- TODO: dividers -->
+                <input type="image" class="doodle_tool" id="doodle_tool_new"    src="./nonsharables/doodle-new.svg"    alt="new"    onclick="doodleTool('new')"   >
+                <!-- TODO: Confirmation for new-->
+            </div>
+        </div>
+
+        <div id="sqmoon" class="square" style="left:75px; top: 75px; width: 1000px;">
+            <div id="moon_icon" class="">
+                <img id="moon_img" src="" alt="" width="100" height="100" />
+            </div>
+            <div id="moon_caption"></div>
+            <div id="moon_numphase"></div>
+        </div>
+
+        <div id="sqweather" class="square" style="left:300px; top: 300px; width: 1000px;">
             <div class="popup-square status-overlay" id="weatherstatus">
                 ⟳ <span class="status-overlay-timestamp" id="weatherstatus_timestamp">12:00:00</span>
             </div>
-            <!-- <div class="popup-header noselect">O</div> -->
-                <!-- <canvas id="canvas" width="600" height="600" style="border: 10px solid black;background-color: burlywood;"></canvas> -->
             <div class="popup-square weather-square" id="weathertest">
                 <br>
                 <br>
@@ -56,34 +105,21 @@
                     lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}
                 </span>
                 <br>
-                <img id="weather_icon" src="" alt="">
-                <br>
-                <span id="calendar_month" class="calendar-month"></span>
-                <br>
-                <span id="calendar_date" class="calendar-date"></span>
-                <br>
-                <span id="calendar_day" class="calendar-day"></span>
-                <br>
+                <img id="weather_icon" class="weather-icon" src="" alt="">
             </div>
         </div>
 
-        <div id="sqclock" class="popup" style="left:0px; top: 0px; width: 1000px;">
-            <!-- <div class="popup-header noselect">O</div> -->
-                <!-- <canvas id="canvas" width="600" height="600" style="border: 10px solid black;background-color: burlywood;"></canvas> -->
+        <div id="sqercot" class="square">
+            <div id="ercot_label">
+                8888.88
+            </div>
+        </div>
+
+        <div id="sqplaceholder1" class="square">
             <div class="popup-square">
-                <canvas id="canvas" style="border:1px solid black; background-color:#eee; width:100%; height:100%;"></canvas>
-                <!-- <div style="background-color: #f0f; height: 100%; width: 100%;"></div> -->
             </div>
         </div>
-
-        <div id="sqdoodle" class="popup" style="left:0px; top:0px; width:1000px;">
-            <div class="popup-square">
-                <canvas id="doodle" style="border:1px solid black; background-color:#fff; width:100%; height:100%;"></canvas>
-            </div>
-        </div>
-
-        <div id="sqplaceholder1" class="popup" style="left:75px; top: 75px; width: 1000px;">
-            <!-- <div class="popup-header noselect">O</div> -->
+        <div id="sqplaceholder2" class="square">
             <div class="popup-square">
             </div>
         </div>

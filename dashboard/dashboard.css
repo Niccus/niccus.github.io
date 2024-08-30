@@ -1,4 +1,63 @@
 
+:root {
+  --main-bg-color-vivid: oklch(80% 0.18 0);
+  --main-bg-color-faded: oklch(96% 0.04 0);
+  --main-bg-color-dark:  oklch(09% 0.01 0);
+
+  transition-property: width, height, left, top, background-color;
+  transition-duration: 1s;
+  transition-timing-function: linear;
+}
+
+/* barlow-regular - latin_latin-ext */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../nonsharables/barlow-v12-latin_latin-ext-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* barlow-600 - latin_latin-ext */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Barlow';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../nonsharables/barlow-v12-latin_latin-ext-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* vt323-regular - latin_latin-ext */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../nonsharables/vt323-v17-latin_latin-ext-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+.hidden {
+  display: none;
+}
+
+#notif_stopped {
+  position: fixed;
+  background-color: #f00;
+  color: #fff;
+  z-index: 99;
+  text-align: center;
+  font-size: larger;
+
+  left: 50%;
+  top: 10%;
+  height: 1.2em;
+  width: 250px;
+}
+
+body {
+  overflow: hidden;
+  touch-action: none;
+}
+
 .relcenter {
   margin: 0;
   position: absolute;
@@ -10,8 +69,6 @@
 /* draggable */
 
 .popup {
-  z-index: 9;
-  background-color: #a1a1a1;
   border: 1px solid #d3d3d3;
   text-align: center;
   overflow: hidden;
@@ -19,14 +76,6 @@
   container: popup / size;
   /* resize: both; */ /* For debugging. Remove manual resizing in normal view */
 
-  width: 1000px;
-  height: 1000px;
-  min-width: 100px;
-  min-height: 100px;
-
-  transition-property: width, height, left, top;
-  transition-duration: 1s;
-  transition-timing-function: linear;
 }
 
 .popup-header {
@@ -38,8 +87,67 @@
   opacity: 0.1;
 }
 
+/**/
+@container popup(min-height: 100px; min-width: 100px;) {}
+
+.popup-square {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: auto;
+  height: 100cqmin;
+  width: 100cqmin;
+
+  /** background-color: #aaa; /**/
+  z-index: -20;
+}
+/**/
+
+/**
+.popup-square {
+width: 100%;
+height: 0;
+padding-top: 100%;
+background-color: #aaa;
+}
+/**/
+
+.square {
+  display: block;
+  position: absolute;
+  margin: auto;
+  height: 100cqmin;
+  width: 100cqmin;
+
+  background-color: #888;
+  border: 3px solid #fff;
+  text-align: center;
+  overflow: hidden;
+  position: absolute;
+  container: popup / size;
+  /* resize: both; */ /* For debugging. Remove manual resizing in normal view */
+  
+  transition-property: width, height, left, top, background-color;
+  transition-duration: 1s;
+  transition-timing-function: linear;
+}
+
 .weather-square {
-  background-color: #ffa040;
+  background-color: var(--main-bg-color-faded);
+  color: #000;
+}
+
+#weather_icon {
+  background-color: #ffffffd0;
+  border: 1px solid black;
+}
+
+#sqcalendar {
+  background-color: var(--main-bg-color-vivid);
+  pointer-events: none;
+  color: #fff;
 }
 
 .calendar-month {
@@ -63,36 +171,106 @@
   font-size: 48px;
 }
 
-#doodle {
+#sqclockdigit {
+  background-color: var(--main-bg-color-vivid);
+  font-family: "Barlow", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 100px;
+  text-align: center;
+  pointer-events: none;
+  color: #fff;
+}
+
+#clockdigit_container {
+  top: 50%;
+  width: 100%;
+}
+
+#clockdigit_hour {
+  position: absolute;
+  left: 25%;
+  top: 15%;
+  text-align: left;
+  transform: translate(-50%, -50%);
+}
+
+#clockdigit_minute {
+  position: absolute;
+  left: 48%;
+  top: 47%;
+  transform: translate(-50%, -50%);
+}
+#clockdigit_second {
+  position: absolute;
+  left: 75%;
+  top: 80%;
+  text-align: right;
+  transform: translate(-50%, -50%);
+}
+
+.focus #doodle {
 	cursor: crosshair;
   /* position: fixed; */
 }
 
-/**/
-@container popup(min-height: 100px; min-width: 100px;) {}
-  .popup-square {
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: auto;
-    height: 100cqmin;
-    width: 100cqmin;
+#doodle_toolbox {
+  top: 5%;
+  left: 95%;
+  background-color: #00000010;
+  border: none;
+  color: #000;
+  width: 50px;
+  height: 300px;
 
-    /** background-color: #aaa; /**/
-    z-index: -20;
-  }
-/**/
-
-/**
-.popup-square {
-  width: 100%;
-  height: 0;
-  padding-top: 100%;
-  background-color: #aaa;
+  visibility: hidden;
 }
-/**/
+
+.focus #doodle_toolbox {
+  visibility: visible;
+}
+
+.doodle_tool {
+  width: 25px;
+  height: 25px;
+}
+
+#sqmoon {
+  background-color: var(--main-bg-color-dark);
+}
+
+#moon_icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#moon_caption {
+  color: #aaa;
+  font-family: "Barlow", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 16px;
+  position: absolute;
+  text-align: center;
+  top: 75%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#moon_numphase {
+  color: #ffffff30;
+  font-family: "Barlow", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 14px;
+  position: absolute;
+  text-align: center;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 /*NOSELECT*/
 
