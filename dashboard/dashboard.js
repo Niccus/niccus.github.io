@@ -11,6 +11,9 @@ const _CELLTYPE_SMALL = Symbol("_CELLTYPE_SMALL");
 var _COLOR_VIVID = chroma.oklch(0.85, 0.18, 0);
 var _COLOR_FADED = chroma.oklch(0.96, 0.04, 0);
 var _COLOR_DARK  = chroma.oklch(0.09, 0.10, 0);
+var _COLOR_ERCOT_LOW  = "#52B76D"; // Color scheme straight from danopia's ERCOT dashboard
+var _COLOR_ERCOT_MED  = "#eba134";
+var _COLOR_ERCOT_HIGH = "#bd0000";
 
 //
 
@@ -47,6 +50,8 @@ const _DOODLE_WIDTH_ERASE = 85;
 
 const _MOON_FREQ = 3600_000; //1hr, pending other details in the full size version.
 
+const _ERCOT_THRESHOLD_MED = 100;
+const _ERCOT_THRESHOLD_HIGH = 500;
 const _ERCOT_PRICE_IDX = 5;
 const _ERCOT_FREQ = 900_000; //15min, may need to time to sync windows
 //TODO: Separate timer for OAuth refresh and token lifetime?
@@ -85,6 +90,8 @@ todo:
             Change color scheme
             Hideable toolbar for buttons w/ color options + eraser
         ERCOT hourly
+        ---
+        Quick timer? (vacuum charging, washing, drying, etc)
 
     Features:
         Make each brick's update frequency depend on the content... probably only the clock should update per frame.
@@ -165,10 +172,11 @@ let dCanvas = document.getElementById("doodle");
 let dCtx = dCanvas.getContext("2d");
 
 let squareErcot = document.getElementById("sqercot");
-let squareErcot_label = document.getElementById("ercot_label");
+let squareErcot_labelDigits = document.getElementById("ercot_label_digits");
 let cache_ercot_idtoken;
-//let cache_ercot_refreshtoken; //Maybe this is a small enough context that refresh tokens are too much trouble...
+let cache_ercot_refreshtoken; //I give up with CORS. I pray this works.
 let cache_ercot_expires;
+let ercot_price = 0.0;
 
 
 const ow_requestOptions = {
@@ -311,22 +319,24 @@ var doodleColorStr = "#000";
 var is_stop = false;
 
 window.onload = function() {
+    let dud; //Placeholder to make clear where promises can start being handled
+
     scaleCell(ctx, _CELLTYPE_LARGE);
     updateColors(); //TODO: Replace random assignment with something more... intentional?
-    init_wakeLocker();
+    dud = init_wakeLocker();
     init_dragElement();
 
     loop_clock();
     init_calendar();
     loop_fillClockdigit();
-    init_weather();
+    dud = init_weather();
     init_doodle();
-    //TODO: where should this go?
     fillMoon();
-    loop_ercot();
+    init_ercot();
+    dud = loop_ercot();
 
-    loop_slowUpdates();
-    SquareManager();
+    dud = loop_slowUpdates();
+    SquareManager(); //TODO: Should this be async?
 
     //Disable page move
     document.body.addEventListener('touchmove', function(evt) {
@@ -346,6 +356,7 @@ window.onbeforeunload = function() { // TODO: Hardcode storage item name as a co
 
     //ercot
     window.localStorage.setItem('ercot_idtoken', cache_ercot_idtoken);
+    window.localStorage.setItem('ercot_refreshtoken', cache_ercot_refreshtoken);
     window.localStorage.setItem('ercot_expires', cache_ercot_expires);
 
     //severe?
@@ -442,10 +453,13 @@ function init_doodle() {
     dCanvas.addEventListener('touchmove', draw.move, false);
 }
 
-function loop_slowUpdates() {
+//TODO: Place this function somewhere appropriate
+async function loop_slowUpdates() {
+    let dud; //placeholder for possible promise handling
+
     //What fills here?
     //update_date();
-    update_weather();
+    dud = update_weather();
     //update_moon();
     //update_severe();
     //update_thunder();
@@ -518,14 +532,14 @@ function init_calendar() {
     squareCalendar_day.innerText = _STR_DAY[curDate.getDay()];
 }
 
-function init_weather() {
+async function init_weather() {
     cache_weather_data = window.localStorage.getItem('weather_data');
     cache_weather_data_time = window.localStorage.getItem('weather_data_time');
 
-    update_weather(true);
+    return update_weather(true);
 }
 
-function update_weather(force = false) {
+async function update_weather(force = false) {
     //TODO: There may be more kinds of weather info getting fetched. Fetch those, use different frequencies, etc.
     if(cache_weather_data_time != null && cache_weather_data_time > (Date.now() - _WEATHER_FREQ_FAST )) {
         if(force) {
@@ -537,8 +551,8 @@ function update_weather(force = false) {
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${OW_LAT}&lon=${OW_LONG}&appid=${KEY_OPENWEATHER}&units=imperial`, ow_requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log('openweather data fetched')
-            console.log(result);
+            console.log(`openweather data fetched|${Date.now()}|${result.main.temp}`)
+            //console.log(result);
             fillWeather(result);
             cache_weather_data = JSON.stringify(result);
             cache_weather_data_time = Date.now();
@@ -565,14 +579,23 @@ function fillMoon() {
     squareMoon_numphase.innerHTML = oPhase.float.toFixed(3) + " / 8";
 }
 
+function init_ercot() {
+    cache_ercot_idtoken = window.localStorage.getItem('ercot_idtoken');
+    cache_ercot_refreshtoken = window.localStorage.getItem('ercot_refreshtoken');
+    cache_ercot_expires = window.localStorage.getItem('ercot_expires');
+}
+
 async function loop_ercot() {
     //Test OAuth fetch. Must be redone with proper handling of access tokens, etc.
     //TODO: above, and maybe make this not a nested fetch
 
-    //if(cache_ercot_idtoken == null || Date.now() > cache_ercot_expires) {
-        await ercot_fetchtoken();
-    //}
-    await ercot_fetchprice();
+    if(cache_ercot_refreshtoken == null || cache_ercot_idtoken == null || Date.now() > cache_ercot_expires) {
+        await ercot_fetchToken();
+    } else {
+        await ercot_refreshToken();
+    }
+    await ercot_fetchPrice();
+    ercot_updateSq();
     //.then(() => ercot_updatesq())
 
     //TODO: Wait to ~10 minutes after 15-minute blocks
@@ -584,7 +607,7 @@ async function loop_ercot() {
     setTimeout(loop_ercot, target - now);
 }
 
-async function ercot_fetchtoken() {
+async function ercot_fetchToken() {
     return fetch(`https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token?username=${ERCOT_UNAME}&password=${ERCOT_PASS}&grant_type=password&scope=openid+fec253ea-0d06-4272-a5e6-b478baeecd70+offline_access&client_id=fec253ea-0d06-4272-a5e6-b478baeecd70&response_type=id_token`, ercot_init_requestOptions)
     .then(response => response.json())
     .then(result => {
@@ -594,17 +617,35 @@ async function ercot_fetchtoken() {
 
         cache_ercot_idtoken = result.id_token;
         cache_ercot_expires = Date.now() + result.expires_in * 1000;
+        cache_ercot_refreshtoken = result.refresh_token;
     })
     .catch(error => console.log('error ercot oauth', error))
     ;
 }
 
-async function ercot_fetchprice() {
+async function ercot_refreshToken() {
+    //Assertion: Refresh token has been cached
+    return fetch(`https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token?grant_type=refresh_token&scope=openid+fec253ea-0d06-4272-a5e6-b478baeecd70+offline_access&client_id=fec253ea-0d06-4272-a5e6-b478baeecd70&response_type=id_token&refresh_token=${cache_ercot_refreshtoken}`)
+    .then(response => response.json())
+    .then(result => {
+        console.log('ercot refresh');
+
+        cache_ercot_idtoken = result.id_token;
+        cache_ercot_expires = result.expires_on;
+        cache_ercot_refreshtoken = result.refresh_token;
+    })
+    .catch(error => console.log('error ercot refresh', error))
+    ;
+}
+
+async function ercot_fetchPrice() {
     let now = new Date(Date.now() - 900_000); //Zoom 15min back. The data is weird...
     let now_y = now.getFullYear();
     let now_m = (now.getMonth() + 1).toString().padStart(2, '0');
     let now_d = now.getDate().toString().padStart(2, '0');
     let now_str = `${now_y}-${now_m}-${now_d}`;
+
+    let err;
 
     ercot_headers.set("Ocp-Apim-Subscription-Key", ERCOT_SUBKEY);
     ercot_headers.set("Authorization", `Bearer ${cache_ercot_idtoken}`);
@@ -624,12 +665,30 @@ async function ercot_fetchprice() {
 
         //...or just use last
         let idx = innerResult.data.length - 1;
-        console.log(innerResult.data[idx][_ERCOT_PRICE_IDX]);
+        ercot_price = innerResult.data[idx][_ERCOT_PRICE_IDX];
+        console.log(ercot_price);
 
         //TODO: This doesn't work on the first data point of the day/midnight. Should it try to fall back to previous day? The offset "now" seems to just work...
     })
     .catch(error => console.log('error ercot price fetching', error))
     ;
+}
+
+//TODO: Decide the actual text in here -- Have to make clear it's electricity price.
+//      Should this be clickable? Maybe just link to either ercot dashboard or datadog dashboard
+//      Retry fetches when fail
+//      Color scheme depending on price point
+//      Animation when high?
+function ercot_updateSq() {
+    squareErcot_labelDigits.innerText = Math.round(ercot_price);
+
+    if(ercot_price > _ERCOT_THRESHOLD_HIGH) {
+        document.documentElement.style.setProperty('--ercot-color', _COLOR_ERCOT_HIGH);
+    } else if(ercot_price > _ERCOT_THRESHOLD_MED) {
+        document.documentElement.style.setProperty('--ercot-color', _COLOR_ERCOT_MED);
+    } else {
+        document.documentElement.style.setProperty('--ercot-color', _COLOR_ERCOT_LOW);
+    }
 }
 
 //TODO: God damn it, maybe just put each digit in its own div so i can pretend it's monospaced and it can be aligned like:
@@ -961,7 +1020,7 @@ function loop_clock() {
 //TODO: Now that the animation is desynced, change this to onclick events instead of frame loop. See where focusedSquare is changed.
 var focusedSquare = "1";
 var squarePositions;
-const defaultLabels = ["sqcalendar", "sqclock", "sqclockdigit", "sqweather", "sqdoodle", "sqmoon", "sqplaceholder1", "sqplaceholder2"]; //Add new elements here
+const defaultLabels = ["sqcalendar", "sqclock", "sqclockdigit", "sqweather", "sqdoodle", "sqmoon", "sqercot", "sqplaceholder1", "sqplaceholder2"]; //Add new elements here
 var windowHandles;
 var initFlag;
 function SquareManager() {

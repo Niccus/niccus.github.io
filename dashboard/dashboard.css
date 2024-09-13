@@ -4,6 +4,8 @@
   --main-bg-color-faded: oklch(96% 0.04 0);
   --main-bg-color-dark:  oklch(09% 0.01 0);
 
+  --ercot-color: #60b060;
+
   transition-property: width, height, left, top, background-color;
   transition-duration: 1s;
   transition-timing-function: linear;
@@ -37,6 +39,20 @@
 
 .hidden {
   display: none;
+}
+
+.minionly {
+  visibility: visible;
+}
+.focus .minionly {
+  visibility: hidden;
+}
+
+.fullonly {
+  visibility: hidden;
+}
+.focus .fullonly {
+  visibility: visible;
 }
 
 #notif_stopped {
@@ -134,14 +150,102 @@ background-color: #aaa;
   transition-timing-function: linear;
 }
 
+#weathermini {
+  width: 270px;
+  height: 270px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+#weatherfull_map {
+  width: 270px;
+  height: 270px;
+  position: absolute;
+  left: 270px;
+  top: 0px;
+}
+
+#weatherfull_minrain {
+  width: 540px;
+  height: 270px;
+  position: absolute;
+  left: 540px;
+  top: 0px;
+}
+
+#weatherfull_hrtemp {
+  width: 540px;
+  height: 810px;
+
+  position: absolute;
+  left: 0px;
+  top: 270px;
+  border-right: 1px solid black;
+}
+
+#weatherfull_daycast{
+  width: 540px;
+  height: 810px;
+
+  position: absolute;
+  left: 540px;
+  top: 270px;
+  border-left: 1px solid black;
+}
+
 .weather-square {
-  background-color: var(--main-bg-color-faded);
+  background-color: var(--main-bg-color-vivid);
   color: #000;
+}
+
+#weathermini {
+  color: #fff;
+  font-family: "Barlow", sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 #weather_icon {
   background-color: #ffffffd0;
   border: 1px solid black;
+  position: absolute;
+  top: 25px;
+  left: 5px; 
+  width: 125px;
+  height: 125px;
+}
+
+#weather_miniCurTemp {
+  color: #fff;
+  font-size: 72px;
+  position: absolute;
+  left: 140px;
+  top: 25px;
+}
+
+#weather_miniFeels_text {
+  color: #fff;
+  font-size: 16px;
+  position: absolute;
+  left: 140px;
+  top: 114px;
+}
+
+#weather_miniFeels_digits {
+  color: #fff;
+  font-size: 20px;
+  position: absolute;
+  left: 180px;
+  top: 110px;
+}
+
+#weather_miniWeatherLabel {
+  color: #fff;
+  font-size: 20px;
+  position: absolute;
+  left: 5px;
+  top: 155px;
 }
 
 #sqcalendar {
@@ -222,12 +326,6 @@ background-color: #aaa;
   color: #000;
   width: 50px;
   height: 300px;
-
-  visibility: hidden;
-}
-
-.focus #doodle_toolbox {
-  visibility: visible;
 }
 
 .doodle_tool {
@@ -270,6 +368,41 @@ background-color: #aaa;
   top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+#sqercot {
+  background-color: var(--main-bg-color-dark);
+}
+
+#ercot_icon {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  color: #ffb;
+  font-size: 40px;
+  transform: translate(-50%, -50%);
+}
+
+#ercot_label {
+  font-family: "Barlow", sans-serif;
+  font-style: normal;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#ercot_label_digits {
+  color: var(--ercot-color);
+  font-size: 40px;
+  font-weight: 800;
+}
+
+#ercot_label_usd {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /*NOSELECT*/

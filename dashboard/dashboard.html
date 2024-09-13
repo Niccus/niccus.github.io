@@ -66,7 +66,7 @@
 
         <div id="sqdoodle" class="square" style="left:0px; top:0px; width:1000px;">
             <canvas id="doodle" style="border:1px solid black; background-color:#fff; width:100%; height:100%;"></canvas>
-            <div id="doodle_toolbox" class="popup">
+            <div id="doodle_toolbox" class="popup fullonly">
                 <div class="popup-header noselect">O</div>
                 
                 <input type="image" class="doodle_tool" id="doodle_tool_eraser" src="./nonsharables/doodle-eraser.svg" alt="eraser" onclick="doodleTool('eraser')">
@@ -95,23 +95,57 @@
         </div>
 
         <div id="sqweather" class="square" style="left:300px; top: 300px; width: 1000px;">
-            <div class="popup-square status-overlay" id="weatherstatus">
-                ⟳ <span class="status-overlay-timestamp" id="weatherstatus_timestamp">12:00:00</span>
-            </div>
-            <div class="popup-square weather-square" id="weathertest">
-                <br>
-                <br>
-                <span id="weather_details">
-                    lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}
-                </span>
-                <br>
-                <img id="weather_icon" class="weather-icon" src="" alt="">
+            <div id="weatherfull" class="popup-square weather-square">
+                <div id="weathermini">
+                    <div class="weather-square" id="weathertest">
+                        <img id="weather_icon" class="weather-icon" src="" alt="">
+                        <span id="weather_miniCurTemp">77°</span>
+                        <span id="weather_miniFeels_text">Feels</span>
+                        <span id="weather_miniFeels_digits">77°</span>
+                        <span id="weather_miniWeatherLabel">Cloudy</span>
+                        <span id="weather_details">
+                            lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}
+                        </span>
+                        <br>
+                        
+                    </div>
+                </div>
+                <div id="weatherfull_map" class="fullonly">How hard is it to have a weather radar map?</div>
+                <div id="weatherfull_minrain" class="fullonly">1hr precipitation forecast</div>
+                <div id="weatherfull_hrtemp" class="fullonly">Hourly summary chart</div>
+                <div id="weatherfull_daycast" class="fullonly">Daily temperature forecast</div>
             </div>
         </div>
+        <!--
+        <div id="sqweather" class="square" style="left:300px; top: 300px; width: 1000px;">
+            <div id="weathermini">
+                <div class="popup-square status-overlay" id="weatherstatus">
+                    ⟳ <span class="status-overlay-timestamp" id="weatherstatus_timestamp">12:00:00</span>
+                </div>
+                <div class="popup-square weather-square" id="weathertest">
+                    <br>
+                    <br>
+                    <span id="weather_details">
+                        lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}
+                    </span>
+                    <br>
+                    <img id="weather_icon" class="weather-icon" src="" alt="">
+                </div>
+            </div>
+            <div id="weatherfull">
+                <div id="weatherfull_summary">Should this just be the mini box?</div>
+                <div id="weatherfull_map">How hard is it to have a weather radar map?</div>
+                <div id="weatherfull_minrain">1hr precipitation forecast</div>
+                <div id="weatherfull_hrtemp">Hourly summary chart</div>
+                <div id="weatherfull_daycast">Daily temperature forecast</div>
+            </div>
+        </div>
+        -->
 
         <div id="sqercot" class="square">
-            <div id="ercot_label">
-                8888.88
+            <div id="ercot_icon">⚡</div>
+            <div id="ercot_label" class="ercot">
+                <span id="ercot_label_digits">8888.88</span><span id="ercot_label_usd">USD/MWh</span>
             </div>
         </div>
 
