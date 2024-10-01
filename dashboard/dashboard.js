@@ -40,7 +40,16 @@ const _STR_MONTH_SHORT = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG"
 
 const _WEATHER_FREQ_FAST = 600_000; //10min -- Temperature doesn't update that often.
 const _WEATHER_FREQ_SLOW = 1200_000; //20min -- I assumed _fast was remotely fast, probably not needed. //TODO: Remove this?
-//TODO: Separate timer for OAuth refresh and token lifetime?
+const _WEATHER_TEMP_CENTER = 70;
+const _WEATHER_TEMP_WINDOW = 30;
+const _WEATHER_TEMP_WIN_MAX = _WEATHER_TEMP_CENTER + _WEATHER_TEMP_WINDOW/2; //85
+const _WEATHER_TEMP_WIN_MIN = _WEATHER_TEMP_CENTER - _WEATHER_TEMP_WINDOW/2; //55
+const _WEATHER_TEMP_LEN_MIN = 50;
+const _WEATHER_TEMP_LEN_MAX = 300;
+const _WEATHER_TEMP_WIND_SIZE_MIN = 5;
+const _WEATHER_TEMP_WIND_SIZE_MAX = 35;
+const _WEATHER_DAY_TEMP_PAD_MIN = 35;
+const _WEATHER_DAY_TEMP_BARLEN_MAX = 290;
 
 const _DOODLE_WIDTH_BASE = 10;
 const _DOODLE_WIDTH_THIN = 3;
@@ -59,6 +68,8 @@ const _ERCOT_FREQ = 900_000; //15min, may need to time to sync windows
 const _SEVERE_FREQ = 3600_000; //1hr, TODO: Check API limits. Faster is better for severe warnings. Maybe two freqs for clear vs alert to look out for warnings?
 
 //const _THUNDER_FREQ //How will this work? If can embed, not a problem, just use severe alerts to listen for when this should be live.
+
+var locale = "en-US";
 
 //
 
@@ -79,17 +90,21 @@ todo:
             Alt palettes?
             Per-branch chances to grow/not grow?
         Weather
-            Split from calendar
-            Forecast?
+            2x Missing boxes
+            Weather alerts
+            Palette for hourly indicators
+            Still thinking about weather icons...
         Severe weather alert as separate brick?
         Thunder map?
         Sunrise, sunset
         Random visualizers/screensavers like glowy lines, plasma ball, etc
         Whiteboard
-            Restrict usage to when big (also indicator that it's not ready yet (maybe the transform needs to be faster))
             Change color scheme
             Hideable toolbar for buttons w/ color options + eraser
-        ERCOT hourly
+            Custom color
+            Better selector
+        ERCOT
+            Fix this CORS thing...
         ---
         Quick timer? (vacuum charging, washing, drying, etc)
 
@@ -147,15 +162,32 @@ let notifStopped = document.getElementById("notif_stopped");
 let squareClock = document.getElementById("sqclock");
 
 let squareClockdigit = document.getElementById("sqclockdigit");
-let squareClockdigit_hour = document.getElementById("clockdigit_hour");
-let squareClockdigit_minute = document.getElementById("clockdigit_minute");
-let squareClockdigit_second = document.getElementById("clockdigit_second");
+let squareClockdigit_hourTens = document.getElementById("clockdigit_hour_tens");
+let squareClockdigit_minuteTens = document.getElementById("clockdigit_minute_tens");
+let squareClockdigit_secondTens = document.getElementById("clockdigit_second_tens");
+let squareClockdigit_hourOnes = document.getElementById("clockdigit_hour_ones");
+let squareClockdigit_minuteOnes = document.getElementById("clockdigit_minute_ones");
+let squareClockdigit_secondOnes = document.getElementById("clockdigit_second_ones");
 
+let cache_weather_data;
+let cache_weather_data_time;
 let squareWeather = document.getElementById("weathertest");
 let squareWeather_details = document.getElementById("weather_details");
 let squareWeather_icon = document.getElementById("weather_icon");
-let cache_weather_data;
-let cache_weather_data_time;
+let squareWeather_mini_CurTemp = document.getElementById("weather_miniCurTemp");
+let squareWeather_mini_CurTempFeels = document.getElementById("weather_miniFeels_digits");
+let squareWeather_graph = document.getElementById("weathergraph");
+let squareWeatherHrTemps = [document.getElementById("whrtemp_01_temp"), document.getElementById("whrtemp_02_temp"), document.getElementById("whrtemp_03_temp"), document.getElementById("whrtemp_04_temp"), document.getElementById("whrtemp_05_temp"), document.getElementById("whrtemp_06_temp"), document.getElementById("whrtemp_07_temp"), document.getElementById("whrtemp_08_temp"), document.getElementById("whrtemp_09_temp"), document.getElementById("whrtemp_10_temp"), document.getElementById("whrtemp_11_temp"), document.getElementById("whrtemp_12_temp")];
+let squareWeatherHrTimes = [document.getElementById("whrtemp_01_time"), document.getElementById("whrtemp_02_time"), document.getElementById("whrtemp_03_time"), document.getElementById("whrtemp_04_time"), document.getElementById("whrtemp_05_time"), document.getElementById("whrtemp_06_time"), document.getElementById("whrtemp_07_time"), document.getElementById("whrtemp_08_time"), document.getElementById("whrtemp_09_time"), document.getElementById("whrtemp_10_time"), document.getElementById("whrtemp_11_time"), document.getElementById("whrtemp_12_time")];
+let squareWeatherHrLabels = [ document.getElementById("whrtemp_01_label"), document.getElementById("whrtemp_02_label"), document.getElementById("whrtemp_03_label"), document.getElementById("whrtemp_04_label"), document.getElementById("whrtemp_05_label"), document.getElementById("whrtemp_06_label"), document.getElementById("whrtemp_07_label"), document.getElementById("whrtemp_08_label"), document.getElementById("whrtemp_09_label"), document.getElementById("whrtemp_10_label"), document.getElementById("whrtemp_11_label"), document.getElementById("whrtemp_12_label")];
+let squareWeatherHrWindAmts = [document.getElementById("whrtemp_01_windamt"), document.getElementById("whrtemp_02_windamt"), document.getElementById("whrtemp_03_windamt"), document.getElementById("whrtemp_04_windamt"), document.getElementById("whrtemp_05_windamt"), document.getElementById("whrtemp_06_windamt"), document.getElementById("whrtemp_07_windamt"), document.getElementById("whrtemp_08_windamt"), document.getElementById("whrtemp_09_windamt"), document.getElementById("whrtemp_10_windamt"), document.getElementById("whrtemp_11_windamt"), document.getElementById("whrtemp_12_windamt")];
+let squareWeatherDayDays = [document.getElementById("whrday_01_day"), document.getElementById("whrday_02_day"), document.getElementById("whrday_03_day"), document.getElementById("whrday_04_day"), document.getElementById("whrday_05_day"), document.getElementById("whrday_06_day"), document.getElementById("whrday_07_day"), document.getElementById("whrday_08_day")];
+let squareWeatherDayRainDigits = [document.getElementById("whrday_01_rainchance_digit"), document.getElementById("whrday_02_rainchance_digit"), document.getElementById("whrday_03_rainchance_digit"), document.getElementById("whrday_04_rainchance_digit"), document.getElementById("whrday_05_rainchance_digit"), document.getElementById("whrday_06_rainchance_digit"), document.getElementById("whrday_07_rainchance_digit"), document.getElementById("whrday_08_rainchance_digit")];
+let squareWeatherDayWeatherIcons = [document.getElementById("whrday_01_weather_icon"), document.getElementById("whrday_02_weather_icon"), document.getElementById("whrday_03_weather_icon"), document.getElementById("whrday_04_weather_icon"), document.getElementById("whrday_05_weather_icon"), document.getElementById("whrday_06_weather_icon"), document.getElementById("whrday_07_weather_icon"), document.getElementById("whrday_08_weather_icon")];
+let squareWeatherDayTempLos = [document.getElementById("whrday_01_tempLo"), document.getElementById("whrday_02_tempLo"), document.getElementById("whrday_03_tempLo"), document.getElementById("whrday_04_tempLo"), document.getElementById("whrday_05_tempLo"), document.getElementById("whrday_06_tempLo"), document.getElementById("whrday_07_tempLo"), document.getElementById("whrday_08_tempLo")];
+let squareWeatherDayTempHis = [document.getElementById("whrday_01_tempHi"), document.getElementById("whrday_02_tempHi"), document.getElementById("whrday_03_tempHi"), document.getElementById("whrday_04_tempHi"), document.getElementById("whrday_05_tempHi"), document.getElementById("whrday_06_tempHi"), document.getElementById("whrday_07_tempHi"), document.getElementById("whrday_08_tempHi")];
+
+
 
 let squareMoon = document.getElementById("sqmoon");
 let squareMoon_icon = document.getElementById("moon_icon");
@@ -168,6 +200,7 @@ let squareCalendar_date = document.getElementById("calendar_date");
 let squareCalendar_day = document.getElementById("calendar_day");
 
 let dCanvas = document.getElementById("doodle");
+let dToolCustomColor = document.getElementById("doodle_tool_customcolor");
 /** @type {CanvasRenderingContext2D} */
 let dCtx = dCanvas.getContext("2d");
 
@@ -237,9 +270,25 @@ function depix(str) {
     return  str.slice(0, str.length - 2) - 0;
 }
 
+function denull(str) {
+    if(str == null || str === undefined || str === "undefined") {
+        return undefined;
+    }
+    return str;
+}
+
+function setStorage(loc, o) {
+    window.localStorage.setItem(loc, denull(o));
+}
+
+function getStorage(loc) {
+    return denull(window.localStorage.getItem(loc));
+}
+
 // Lune thoughts -- Lune with 1/4 area appears to be with a circle centered 0.621184 away from the circle with radius 1 (it should have radius = sqrt(1 + 0.621184^2))
 // https://www.desmos.com/calculator/m1yhxauivs
 //Mostly copy-pasted from Dither's https://gist.github.com/Dither/d2801f7b22d5602fff38821c2177e301
+//TODO: Allow fractions of day
 function moonphase(date = new Date(), type = 0) {
     let year = date.getFullYear(),
         month = date.getMonth(),
@@ -321,6 +370,11 @@ var is_stop = false;
 window.onload = function() {
     let dud; //Placeholder to make clear where promises can start being handled
 
+    if (navigator.languages != undefined) 
+        { locale = navigator.languages[0]; }
+    else
+        { locale = navigator.language; }
+
     scaleCell(ctx, _CELLTYPE_LARGE);
     updateColors(); //TODO: Replace random assignment with something more... intentional?
     dud = init_wakeLocker();
@@ -331,7 +385,7 @@ window.onload = function() {
     loop_fillClockdigit();
     dud = init_weather();
     init_doodle();
-    fillMoon();
+    //fillMoon(); //Take out of here?
     init_ercot();
     dud = loop_ercot();
 
@@ -346,18 +400,18 @@ window.onload = function() {
 
 // TODO: Save other bits of settings, too. Maybe query data so refreshing doesn't spam API requests?
 window.onbeforeunload = function() { // TODO: Hardcode storage item name as a constant
-    window.localStorage.setItem('weather_data', cache_weather_data);
-    window.localStorage.setItem('weather_data_time', cache_weather_data_time);
+    setStorage('weather_data', cache_weather_data);
+    setStorage('weather_data_time', cache_weather_data_time);
 
-    window.localStorage.setItem('doodle_canvas', dCanvas.toDataURL());
+    setStorage('doodle_canvas', dCanvas.toDataURL());
     // color setting?
 
     //moon?
 
     //ercot
-    window.localStorage.setItem('ercot_idtoken', cache_ercot_idtoken);
-    window.localStorage.setItem('ercot_refreshtoken', cache_ercot_refreshtoken);
-    window.localStorage.setItem('ercot_expires', cache_ercot_expires);
+    setStorage('ercot_idtoken', cache_ercot_idtoken);
+    setStorage('ercot_refreshtoken', cache_ercot_refreshtoken);
+    setStorage('ercot_expires', cache_ercot_expires);
 
     //severe?
 
@@ -376,7 +430,7 @@ function init_doodle() {
     dCtx.fillRect(0, 0, dCanvas.width, dCanvas.height);
 
     //Load cached canvas data
-    let dataURL = window.localStorage.getItem('doodle_canvas');
+    let dataURL = getStorage('doodle_canvas');
     if(dataURL != null) {
         let img = new Image;
         img.src = dataURL;
@@ -384,7 +438,7 @@ function init_doodle() {
             dCtx.drawImage(img, 0, 0);
         };
     }
-
+canvas
     //Mouse event handlers
     if(dCanvas) {
         var isDown = false;
@@ -461,6 +515,7 @@ async function loop_slowUpdates() {
     //update_date();
     dud = update_weather();
     //update_moon();
+    fillMoon();
     //update_severe();
     //update_thunder();
 
@@ -498,6 +553,9 @@ function doodleTool(button) {
         case "blue":
             doodleColorStr = "#00f";
             break;
+        case "customcolor":
+            doodleColorStr = dToolCustomColor.value;
+            break;
         case "new":
             //TODO
             break;
@@ -533,14 +591,13 @@ function init_calendar() {
 }
 
 async function init_weather() {
-    cache_weather_data = window.localStorage.getItem('weather_data');
-    cache_weather_data_time = window.localStorage.getItem('weather_data_time');
+    cache_weather_data = getStorage('weather_data');
+    cache_weather_data_time = getStorage('weather_data_time');
 
     return update_weather(true);
 }
 
 async function update_weather(force = false) {
-    //TODO: There may be more kinds of weather info getting fetched. Fetch those, use different frequencies, etc.
     if(cache_weather_data_time != null && cache_weather_data_time > (Date.now() - _WEATHER_FREQ_FAST )) {
         if(force) {
             console.log('cached weather data loaded');
@@ -548,11 +605,11 @@ async function update_weather(force = false) {
             fillWeather(JSON.parse(cache_weather_data));
         }
     } else {
-        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${OW_LAT}&lon=${OW_LONG}&appid=${KEY_OPENWEATHER}&units=imperial`, ow_requestOptions)
+        fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${OW_LAT}&lon=${OW_LONG}&appid=${KEY_OPENWEATHER}&units=imperial`, ow_requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log(`openweather data fetched|${Date.now()}|${result.main.temp}`)
-            //console.log(result);
+            console.log(`openweather data fetched|${Date.now()}|${result.current.temp}`)
+            console.log(result);
             fillWeather(result);
             cache_weather_data = JSON.stringify(result);
             cache_weather_data_time = Date.now();
@@ -563,9 +620,265 @@ async function update_weather(force = false) {
 
 //TODO: Move calendar filling to its own function
 function fillWeather(o) {
-    squareWeather_details.innerHTML = `lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}`;
-    squareWeather_icon.src = `./nonsharables/${o.weather[0].icon}.png`;
-    squareWeather_icon.alt = `${o.weather[0].main}`;
+    //squareWeather_details.innerHTML = `lon ${o.lon} | lat ${o.lat} <br> ${o.daily[0].temp.min} [ ${o.current.temp} ] ${o.daily[0].temp.max}`;
+    squareWeather_details.innerHTML = "";
+    squareWeather_icon.src = `./nonsharables/${o.current.weather[0].icon}.png`;
+    squareWeather_icon.alt = `${o.current.weather[0].main}`;
+
+    let nowTemp = o.current.temp;
+    squareWeather_mini_CurTemp.innerText = Math.round(nowTemp) + "°";
+    squareWeather_mini_CurTempFeels.innerText = Math.round(o.current.feels_like) + "°";
+
+    fillWeatherGraph(o);
+
+    //Hourlies, precalc
+    //Are we clamping hotwise or coldwise?
+    let temp_min = 460;
+    let temp_max = -460;
+    let temp_clamp_min = nowTemp - _WEATHER_TEMP_WINDOW;
+    let temp_clamp_max = nowTemp + _WEATHER_TEMP_WINDOW;
+    for(let hr = 0; hr < 12; ++hr) {
+        //Mirror me to the loop below
+        let hrIdx = hr*2;
+        let hrTemp = clamp(temp_clamp_min, temp_clamp_max, o.hourly[hrIdx].temp);
+        if(hrTemp < temp_min) { temp_min = hrTemp;}
+        if(hrTemp > temp_max) { temp_max = hrTemp;}
+    }
+    let temp_left = _WEATHER_TEMP_WIN_MIN;
+    let temp_right = _WEATHER_TEMP_WIN_MAX;
+    if(temp_max > _WEATHER_TEMP_WIN_MAX) {
+        temp_right = temp_max;
+        temp_left = temp_right - _WEATHER_TEMP_WINDOW;
+    } else if(temp_max < _WEATHER_TEMP_WIN_MIN) {
+        temp_left = temp_min;
+        temp_right = temp_left + _WEATHER_TEMP_WINDOW;
+    } else {
+        temp_left = _WEATHER_TEMP_WIN_MIN;
+        temp_right = _WEATHER_TEMP_WIN_MAX;
+    }
+
+    //Hourlies, populate
+    let prevLabel = "";
+    for(let hr = 0; hr < 12; ++hr) {
+        let rowIdx = hr;
+        let rowIdxText = (''+(hr+1)).padStart(2,'0');
+        //let hrIdx = hr; //1hr or 2hr increments?
+        let hrIdx = hr*2;
+
+        let curHour = o.hourly[hrIdx];
+        let curDesc = curHour.weather[0].main;
+        let curDate = new Date(curHour.dt*1000);
+        let temp = curHour.temp;
+        let tempCoord = (temp - temp_left)/_WEATHER_TEMP_WINDOW;
+
+        let windSpeed = curHour.wind_speed;
+        let windScale = clamp(_WEATHER_TEMP_WIND_SIZE_MIN, _WEATHER_TEMP_WIND_SIZE_MAX, curHour.wind_speed*2 + _WEATHER_TEMP_WIND_SIZE_MIN);
+
+        let pCloud = curHour.clouds;
+        let pRain = Math.round(curHour.pop * 100);
+        document.documentElement.style.setProperty(`--whrtemp_${rowIdxText}_indicatorbg`, `color-mix(in oklch, color-mix(in oklch, #fff, #888 ${pCloud}%), oklch(63.09% 0.14 240.35) ${pRain}%)`);
+
+        if(rowIdx > 0) {
+            squareWeatherHrTimes[rowIdx].innerText = curDate.toLocaleString(locale, {hour: 'numeric', hour12: true});
+        }
+        
+        if(curDesc !== prevLabel) {
+            squareWeatherHrLabels[rowIdx].innerText = curHour.weather[0].main;
+            prevLabel = curDesc;
+        } else {
+            squareWeatherHrLabels[rowIdx].innerText = "";
+        }
+        document.documentElement.style.setProperty(`--whrtemp_${rowIdxText}_spacerlen`, lerp(_WEATHER_TEMP_LEN_MIN, _WEATHER_TEMP_LEN_MAX, clamp(0, 1, tempCoord)) + "px")
+        temp = Math.round(temp);
+        squareWeatherHrTemps[rowIdx].innerText = temp + "°";
+        document.documentElement.style.setProperty(`--whrtemp_${rowIdxText}_windrot`, curHour.wind_deg + "deg");
+        document.documentElement.style.setProperty(`--whrtemp_${rowIdxText}_windsize`, windScale + "px");
+        squareWeatherHrWindAmts[rowIdx].innerText = Math.round(windSpeed);
+    }
+
+    //Dailies, precalc
+    temp_min = 460;
+    temp_max = -460;
+    temp_clamp_min = o.daily[0].temp.min - _WEATHER_TEMP_WINDOW;
+    temp_clamp_max = o.daily[0].temp.max + _WEATHER_TEMP_WINDOW;
+    for(let d = 0; d < 8; ++d) {
+        let dayIdx = d;
+        let hrTemp = clamp(temp_clamp_min, temp_clamp_max, o.daily[dayIdx].temp.min);
+        if(hrTemp < temp_min) { temp_min = hrTemp;}
+        hrTemp = clamp(temp_clamp_min, temp_clamp_max, o.daily[dayIdx].temp.max);
+        if(hrTemp > temp_max) { temp_max = hrTemp;}
+    }
+    temp_left = _WEATHER_TEMP_WIN_MIN;
+    temp_right = _WEATHER_TEMP_WIN_MAX;
+    if(temp_max > _WEATHER_TEMP_WIN_MAX) {
+        temp_right = temp_max;
+        temp_left = temp_right - _WEATHER_TEMP_WINDOW;
+    } else if(temp_max < _WEATHER_TEMP_WIN_MIN) {
+        temp_left = temp_min;
+        temp_right = temp_left + _WEATHER_TEMP_WINDOW;
+    } else {
+        temp_left = _WEATHER_TEMP_WIN_MIN;
+        temp_right = _WEATHER_TEMP_WIN_MAX;
+    }
+
+    //Dailies, populate
+    for(let d = 0; d < 8; ++d) {
+        let rowIdx = d;
+        let dayIdx = d;
+        let rowIdxText = (''+(d+1)).padStart(2,'0');
+
+        let curDay = o.daily[dayIdx];
+        let curDate = new Date(curDay.dt*1000);
+
+        if(rowIdx > 0) {
+            squareWeatherDayDays[rowIdx].innerText = curDate.toLocaleString(locale, { weekday: 'short' }).toUpperCase();
+        }
+
+        squareWeatherDayRainDigits[rowIdx].innerText = Math.round(curDay.pop * 100) + "%";
+        squareWeatherDayWeatherIcons[rowIdx].src = `./nonsharables/${curDay.weather[0].icon}.png`;
+        squareWeatherDayWeatherIcons[rowIdx].alt = curDay.weather[0].main;
+
+        let tempLo = curDay.temp.min;
+        let tempHi = curDay.temp.max;
+        squareWeatherDayTempLos[rowIdx].innerText = Math.round(tempLo) + "°";
+        squareWeatherDayTempHis[rowIdx].innerText = Math.round(tempHi) + "°";
+
+        let tempLoCoord = (tempLo - temp_left)/_WEATHER_TEMP_WINDOW;
+        let tempHiCoord = (tempHi - temp_left)/_WEATHER_TEMP_WINDOW;
+        let tempHiOffset = tempHiCoord - tempLoCoord;
+        document.documentElement.style.setProperty(`--whrday_${rowIdxText}_padlen`, (tempLoCoord*_WEATHER_DAY_TEMP_BARLEN_MAX + _WEATHER_DAY_TEMP_PAD_MIN) + "px");
+        document.documentElement.style.setProperty(`--whrday_${rowIdxText}_barlen`, (tempHiOffset*_WEATHER_DAY_TEMP_BARLEN_MAX) + "px");
+    }
+}
+
+function precipitationToHeight(mmh) {
+    //Zones are 240 <-> 160 <-> 80 <-> 0
+    if(mmh <= 2.5) {
+        //"light"
+        return 240 - mmh*32; //mmh*80/2.5
+    } else if(mmh <= 7.5) {
+        //"moderate"
+        return 200 - 16 * mmh; //160 - 80 * (mmh-2.5)/5
+    } else {
+        //"heavy", with "violent" at 50
+        return 94 - 1.9*mmh; //80 - 80 * (mmh - 7.5)/(50 - 7.5), rounding a bit
+    }
+}
+
+function fillWeatherGraph(day) {
+    let precipTotal = 0;
+
+    /** @type {CanvasRenderingContext2D} */
+    var graph = squareWeather_graph.getContext("2d");
+    squareWeather_graph.width = 540; //TODO: constants, move this to a setup function instead of per-draw
+    squareWeather_graph.height = 270;
+    graph.lineCap = "round";
+
+    //Background
+    graph.fillStyle = _COLOR_FADED;
+    graph.fillRect(0, 0, 540, 270);
+
+    //Guidelines
+    graph.strokeStyle = "#bbb";
+    graph.fillStyle = "#444";
+    graph.lineWidth = 2;
+    graph.font = "bold 18px Barlow"
+
+    //Labels
+    graph.fillText("HEAVY", 20, 45);
+    graph.fillText("MED", 20, 125);
+    graph.fillText("LIGHT", 20, 205);
+
+    //Dividers
+    graph.beginPath();
+    graph.moveTo(20, 80);
+    graph.lineTo(520, 80);
+    graph.stroke();
+
+    graph.beginPath();
+    graph.moveTo(20, 160);
+    graph.lineTo(520, 160);
+    graph.stroke();
+
+    //Midlines for alignment
+    /*
+    graph.beginPath();
+    graph.moveTo(50, 40);
+    graph.lineTo(470, 40);
+    graph.stroke();
+    graph.beginPath();
+    graph.moveTo(50, 120);
+    graph.lineTo(470, 120);
+    graph.stroke();
+    graph.beginPath();
+    graph.moveTo(50, 200);
+    graph.lineTo(470, 200);
+    graph.stroke(); */
+
+    // TODO: Actual graph
+    // TODO: eek constants
+    // TODO: how to express fuzziness?
+    //Precipitation
+    graph.fillStyle = "#77beec";
+    graph.beginPath();
+    graph.moveTo(20, 240);
+    graph.lineTo(20, precipitationToHeight(day.minutely[0].precipitation));
+    for(let i = 0; i < 60; ++i) {
+        graph.lineTo(20 + (1 + i)/60*500, precipitationToHeight(day.minutely[i].precipitation));
+        precipTotal += day.minutely[i].precipitation;
+    }
+    graph.lineTo(520, 240);
+    graph.closePath();
+    graph.stroke();
+    graph.fill();
+
+    //Switchover...
+    graph.strokeStyle = "#444";
+    graph.fillStyle = "#444";
+    graph.lineWidth = 4;
+    graph.font = "bold 14px Barlow"
+
+    //No rain?
+    if(precipTotal < 2) {
+        graph.fillText("No precipitation expected for the next hour.", 160, 125);
+    }
+    
+    //Baseline
+    graph.beginPath();
+    graph.moveTo(20, 240);
+    graph.lineTo(520, 240);
+    graph.stroke();
+
+    //Minutemarks
+    graph.beginPath();
+    graph.moveTo(103, 240);
+    graph.lineTo(103, 245);
+    graph.stroke();
+    graph.fillText("10", 98, 260);
+
+    graph.beginPath();
+    graph.moveTo(187, 240);
+    graph.lineTo(187, 245);
+    graph.stroke();
+    graph.fillText("20", 180, 260);
+
+    graph.beginPath();
+    graph.moveTo(270, 240);
+    graph.lineTo(270, 245);
+    graph.stroke();
+    graph.fillText("30", 263, 260);
+
+    graph.beginPath();
+    graph.moveTo(353, 240);
+    graph.lineTo(353, 245);
+    graph.stroke();
+    graph.fillText("40", 346, 260);
+
+    graph.beginPath();
+    graph.moveTo(437, 240);
+    graph.lineTo(437, 245);
+    graph.stroke();
+    graph.fillText("50 min", 430, 260);
 }
 
 //TODO: Add sunset/sunrise info, only in fullsize. Weirdly, already available from openweather data...
@@ -580,9 +893,9 @@ function fillMoon() {
 }
 
 function init_ercot() {
-    cache_ercot_idtoken = window.localStorage.getItem('ercot_idtoken');
-    cache_ercot_refreshtoken = window.localStorage.getItem('ercot_refreshtoken');
-    cache_ercot_expires = window.localStorage.getItem('ercot_expires');
+    cache_ercot_idtoken = getStorage('ercot_idtoken');
+    cache_ercot_refreshtoken = getStorage('ercot_refreshtoken');
+    cache_ercot_expires = getStorage('ercot_expires');
 }
 
 async function loop_ercot() {
@@ -598,7 +911,6 @@ async function loop_ercot() {
     ercot_updateSq();
     //.then(() => ercot_updatesq())
 
-    //TODO: Wait to ~10 minutes after 15-minute blocks
     let now = Date.now();
     let hourOffset = ((now - 150_000) % 3600_000);
     let hourBase = now - hourOffset;
@@ -619,8 +931,12 @@ async function ercot_fetchToken() {
         cache_ercot_expires = Date.now() + result.expires_in * 1000;
         cache_ercot_refreshtoken = result.refresh_token;
     })
-    .catch(error => console.log('error ercot oauth', error))
-    ;
+    .catch(error => {
+        console.log('error ercot oauth', error)
+        cache_ercot_idtoken = "";
+        cache_ercot_expires = "";
+        cache_ercot_refreshtoken = "";
+    });
 }
 
 async function ercot_refreshToken() {
@@ -634,8 +950,13 @@ async function ercot_refreshToken() {
         cache_ercot_expires = result.expires_on;
         cache_ercot_refreshtoken = result.refresh_token;
     })
-    .catch(error => console.log('error ercot refresh', error))
-    ;
+    .catch(error => {
+        cache_ercot_idtoken = "";
+        cache_ercot_expires = "";
+        cache_ercot_refreshtoken = "";
+        console.log('error ercot refresh', error);
+        ercot_fetchToken();
+    });
 }
 
 async function ercot_fetchPrice() {
@@ -674,8 +995,7 @@ async function ercot_fetchPrice() {
     ;
 }
 
-//TODO: Decide the actual text in here -- Have to make clear it's electricity price.
-//      Should this be clickable? Maybe just link to either ercot dashboard or datadog dashboard
+//TODO: Should this be clickable? Maybe just link to either ercot dashboard or datadog dashboard
 //      Retry fetches when fail
 //      Color scheme depending on price point
 //      Animation when high?
@@ -691,24 +1011,23 @@ function ercot_updateSq() {
     }
 }
 
-//TODO: God damn it, maybe just put each digit in its own div so i can pretend it's monospaced and it can be aligned like:
-//   19  
-//    47 
-//     41
 function loop_fillClockdigit() {
     let dt = new Date();
     let msec = dt.getTime() % 1000;
     let delay = 1001 - msec;
     if(delay < 100) { delay += 1000; }
 
-    squareClockdigit_hour.innerText = (""+dt.getHours()).padStart(2, '0');
-    squareClockdigit_minute.innerText = (""+dt.getMinutes()).padStart(2, '0');
-    squareClockdigit_second.innerText = (""+dt.getSeconds()).padStart(2, '0');
+    squareClockdigit_hourTens.innerText = Math.floor(dt.getHours()/10);
+    squareClockdigit_hourOnes.innerText = Math.floor(dt.getHours()%10);
+    squareClockdigit_minuteTens.innerText = Math.floor(dt.getMinutes()/10);
+    squareClockdigit_minuteOnes.innerText = Math.floor(dt.getMinutes()%10);
+    squareClockdigit_secondTens.innerText = Math.floor(dt.getSeconds()/10);
+    squareClockdigit_secondOnes.innerText = Math.floor(dt.getSeconds()%10);
 
     setTimeout(loop_fillClockdigit, delay);
 }
 
-//
+// TODO: Move me to a proper location for inits
 
 /** @type {HTMLCanvasElement} */
 var canvas = document.getElementById("canvas"); 

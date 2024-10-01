@@ -6,6 +6,92 @@
 
   --ercot-color: #60b060;
 
+  --whr-hr-row-height: 60px; /* TODO: Commit this and not use a variable */
+  --whr-day-row-height: 80px;
+
+  --whrtemp_01_indicatorbg: #fff;
+  --whrtemp_02_indicatorbg: #fff;
+  --whrtemp_03_indicatorbg: #fff;
+  --whrtemp_04_indicatorbg: #fff;
+  --whrtemp_05_indicatorbg: #fff;
+  --whrtemp_06_indicatorbg: #fff;
+  --whrtemp_07_indicatorbg: #fff;
+  --whrtemp_08_indicatorbg: #fff;
+  --whrtemp_09_indicatorbg: #fff;
+  --whrtemp_10_indicatorbg: #fff;
+  --whrtemp_11_indicatorbg: #fff;
+  --whrtemp_12_indicatorbg: #fff;
+
+  --whrtemp_01_labelvis: visible;
+  --whrtemp_02_labelvis: hidden;
+  --whrtemp_03_labelvis: hidden;
+  --whrtemp_04_labelvis: hidden;
+  --whrtemp_05_labelvis: hidden;
+  --whrtemp_06_labelvis: hidden;
+  --whrtemp_07_labelvis: hidden;
+  --whrtemp_08_labelvis: hidden;
+  --whrtemp_09_labelvis: hidden;
+  --whrtemp_10_labelvis: hidden;
+  --whrtemp_11_labelvis: hidden;
+  --whrtemp_12_labelvis: hidden;
+  
+  --whrtemp_01_spacerlen: 100px;
+  --whrtemp_02_spacerlen: 100px;
+  --whrtemp_03_spacerlen: 100px;
+  --whrtemp_04_spacerlen: 100px;
+  --whrtemp_05_spacerlen: 100px;
+  --whrtemp_06_spacerlen: 100px;
+  --whrtemp_07_spacerlen: 100px;
+  --whrtemp_08_spacerlen: 100px;
+  --whrtemp_09_spacerlen: 100px;
+  --whrtemp_10_spacerlen: 100px;
+  --whrtemp_11_spacerlen: 100px;
+  --whrtemp_12_spacerlen: 100px;
+
+  --whrtemp_01_windrot: 0deg;
+  --whrtemp_02_windrot: 0deg;
+  --whrtemp_03_windrot: 0deg;
+  --whrtemp_04_windrot: 0deg;
+  --whrtemp_05_windrot: 0deg;
+  --whrtemp_06_windrot: 0deg;
+  --whrtemp_07_windrot: 0deg;
+  --whrtemp_08_windrot: 0deg;
+  --whrtemp_09_windrot: 0deg;
+  --whrtemp_10_windrot: 0deg;
+  --whrtemp_11_windrot: 0deg;
+  --whrtemp_12_windrot: 0deg;
+  
+  --whrtemp_01_windsize: 10px;
+  --whrtemp_02_windsize: 10px;
+  --whrtemp_03_windsize: 10px;
+  --whrtemp_04_windsize: 10px;
+  --whrtemp_05_windsize: 10px;
+  --whrtemp_06_windsize: 10px;
+  --whrtemp_07_windsize: 10px;
+  --whrtemp_08_windsize: 10px;
+  --whrtemp_09_windsize: 10px;
+  --whrtemp_10_windsize: 10px;
+  --whrtemp_11_windsize: 10px;
+  --whrtemp_12_windsize: 10px;
+
+  --whrday_01_padlen: 35px;
+  --whrday_02_padlen: 35px;
+  --whrday_03_padlen: 35px;
+  --whrday_04_padlen: 35px;
+  --whrday_05_padlen: 35px;
+  --whrday_06_padlen: 35px;
+  --whrday_07_padlen: 35px;
+  --whrday_08_padlen: 35px;
+
+  --whrday_01_barlen: 290px;
+  --whrday_02_barlen: 290px;
+  --whrday_03_barlen: 290px;
+  --whrday_04_barlen: 290px;
+  --whrday_05_barlen: 290px;
+  --whrday_06_barlen: 290px;
+  --whrday_07_barlen: 290px;
+  --whrday_08_barlen: 290px;
+
   transition-property: width, height, left, top, background-color;
   transition-duration: 1s;
   transition-timing-function: linear;
@@ -228,7 +314,7 @@ background-color: #aaa;
   color: #fff;
   font-size: 16px;
   position: absolute;
-  left: 140px;
+  left: 144px;
   top: 114px;
 }
 
@@ -236,7 +322,7 @@ background-color: #aaa;
   color: #fff;
   font-size: 20px;
   position: absolute;
-  left: 180px;
+  left: 184px;
   top: 110px;
 }
 
@@ -246,6 +332,285 @@ background-color: #aaa;
   position: absolute;
   left: 5px;
   top: 155px;
+}
+
+#weatherfull_hrtemp {
+  background-color: var(--main-bg-color-faded);
+  color: #000;
+  font-family: "Barlow", sans-serif;
+  padding-top: 40px;
+}
+
+.whrTempRow {
+  position: relative;
+  display: block;
+  text-align: left;
+  height: var(--whr-hr-row-height);
+  width: 520px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.whrTemp_indicator {
+  /*display: inline-block;*/
+  float: left;
+  background-color: #888;
+  width: 30px;
+  height: var(--whr-hr-row-height);
+}
+
+#whrtemp_01_indicator {
+  border-radius: 10px 10px 0px 0px;
+  background-color: var(--whrtemp_01_indicatorbg);
+}
+
+#whrtemp_02_indicator { background-color: var(--whrtemp_02_indicatorbg); }
+#whrtemp_03_indicator { background-color: var(--whrtemp_03_indicatorbg); }
+#whrtemp_04_indicator { background-color: var(--whrtemp_04_indicatorbg); }
+#whrtemp_05_indicator { background-color: var(--whrtemp_05_indicatorbg); }
+#whrtemp_06_indicator { background-color: var(--whrtemp_06_indicatorbg); }
+#whrtemp_07_indicator { background-color: var(--whrtemp_07_indicatorbg); }
+#whrtemp_08_indicator { background-color: var(--whrtemp_08_indicatorbg); }
+#whrtemp_09_indicator { background-color: var(--whrtemp_09_indicatorbg); }
+#whrtemp_10_indicator { background-color: var(--whrtemp_10_indicatorbg); }
+#whrtemp_11_indicator { background-color: var(--whrtemp_11_indicatorbg); }
+
+#whrtemp_12_indicator {
+  border-radius: 0px 0px 10px 10px;
+  background-color: var(--whrtemp_12_indicatorbg);
+}
+
+.whrTemp_time {
+  /*display: inline-block;*/
+  float: left;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  width: 70px;
+  height: var(--whr-hr-row-height);
+  margin-right: 5px;
+}
+
+.whrTemp_label {
+  position: absolute;
+  top: 8px;
+  left: 110px;
+  font-style: italic;
+  font-weight: 400;
+  color: #aaa;
+}
+
+.whrTemp_spacer {
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  border: 1px solid #aaa;
+  margin-bottom: 3px;
+  top: 5px;
+  z-index: 1;
+}
+#whrtemp_01_spacer{ width: var(--whrtemp_01_spacerlen); }
+#whrtemp_02_spacer{ width: var(--whrtemp_02_spacerlen); }
+#whrtemp_03_spacer{ width: var(--whrtemp_03_spacerlen); }
+#whrtemp_04_spacer{ width: var(--whrtemp_04_spacerlen); }
+#whrtemp_05_spacer{ width: var(--whrtemp_05_spacerlen); }
+#whrtemp_06_spacer{ width: var(--whrtemp_06_spacerlen); }
+#whrtemp_07_spacer{ width: var(--whrtemp_07_spacerlen); }
+#whrtemp_08_spacer{ width: var(--whrtemp_08_spacerlen); }
+#whrtemp_09_spacer{ width: var(--whrtemp_09_spacerlen); }
+#whrtemp_10_spacer{ width: var(--whrtemp_10_spacerlen); }
+#whrtemp_11_spacer{ width: var(--whrtemp_11_spacerlen); }
+#whrtemp_12_spacer{ width: var(--whrtemp_12_spacerlen); }
+
+.whrTemp_temp {
+  position: relative;
+  display: inline-block;
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 24px;
+  padding: 3px 12px;
+  top: 10px;
+  z-index: 2;
+}
+
+.whrTemp_winddir_container {
+  position: relative;
+  display: inline-block;
+  top: 15px;
+  height: 30px;
+  width: 30px;
+  margin: 0px -5px;
+  overflow: hidden;
+}
+
+.whrTemp_winddir {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: 50%;
+  left: 50%;
+}
+
+#whrtemp_01_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_01_windrot)); height: var(--whrtemp_01_windsize); width: var(--whrtemp_01_windsize); }
+#whrtemp_02_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_02_windrot)); height: var(--whrtemp_02_windsize); width: var(--whrtemp_02_windsize); }
+#whrtemp_03_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_03_windrot)); height: var(--whrtemp_03_windsize); width: var(--whrtemp_03_windsize); }
+#whrtemp_04_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_04_windrot)); height: var(--whrtemp_04_windsize); width: var(--whrtemp_04_windsize); }
+#whrtemp_05_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_05_windrot)); height: var(--whrtemp_05_windsize); width: var(--whrtemp_05_windsize); }
+#whrtemp_06_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_06_windrot)); height: var(--whrtemp_06_windsize); width: var(--whrtemp_06_windsize); }
+#whrtemp_07_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_07_windrot)); height: var(--whrtemp_07_windsize); width: var(--whrtemp_07_windsize); }
+#whrtemp_08_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_08_windrot)); height: var(--whrtemp_08_windsize); width: var(--whrtemp_08_windsize); }
+#whrtemp_09_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_09_windrot)); height: var(--whrtemp_09_windsize); width: var(--whrtemp_09_windsize); }
+#whrtemp_10_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_10_windrot)); height: var(--whrtemp_10_windsize); width: var(--whrtemp_10_windsize); }
+#whrtemp_11_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_11_windrot)); height: var(--whrtemp_11_windsize); width: var(--whrtemp_11_windsize); }
+#whrtemp_12_winddir{ transform: translate(-50%, -50%) rotate(var(--whrtemp_12_windrot)); height: var(--whrtemp_12_windsize); width: var(--whrtemp_12_windsize); }
+
+.whrTemp_windamt {
+  position: relative;
+  display: inline-block;
+  font-weight: 400;
+  color: #777;
+  top: 5px;
+}
+
+#weatherfull_daycast {
+  background-color: var(--main-bg-color-faded);
+  color: #000;
+  font-family: "Barlow", sans-serif;
+  padding-top: 40px;
+  padding-left: 5px;
+}
+
+.whrDayRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  height: var(--whr-day-row-height);
+  width: 520px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  /* DEBUG * / border: 1px solid #f0f; /**/
+}
+
+.whrDay_label {
+  float: left;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  justify-content: flex-start;
+  width: 70px;
+  height: var(--whr-day-row-heightight);
+  margin-right: 5px;
+}
+
+.whrDay_day {
+  position: relative;
+  display: block;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  width: 70px;
+  height: 30px;
+  padding-top: 8px;
+}
+
+.whrDay_rainChance_container {
+  position: relative;
+  display: block;
+  height: 25px;
+  padding-left: 2px;
+}
+
+.whrDay_rain_icon {
+  position: relative;
+  display: inline;
+  height: 16px;
+  width: 10px;
+  top: 2px;
+}
+
+.whrDay_rain_digit {
+  display: inline;
+  color: #3070B0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.whrDay_weather_icon_container {
+  float: left;
+  display: flex;
+  /*position: relative;
+  display: inline-block;*/
+  height: var(--whr-day-row-height);
+  width: 50px;
+  align-items: center;
+  overflow: hidden;
+}
+
+.whrDay_weather_icon {
+  /* position: absolute;
+  top: 2px; */
+  height: 50px;
+  width: 50px;
+}
+
+/* Commit to consts: Minimum spacer 35px, max width of bar is 290px if spacer is minimum. */
+.whrDay_tempSpacer {
+  float: left;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  height: var(--whr-day-row-height);
+}
+
+#whrday_01_tempSpacer { width: var(--whrday_01_padlen); }
+#whrday_02_tempSpacer { width: var(--whrday_02_padlen); }
+#whrday_03_tempSpacer { width: var(--whrday_03_padlen); }
+#whrday_04_tempSpacer { width: var(--whrday_04_padlen); }
+#whrday_05_tempSpacer { width: var(--whrday_05_padlen); }
+#whrday_06_tempSpacer { width: var(--whrday_06_padlen); }
+#whrday_07_tempSpacer { width: var(--whrday_07_padlen); }
+#whrday_08_tempSpacer { width: var(--whrday_08_padlen); }
+
+.whrDay_tempLo {
+  padding-right: 5px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.whrDay_tempBar {
+  position: relative;
+  display: inline-block;
+  background-color: #ddd;
+  border: 1px solid #bbb;
+  border-radius: 24px;
+  padding: 3px 12px;
+  height: 20px;
+}
+
+#whrday_01_tempBar { width: var(--whrday_01_barlen); }
+#whrday_02_tempBar { width: var(--whrday_02_barlen); }
+#whrday_03_tempBar { width: var(--whrday_03_barlen); }
+#whrday_04_tempBar { width: var(--whrday_04_barlen); }
+#whrday_05_tempBar { width: var(--whrday_05_barlen); }
+#whrday_06_tempBar { width: var(--whrday_06_barlen); }
+#whrday_07_tempBar { width: var(--whrday_07_barlen); }
+#whrday_08_tempBar { width: var(--whrday_08_barlen); }
+
+.whrDay_tempHi {
+  position: relative;
+  display: inline-block;
+  padding-left: 5px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 #sqcalendar {
@@ -291,24 +656,45 @@ background-color: #aaa;
   width: 100%;
 }
 
-#clockdigit_hour {
+#clockdigit_hour_tens {
   position: absolute;
-  left: 25%;
-  top: 15%;
+  left: 18%;
+  top: 18%;
+  text-align: left;
+  transform: translate(-50%, -50%);
+}
+#clockdigit_hour_ones {
+  position: absolute;
+  left: 39%;
+  top: 18%;
   text-align: left;
   transform: translate(-50%, -50%);
 }
 
-#clockdigit_minute {
+#clockdigit_minute_tens {
   position: absolute;
-  left: 48%;
-  top: 47%;
+  left: 39%;
+  top: 48%;
   transform: translate(-50%, -50%);
 }
-#clockdigit_second {
+#clockdigit_minute_ones {
   position: absolute;
-  left: 75%;
-  top: 80%;
+  left: 60%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+}
+
+#clockdigit_second_tens {
+  position: absolute;
+  left: 60%;
+  top: 78%;
+  text-align: right;
+  transform: translate(-50%, -50%);
+}
+#clockdigit_second_ones {
+  position: absolute;
+  left: 81%;
+  top: 78%;
   text-align: right;
   transform: translate(-50%, -50%);
 }

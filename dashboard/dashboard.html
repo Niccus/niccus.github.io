@@ -59,15 +59,15 @@
         </div>
 
         <div id="sqclockdigit" class="square">
-            <div id="clockdigit_hour"></div>
-            <div id="clockdigit_minute"></div>
-            <div id="clockdigit_second"></div>
+            <div id="clockdigit_hour_tens"></div><div id="clockdigit_hour_ones"></div>
+            <div id="clockdigit_minute_tens"></div><div id="clockdigit_minute_ones"></div>
+            <div id="clockdigit_second_tens"></div><div id="clockdigit_second_ones"></div>
         </div>
 
         <div id="sqdoodle" class="square" style="left:0px; top:0px; width:1000px;">
             <canvas id="doodle" style="border:1px solid black; background-color:#fff; width:100%; height:100%;"></canvas>
             <div id="doodle_toolbox" class="popup fullonly">
-                <div class="popup-header noselect">O</div>
+                <div class="popup-header noselect">☰</div>
                 
                 <input type="image" class="doodle_tool" id="doodle_tool_eraser" src="./nonsharables/doodle-eraser.svg" alt="eraser" onclick="doodleTool('eraser')">
                 <input type="image" class="doodle_tool" id="doodle_tool_thin"   src="./nonsharables/doodle-thin.png"   alt="thin"   onclick="doodleTool('thin')"  >
@@ -79,7 +79,7 @@
                 <input type="image" class="doodle_tool" id="doodle_tool_green"  src="./nonsharables/doodle-green.png"  alt="green"  onclick="doodleTool('green')" >
                 <input type="image" class="doodle_tool" id="doodle_tool_blue"   src="./nonsharables/doodle-blue.png"   alt="blue"   onclick="doodleTool('blue')"  >
                 <!-- TODO: Colorpicker -->
-                 <input type="color" value="#4488ff" class="doodle_tool" id="doodle_tool_customcolor" alt="custom color" onclick="doodleTool('customcolor')">
+                 <input type="color" value="#4488ff" class="doodle_tool" id="doodle_tool_customcolor" alt="custom color" oninput="doodleTool('customcolor')">
                 <!-- TODO: dividers -->
                 <input type="image" class="doodle_tool" id="doodle_tool_new"    src="./nonsharables/doodle-new.svg"    alt="new"    onclick="doodleTool('new')"   >
                 <!-- TODO: Confirmation for new-->
@@ -111,9 +111,259 @@
                     </div>
                 </div>
                 <div id="weatherfull_map" class="fullonly">How hard is it to have a weather radar map?</div>
-                <div id="weatherfull_minrain" class="fullonly">1hr precipitation forecast</div>
-                <div id="weatherfull_hrtemp" class="fullonly">Hourly summary chart</div>
-                <div id="weatherfull_daycast" class="fullonly">Daily temperature forecast</div>
+                <div id="weatherfull_minrain" class="fullonly">
+                    <canvas id="weathergraph" style="background-color:#fff; width:100%; height:100%;"></canvas>
+                </div>
+                <div id="weatherfull_hrtemp" class="fullonly">
+                    <div id="hrtemp_01" class="whrTempRow">
+                        <div id="whrtemp_01_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_01_time" class="whrTemp_time">NOW</div>
+                        <div id="whrtemp_01_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_01_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_01_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_01_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_01_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_02" class="whrTempRow">
+                        <div id="whrtemp_02_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_02_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_02_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_02_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_02_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_02_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_02_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_03" class="whrTempRow">
+                        <div id="whrtemp_03_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_03_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_03_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_03_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_03_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_03_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_03_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_04" class="whrTempRow">
+                        <div id="whrtemp_04_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_04_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_04_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_04_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_04_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_04_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_04_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_05" class="whrTempRow">
+                        <div id="whrtemp_05_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_05_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_05_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_05_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_05_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_05_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_05_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_06" class="whrTempRow">
+                        <div id="whrtemp_06_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_06_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_06_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_06_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_06_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_06_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_06_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_07" class="whrTempRow">
+                        <div id="whrtemp_07_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_07_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_07_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_07_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_07_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_07_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_07_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_08" class="whrTempRow">
+                        <div id="whrtemp_08_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_08_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_08_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_08_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_08_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_08_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_08_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_09" class="whrTempRow">
+                        <div id="whrtemp_09_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_09_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_09_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_09_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_09_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_09_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_09_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_10" class="whrTempRow">
+                        <div id="whrtemp_10_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_10_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_10_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_10_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_10_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_10_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_10_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_11" class="whrTempRow">
+                        <div id="whrtemp_11_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_11_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_11_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_11_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_11_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_11_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_11_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                    <div id="hrtemp_12" class="whrTempRow">
+                        <div id="whrtemp_12_indicator" class="whrTemp_indicator"></div>
+                        <div id="whrtemp_12_time" class="whrTemp_time">12 PM</div>
+                        <div id="whrtemp_12_label" class="whrTemp_label">Cloudy</div>
+                        <div id="whrtemp_12_spacer" class="whrTemp_spacer"></div>
+                        <div id="whrtemp_12_temp" class="whrTemp_temp">77°</div>
+                        <div class="whrTemp_winddir_container"><img id="whrtemp_12_winddir" class="whrTemp_winddir" src="./nonsharables/arrow.svg" /></div>
+                        <div id="whrtemp_12_windamt" class="whrTemp_windamt">7</div>
+                    </div>
+                </div>
+                <div id="weatherfull_daycast" class="fullonly">
+                    <div id="daytemp_01" class="whrDayRow">
+                        <div id="whrday_01_label" class="whrDay_label">
+                            <div id="whrday_01_day" class="whrDay_day">TODAY</div>
+                            <div id="whrday_01_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_01_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_01_rainchance_digit" class="whrDay_rain_digit">0%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_01_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_01_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <!-- Does there need to be an invis spacer here?-->
+                        <!-- Does the temp bar need a container? -->
+                        <div id="whrday_01_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_01_tempLo" class="whrDay_tempLo">0°</div>
+                        </div>
+                        <div id="whrday_01_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_01_tempHi" class="whrDay_tempHi">80°</div>
+                    </div>
+                    <div id="daytemp_02" class="whrDayRow">
+                        <div id="whrday_02_label" class="whrDay_label">
+                            <div id="whrday_02_day" class="whrDay_day">WED</div>
+                            <div id="whrday_02_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_02_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_02_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_02_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_02_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_02_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_02_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_02_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_02_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                    <div id="daytemp_03" class="whrDayRow">
+                        <div id="whrday_03_label" class="whrDay_label">
+                            <div id="whrday_03_day" class="whrDay_day">WED</div>
+                            <div id="whrday_03_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_03_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_03_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_03_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_03_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_03_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_03_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_03_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_03_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                    <div id="daytemp_04" class="whrDayRow">
+                        <div id="whrday_04_label" class="whrDay_label">
+                            <div id="whrday_04_day" class="whrDay_day">WED</div>
+                            <div id="whrday_04_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_04_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_04_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_04_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_04_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_04_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_04_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_04_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_04_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                    <div id="daytemp_05" class="whrDayRow">
+                        <div id="whrday_05_label" class="whrDay_label">
+                            <div id="whrday_05_day" class="whrDay_day">WED</div>
+                            <div id="whrday_05_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_05_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_05_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_05_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_05_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_05_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_05_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_05_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_05_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                    <div id="daytemp_06" class="whrDayRow">
+                        <div id="whrday_06_label" class="whrDay_label">
+                            <div id="whrday_06_day" class="whrDay_day">WED</div>
+                            <div id="whrday_06_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_06_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_06_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_06_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_06_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_06_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_06_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_06_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_06_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                    <div id="daytemp_07" class="whrDayRow">
+                        <div id="whrday_07_label" class="whrDay_label">
+                            <div id="whrday_07_day" class="whrDay_day">WED</div>
+                            <div id="whrday_07_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_07_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_07_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_07_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_07_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_07_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_07_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_07_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_07_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                    <div id="daytemp_08" class="whrDayRow">
+                        <div id="whrday_08_label" class="whrDay_label">
+                            <div id="whrday_08_day" class="whrDay_day">WED</div>
+                            <div id="whrday_08_rainchance" class="whrDay_rainChance_container">
+                                <img id="whrday_08_rain_icon" class="whrDay_rain_icon" src="./nonsharables/precipitation.png">
+                                <div id="whrday_08_rainchance_digit" class="whrDay_rain_digit">75%</div>
+                            </div>
+                        </div>
+                        <div id="whrday_08_weather_icon_container" class="whrDay_weather_icon_container">
+                            <img id="whrday_08_weather_icon" class="whrDay_weather_icon" src="./nonsharables/01d.png">
+                        </div>
+                        <div id="whrday_08_tempSpacer" class="whrDay_tempSpacer">
+                            <div id="whrday_08_tempLo" class="whrDay_tempLo">20°</div>
+                        </div>
+                        <div id="whrday_08_tempBar" class="whrDay_tempBar"></div>
+                        <div id="whrday_08_tempHi" class="whrDay_tempHi">100°</div>
+                    </div>
+                </div>
             </div>
         </div>
         <!--
