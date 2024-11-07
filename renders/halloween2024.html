@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        #aligner {
+            background-color: #f0f;
+            z-index: -1; /* Set me positive to see center of canvas */
+
+            position: absolute;
+            width: 10px;
+            height: 10px;
+        }
+
+        #cv {
+            position: absolute;
+        }
+    </style>
+
+    <title>001 - hallow2024</title>
+</head>
+<body>
+    <div id="main">
+        <canvas id="cv"> </canvas>
+        <div id="aligner"></div>
+    </div>
+</body>
+<script src="settings.js"></script>
+<script>
+
+/** @type {HTMLCanvasElement} */
+var cv = document.getElementById("cv");
+/** @type {CanvasRenderingContext2D} */
+var ctx = cv.getContext("2d");
+
+//Setup
+
+cv.style.top = _canvas_top;
+cv.style.left = _canvas_left;
+cv.style.height = _canvas_h;
+cv.style.width = _canvas_w;
+cv.height = _h;
+cv.width  = _w;
+
+var aligner = document.getElementById("aligner");
+aligner.style.top = `${_top + _h*0.5 - 5}px`;
+aligner.style.left = `${_left + _w*0.5 - 5}px`;
+
+ctx.fillStyle="#fff";
+ctx.fillRect(0, 0, cv.width, cv.height);
+
+let scaleFactor = Math.min(_w, _h)*0.5;
+let c_x = _w/scaleFactor/2;
+let c_y = _h/scaleFactor/2;
+ctx.transform(scaleFactor, 0, 0, -scaleFactor, 0, 0);
+ctx.translate(c_x, -c_y);
+
+//Actual drawing
+var bubbles = [];
+var deletes = [];
+
+const r_min = 0.05;
+const r_max = 1;
+const v_min = 0.0015;
+const v_max = 0.010;
+
+const tau = Math.PI * 2;
+function renderloop() {
+    ctx.fillStyle="#003";
+    ctx.fillRect(-c_x, -c_y, c_x*2, c_y*2);
+
+    //Low chance to make a new bubble
+    if(Math.random() < 0.07) {
+        let sizerand = Math.pow(Math.random(), 5.5);
+        bubbles.push({
+            x: lerp(-c_x, c_x, Math.random()),
+            y: -c_y - r_max,
+            dx: 0,
+            dy: lerp(v_min, v_max, Math.random())*(1+sizerand),
+            r: lerp(r_min, r_max, sizerand)
+        });
+    }
+
+    ctx.strokeStyle = "#f78c4c";
+    //ctx.fillStyle = "#f78c4c";
+    ctx.fillStyle = "#9f3c00";
+    //Upkeep on bubbles
+    for(let i in bubbles) {
+        let b = bubbles[i];
+        if(b.y > c_y + r_max) {
+            deletes.push(i);
+            continue;
+        }
+
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, b.r, b.r, 0, 0, tau);
+        ctx.fill();
+
+        b.x += b.dx;
+        b.y += b.dy;
+    }
+
+    //Cleanup
+    while(deletes.length > 0) {
+        let i_d = deletes.pop();
+        bubbles.splice(i_d, 1);
+    }
+
+    setTimeout(renderloop, 25);
+}
+renderloop();
+
+</script>
+</html>
+
+
+

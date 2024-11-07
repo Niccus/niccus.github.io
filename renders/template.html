@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        #aligner {
+            background-color: #f0f;
+            z-index: -1; /* Set me positive to see center of canvas */
+
+            position: absolute;
+            width: 10px;
+            height: 10px;
+        }
+
+        #cv {
+            position: absolute;
+        }
+    </style>
+
+    <title>001 - hallow2024</title>
+</head>
+<body>
+    <div id="main">
+        <canvas id="cv"> </canvas>
+        <div id="aligner"></div>
+    </div>
+</body>
+<script src="settings.js"></script>
+<script>
+
+/** @type {HTMLCanvasElement} */
+var cv = document.getElementById("cv");
+/** @type {CanvasRenderingContext2D} */
+var ctx = cv.getContext("2d");
+
+//Setup
+
+cv.style.top = _canvas_top;
+cv.style.left = _canvas_left;
+cv.style.height = _canvas_h;
+cv.style.width = _canvas_w;
+cv.height = _h;
+cv.width  = _w;
+
+var aligner = document.getElementById("aligner");
+aligner.style.top = `${_top + _h*0.5 - 5}px`;
+aligner.style.left = `${_left + _w*0.5 - 5}px`;
+
+ctx.fillStyle="#fff";
+ctx.fillRect(0, 0, cv.width, cv.height);
+
+let scaleFactor = Math.min(_w, _h)*0.5;
+let c_x = _w/scaleFactor/2;
+let c_y = _h/scaleFactor/2;
+let c_far = Math.max(c_x, c_y);
+let c_near = Math.min(c_x, c_y);
+ctx.transform(scaleFactor, 0, 0, -scaleFactor, 0, 0);
+ctx.translate(c_x, -c_y);
+
+//Actual drawing
+
+ctx.fillStyle="#ff0";
+ctx.fillRect(0, 0, 1, 1);
+ctx.fillStyle="#f00";
+ctx.fillRect(-1, 0, 1, 1);
+ctx.fillStyle="#0f0";
+ctx.fillRect(0, -1, 1, 1);
+ctx.fillStyle="#000";
+ctx.fillRect(-0.5, -0.5, 1, 1);
+
+function renderloop() {
+    //bg
+    ctx.fillStyle="#000";
+    ctx.fillRect(-c_x, -c_y, c_x*2, c_y*2);
+
+    //actual rendering here
+
+    setTimeout(renderloop, 25);
+}
+renderloop();
+
+
+</script>
+</html>

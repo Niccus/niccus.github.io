@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        #aligner {
+            background-color: #f0f;
+            z-index: -1; /* Set me positive to see center of canvas */
+
+            position: absolute;
+            width: 10px;
+            height: 10px;
+        }
+
+        #cv {
+            position: absolute;
+        }
+    </style>
+
+    <title>003 - splatter b</title>
+</head>
+<body>
+    <div id="main">
+        <canvas id="cv"> </canvas>
+        <div id="aligner"></div>
+    </div>
+</body>
+<script src="settings.js"></script>
+<script>
+
+/** @type {HTMLCanvasElement} */
+var cv = document.getElementById("cv");
+/** @type {CanvasRenderingContext2D} */
+var ctx = cv.getContext("2d");
+
+//Setup
+
+cv.style.top = _canvas_top;
+cv.style.left = _canvas_left;
+cv.style.height = _canvas_h;
+cv.style.width = _canvas_w;
+cv.height = _h;
+cv.width  = _w;
+
+var aligner = document.getElementById("aligner");
+aligner.style.top = `${_top + _h*0.5 - 5}px`;
+aligner.style.left = `${_left + _w*0.5 - 5}px`;
+
+ctx.fillStyle="#fff";
+ctx.fillRect(0, 0, cv.width, cv.height);
+
+let scaleFactor = Math.min(_w, _h)*0.5;
+let c_x = _w/scaleFactor/2;
+let c_y = _h/scaleFactor/2;
+let c_far = Math.max(c_x, c_y);
+let c_near = Math.min(c_x, c_y);
+ctx.transform(scaleFactor, 0, 0, -scaleFactor, 0, 0);
+ctx.translate(c_x, -c_y);
+
+//Actual drawing
+const blorbCount = 125*c_far;
+let blorbs = [];
+for(let i = 0; i < blorbCount; ++i) {
+    let radius = lerp(0.3, 1.0, r());
+    let velocity = lerp(0.0001, 0.0002, r());
+    let {x, y} = rand2rdir(velocity);
+
+    blorbs[i] = {
+        px: lerp(-c_far, c_far, r()),
+        py: lerp(-c_far, c_far, r()),
+        dx: x,
+        dy: y,
+        dc: lerp(0.002, 0.012, r()) * (r() > 0.5 ? 1 : -1),
+        r: radius,
+        //color: `oklch(35% 0.5 ${10 + r()*340}deg / 1)`
+        color: r()*360
+    }
+}
+
+
+function renderloop() {
+    //Splatter was nice, but doesn't project well. Another go.
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle="#000";
+    ctx.fillRect(-c_x, -c_y, c_x*2, c_y*2);
+    ctx.globalCompositeOperation = "lighter";
+
+    let grad;
+    for(let i = 0; i < blorbCount; ++i) {
+        let b = blorbs[i];
+        b.px += b.dx;
+        b.py += b.dy;
+        let x = 1.5*c_far*sin(b.px);
+        let y = 1.5*c_far*sin(b.py);
+        let r = b.r;
+        b.color += b.dc;
+        let c = b.color;
+
+        if((abs(x) - r) > c_x || (abs(y) - r) > c_y)
+            { continue; }
+
+        grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+
+        /*
+        grad.addColorStop(0, "black");
+        grad.addColorStop(1, c);
+        */
+        grad.addColorStop(0, `hsl(${c} 55% 60% / 1)`);
+        grad.addColorStop(0.22, `hsl(${c} 95% 45% / 0.6)`);
+        grad.addColorStop(0.25, `hsl(${c} 95% 25% / 0.5)`);
+        grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        // Set the fill style and draw a rectangle
+        ctx.fillStyle = grad;
+        //ctx.ellipse(x, y, r, r, 0, 0, tau);
+        //ctx.fill();
+        ctx.fillRect(x-r, y-r, r*2, r*2);
+        delete grad;
+    }
+
+    setTimeout(renderloop, 50);
+}
+renderloop();
+
+
+</script>
+</html>
