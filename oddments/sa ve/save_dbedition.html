@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #main {
+            font-family: Arial, Helvetica, sans-serif;
+            display: inline-block;
+        }
+
+        #sa {
+            font-size: 180px;
+            display: inline-block;
+            /* border-right: 1px dotted gray; */
+        }
+        #ve {
+            font-size: 180px;
+            position: absolute;
+            top: 8px;
+            left: 394px;
+        }
+        #distance {
+            width: 1000px;
+        }
+    </style>
+
+    <title>SA but how far? VE</title>
+</head>
+<body>
+    <div id="main">
+        <div id="sa">SA</div><div id="ve">VE</div>
+        <br>
+        <input type="range" id="distance" name="distance" min="0" max="200" step="0.1" value="200" width="1000px" oninput="input()">
+        <label for="distance">Spacing</label>
+    </div>
+</body>
+<script src="form_db.js"></script>
+</html>
+
+
+
