@@ -2,13 +2,13 @@
 // Assuming 1920x1080 window, parameters to align to the window and not have the wall around the window get too bright.
 // todo:? tilt parameters/rendering because the projector is waaaay at an angle
 
-const _top = 155;
-const _left = 100;
+const _top = 195;
+const _left = 140;
 const _canvas_top = `${_top.toString()}px`;
 const _canvas_left = `${_left.toString()}px`;
 
-const _h = 720;
-const _w = 1700;
+const _h = 640;
+const _w = 1660;
 const _canvas_h = `${_h.toString()}px`;
 const _canvas_w = `${_w.toString()}px`;
 

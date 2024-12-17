@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        #aligner {
+            background-color: #f0f;
+            z-index: -1; /* Set me positive to see center of canvas */
+
+            position: absolute;
+            width: 10px;
+            height: 10px;
+        }
+
+        #cv {
+            position: absolute;
+        }
+    </style>
+
+    <title>004 - xmas2024</title>
+</head>
+<body>
+    <div id="main">
+        <canvas id="cv"> </canvas>
+        <div id="aligner"></div>
+    </div>
+</body>
+<script src="settings.js"></script>
+<script>
+
+/** @type {HTMLCanvasElement} */
+var cv = document.getElementById("cv");
+/** @type {CanvasRenderingContext2D} */
+var ctx = cv.getContext("2d");
+
+//Setup
+
+cv.style.top = _canvas_top;
+cv.style.left = _canvas_left;
+cv.style.height = _canvas_h;
+cv.style.width = _canvas_w;
+cv.height = _h;
+cv.width  = _w;
+
+var aligner = document.getElementById("aligner");
+aligner.style.top = `${_top + _h*0.5 - 5}px`;
+aligner.style.left = `${_left + _w*0.5 - 5}px`;
+
+ctx.fillStyle="#fff";
+ctx.fillRect(0, 0, cv.width, cv.height);
+
+let scaleFactor = Math.min(_w, _h)*0.5;
+let c_x = _w/scaleFactor/2;
+let c_y = _h/scaleFactor/2;
+ctx.transform(scaleFactor, 0, 0, -scaleFactor, 0, 0);
+ctx.translate(c_x, -c_y);
+
+//Actual drawing
+var bubbles = [];
+var deletes = [];
+
+const r_min = 0.6;
+const r_max = 1.5;
+const v_min = 0.004;
+const v_max = 0.005;
+
+const threshold_base = 0.000000000000005;
+const threshold_inc = 0.000003;
+let threshold = threshold_base;
+
+const minilights_radius = 0.6;
+const minilights_palette = ["#ff0000", "#0000bb", "#f0f000", "#00ff00"]; //Red, blue, yellow, green
+const minilights_palcount = minilights_palette.length;
+let minilights_minioffset = 0;
+const minilights_framesperblink = 120;
+let minilights_offset = 0;
+let minilights_coords = [];
+let minilights_numlong = 9;
+let minilights_numshort = 4;
+for(let i = 0; i < minilights_numlong; ++i) {
+    minilights_coords.push({x:-c_x + i*(2*c_x/minilights_numlong), y: c_y});
+}
+for(let i = 0; i < minilights_numshort; ++i) {
+    minilights_coords.push({x:c_x, y: c_y - i*(2*c_y/minilights_numshort)});
+}
+for(let i = 0; i < minilights_numlong; ++i) {
+    minilights_coords.push({x:c_x - i*(2*c_x/minilights_numlong), y: -c_y});
+}
+for(let i = 0; i < minilights_numshort; ++i) {
+    minilights_coords.push({x:-c_x, y: -c_y + i*(2*c_y/minilights_numshort)});
+}
+
+function renderloop() {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle="#000412";
+    ctx.fillRect(-c_x, -c_y, c_x*2, c_y*2);
+
+    //Low chance to make a new bubble
+    //if(r() < 0.004) {
+    if(r() < threshold) {
+        threshold = threshold_base;
+        let sizerand = Math.pow(r(), 5.5);
+        bubbles.push({
+            x: lerp(-c_x, c_x, r()),
+            y: c_y + r_max,
+            dx: 0,
+            dy: lerp(v_min, v_max, r())*(1+sizerand),
+            r: lerp(r_min, r_max, sizerand),
+            th: r()*tau,
+        });
+    } else {
+        //exponential spiciness??
+        //threshold += threshold_inc; 
+        threshold *= 1.1;
+    }
+
+    ctx.strokeStyle = "#ffffff";
+    //ctx.fillStyle = "#f78c4c";
+    ctx.fillStyle = "#ffffff";
+    //Upkeep on bubbles
+    for(let i in bubbles) {
+        let b = bubbles[i];
+        if(b.y < -c_y - r_max) {
+            deletes.push(i);
+            continue;
+        }
+
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, b.r*0.1, b.r, b.th, 0, tau);
+        ctx.ellipse(b.x, b.y, b.r*0.1, b.r, b.th + tau/3, 0, tau);
+        ctx.ellipse(b.x, b.y, b.r*0.1, b.r, b.th + tau*2/3, 0, tau);
+        ctx.fill();
+
+        b.x += b.dx;
+        b.y -= b.dy;
+    }
+
+    //Cleanup
+    while(deletes.length > 0) {
+        let i_d = deletes.pop();
+        bubbles.splice(i_d, 1);
+    }
+
+    //Overlay string lights
+    ctx.globalCompositeOperation = "lighter";
+    minilights_minioffset += 1;
+    if(minilights_minioffset > minilights_framesperblink) {
+        minilights_minioffset = 0;
+        minilights_offset = (minilights_offset + 1)%minilights_palcount;
+    }
+    for(let i = 0; i < minilights_coords.length; ++i) {
+        let curColor = minilights_palette[(i + minilights_offset) % minilights_palcount];
+        let curX = minilights_coords[i].x;
+        let curY = minilights_coords[i].y
+
+        grad = ctx.createRadialGradient(curX, curY, 0, curX, curY, minilights_radius);
+
+        grad.addColorStop(0, curColor);
+        grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+        ctx.fillStyle = grad;
+
+        //ctx.fillStyle = minilights_palette[(i + minilights_offset) % minilights_palcount];
+        ctx.beginPath();
+        ctx.ellipse(curX, curY, minilights_radius, minilights_radius, 0, 0, tau);
+        ctx.fill();
+    }
+
+    setTimeout(renderloop, 25);
+}
+renderloop();
+
+</script>
+</html>
+
+
+

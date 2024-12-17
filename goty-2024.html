@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@500&family=Lato&display=swap" rel="stylesheet">
+    <title>nic's occupied with random side projects and backlogs but i guess it's time for the games of tyool 2024</title>
+    <meta property="og:title" content="nic's occupied with random side projects and backlogs but i guess it's time for the games of tyool 2024">
+    <meta property="og:description" content="(we're not sorting anything this year)">
+    <style>
+        :root {
+            /*--imgCaptions: hidden;*/
+            --imgCaptions: none;
+        }
+
+        * {
+            /*top: 0px;*/
+            left: 0px;
+            padding-top: 1%;
+            padding-left: 1%;
+            padding-bottom: 1%;
+            position: static;
+            font-family: 'Lato', sans-serif;
+        }
+
+        a:link {
+            color: #66f;
+        }
+
+        p {
+            padding: 0.25em;
+            margin: 0px;
+        }
+
+        img {
+            max-width: 900px;
+        }
+
+        em, s, a { /*I have definitely made a mistake*/
+            padding: 0;
+        }
+
+        #mulligan {
+            padding: 5px 5px;
+            margin: 15px 15px;
+        }
+
+        .cookie_disclaimer {
+            position: fixed;
+            z-index: 999;
+            background-color: #000;
+            color: #fff;
+            font-size: 30px;
+            left: 50px;
+            padding: 20px;
+            border: 2px solid red;
+        }
+
+        .cookie_button {
+            font-size: 20px;
+            padding: 5px;
+        }
+
+        #cookie_confirm {
+            background-color: #cfc;
+        }
+
+        .list {
+            position: relative;
+            overflow: hidden;
+            /*background: linear-gradient(120deg, transparent 0%, #ffff 100%);*/
+
+            &::before {
+                background-image: url("/images/studded.png");
+                background-size: 50px 50px;
+                
+                content: "";
+                position: absolute;
+                width: 500%;
+                height: 500%;
+                top: -250%;
+                left: -250%;
+                z-index: 0;
+                opacity: 0.7;
+            }
+        }
+
+        #prelude {
+            margin-bottom: 100px;
+            width: 75%;
+            background-color: rgba(0,0,0, 0.5);
+        }
+
+        .desc {
+            margin-top: 200px;
+            padding-bottom: 0.2em;
+            border-left: 15px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .options_samples {
+            display: inline-block;
+            width: 400px;
+        }
+
+        .options_selected {
+            background-color: #000;
+            border: 2px solid white;
+        }
+
+        #mp_sp_sp p {
+            background-color: #100;
+            text-shadow: #600 -1px -1px;
+        }
+
+        .listImgCaption {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            position: sticky;
+        }
+
+        .list {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+        }
+
+        .list .listEntry {
+            display: flex;
+            background: linear-gradient(135deg, transparent 0%, transparent 50%, #ffffff28 100%);
+        }
+
+        .list .listSidebar {
+            flex: 1;
+            width: 330px;
+        }
+
+        .list .listImgCtr {
+            width: 320px;
+        }
+
+        .list .listImg {
+            height: 300px;
+            width: 300px;
+            position: sticky;
+        }
+
+        .list .listImgCaption {
+            /*visibility: var(--imgCaptions, hidden);*/
+            display: var(--imgCaptions, none);
+        }
+
+        .list .listContents {
+            flex: 13;
+        }
+
+        .list .listEntry {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 10px groove rgba(255,255,255, 0.1);
+            z-index: 2;
+            position:relative;
+
+            padding-top: 0.5em;
+            padding-bottom: 1em;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .list .listTitle {
+            position: relative;
+            z-index: 3;
+            background-color: #111;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .list .listGenre {
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+            left: 3em;
+            z-index: 2;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #111;
+            border-top: 5px dashed;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            width: fit-content;
+            padding-top: 5px;
+            padding-bottom: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .listGenre:hover {
+            z-index: 4;
+        }
+
+        .list .listDetail {
+            background-color: #050505;
+            position: relative;
+            width: 550px;
+            font-size:18px;
+            z-index: 1;
+            padding-bottom: 10px;
+            padding-right: 10px;
+        }
+
+        .listDetail:hover {
+            z-index: 4;
+        }
+
+        .tooPopular {
+            background-color: rgba(255, 0, 0, 0.05);
+        }
+
+        .tooPopular .listGenre {
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .small {
+            background-color: rgba(0, 255, 48, 0.05);
+        }
+
+        .small .listGenre {
+            border-color: rgba(0, 255, 48, 0.5);
+        }
+
+        .main {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .main .listGenre {
+            border-color: rgba(40, 6, 255, 0.5);
+        }
+
+        .closeBacklog {
+            background-color: rgba(192, 64, 0, 0.05);
+        }
+
+        .closeBacklog .listGenre {
+            border-color: rgba(192, 64, 0, 0.5);
+        }
+
+        .scrapbookEntry {
+            display: flex;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .scrapbookImg {
+            flex: 1;
+            width: 720px;
+        }
+
+        .scrapbookRight {
+            flex: 10;
+        }
+
+        .scrapbookTitle {
+            position: relative;
+            z-index: 3;
+            background-color: #111;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .scrapbookDesc {
+            background-color: #050505;
+            position: relative;
+            width: 75%;
+            font-size:18px;
+            z-index: 1;
+            padding-bottom: 10px;
+            padding-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cookie_disclaimer" class="cookie_disclaimer" style="visibility:visible;">
+        This website uses cookies to preserve the uniqueness of your browsing experience.<br>
+        <button class="cookie_button" id="cookie_confirm" onclick="cookiebutton(true)">Allow cookies</button>
+        <button class="cookie_button" id="cookie_unfirm" onclick="cookiebutton(false)">No thanks. Enable permadeath</button>
+    </div>
+    <div id="main" style="width: 99%; position: absolute; top: 0px; font-size: 25px; color: #eee; background-color: #222;">
+        <div id="topseparator"></div>
+        <button id="mulligan" onclick="mulligan()" type="button">Click here to mulligan</button>
+        <br>
+        <div id="prelude">
+            <p>Like the previous year, 2024 started with a lot of gaming, but eventually it was overcome with surprisingly large side projects. I got to learn a lot about weather data and the scattershot availability of weather icons. Oh well, there were plenty of good games along the way.</p>
+            <p>For this year, nothing is ordered, but everything is measured. On one axis, between mechanical and biological. On the other, how well things are going for the characters. The punchline comes later.</p>
+            <img src="./images/goty/2024/template.png" alt="An example empty chart. It's a two-dimensional scatter plot, akin to a political alignment chart."/>
+            <p>I also thought about adding a puzzle-o-meter rating, but I... haven't... completed... many puzzle games this year.</p>
+            <p>Games without commentary are generally games that have had plenty of public exposure, and I don't have enough of a Take to elaborate on.</p>
+            <p>As usual, even if I spend time complaining about a game, any game you see on this list is recommended. If you'd like to use this list as a gift guide, the safest purchases are probably the ones that <em>don't</em> have commentary, public traction means a lot.</p>
+            <p>Poke me on discord or something if your interest is piqued and you want some clarification on the various comments here.</p>
+            <p>-nic</p>
+        </div>
+
+        <div id="guide" class="guide main">
+
+        </div>
+
+        <div id="optionsmain" class="options main">
+            But first! a quick bit of options. How do you want your graph notes? <br> <br>
+            <div class="options_samples" id="container_opt_hover"><div><img src="./images/goty/2024/placeholder.png" alt="Placeholder scatterplot. It's a mess." title="It's me! Extra text that appears by hovering over the image!" /></div> <input type="radio" id="opt_hover" name="options_radio" value="hover" checked onchange="optionsText('hover')"> <label for="opt_hover">Alt text (hover)</label><br></div>
+            <div class="options_samples" id="container_opt_text"><div><img src="./images/goty/2024/placeholder.png" alt="The same placeholder scatterplot. It's still a mess." title="It's me! Extra text that appears by hovering over the image!" /><div class="listImgCaption">It's me! Extra text that appears by hovering over the image!</div></div><input type="radio" id="opt_text" name="options_radio" value="text" onchange="optionsText('text')"> <label for="opt_text">Text, underneath</label><br></div>
+        </div>
+
+        <div id="descmain" class="desc main">
+            <p>Here we go! Games finally measured. Numbers without fail. The ground truth. The incomparable, compared.</p>
+        </div>
+        <div id="listmain" class="list main">
+        </div>
+
+        <div id="scrapbookmain" class="scrapbook main">
+            <p>And as a bonus, a selection of screenshots...</p>
+            <div id="scrapbooklist">
+            </div>
+        </div>
+        <br><br><br><br>
+        <div id="extrajail" class="list main">
+            <span style="color: #fff; z-index: 10;">Horny jail</span>
+            <div class="listEntry">
+                <div class="listContents">
+                    <div class="listTitle">ASTLIBRA Revision</div>
+                    <div class="listGenre">Actraiser/Valley-of-the-Wind like? Sort of? It's closest to a SotN-like I guess.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="midseparator" style="margin-top: 30px; margin-bottom: 30px;"></div>
+        <div id="postlude">
+            <p>That's all! Thanks for reading. I have quite a few mostly complete games to finish, so with any luck 2025 will have a large list, but I might start bigger projects...</p>
+            <p>As usual, ask me anything at your leisure.</p>
+        </div>
+        <div id="botseparator" style="margin-top: 250px; margin-bottom: 250px;"></div>
+        <div style="font-size: 8px;">so much left to see.</div>
+    </div>
+    <script>
+        const listNames = {
+            "main": document.getElementById('listmain') //Normally there's more, but it's a one-list year
+        };
+        var scrapListElem = document.getElementById('scrapbooklist');
+
+        var opt_hover = document.getElementById("opt_hover");
+        var opt_text = document.getElementById("opt_text");
+        var opt_hover_ctr = document.getElementById("container_opt_hover");
+        var opt_text_ctr = document.getElementById("container_opt_text");
+
+        var cookie_allowed = false;
+        var seed;
+        var option_img = "visible";
+        const cookie_overlay = document.getElementById("cookie_disclaimer");
+
+        //
+        function cookiebutton(allow) {
+            cookie_allowed = allow;
+            cookie_overlay.style.setProperty("visibility", "hidden");
+            setCookie('ord2024_allowed', true);
+            if(cookie_allowed && seed) {
+                setCookie('ord2024', btoa(seed));
+                setCookie('ord2024_img', option_img);
+            }
+        }
+
+        //Functions straight up copied from w3school
+        function setCookie(cname, cvalue) {
+            if(cookie_allowed) {
+                document.cookie = cname + "=" + cvalue + ";path=/";
+            }
+        }
+
+        //
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        //
+        function mulligan() {
+            setCookie('ord2024', "");
+            location.reload();
+        }
+
+        //Cheaty function to invoke within text. Very illegal.
+        function unhide(id) {
+            let obj = document.getElementById(id);
+            if(obj) {
+                obj.style.visibility = "visible";
+            }
+        }
+
+        //http://davidbau.com/archives/2010/01/30/random_seeds_coded_hints_and_quintillions.html
+        Math.oldrandom = Math.random;
+        !function(a,b,c,d,e,f,g,h,i){function j(a){var b,c=a.length,e=this,f=0,g=e.i=e.j=0,h=e.S=[];for(c||(a=[c++]);d>f;)h[f]=f++;for(f=0;d>f;f++)h[f]=h[g=s&g+a[f%c]+(b=h[f])],h[g]=b;(e.g=function(a){for(var b,c=0,f=e.i,g=e.j,h=e.S;a--;)b=h[f=s&f+1],c=c*d+h[s&(h[f]=h[g=s&g+b])+(h[g]=b)];return e.i=f,e.j=g,c})(d)}function k(a,b){var c,d=[],e=typeof a;if(b&&"object"==e)for(c in a)try{d.push(k(a[c],b-1))}catch(f){}return d.length?d:"string"==e?a:a+"\0"}function l(a,b){for(var c,d=a+"",e=0;e<d.length;)b[s&e]=s&(c^=19*b[s&e])+d.charCodeAt(e++);return n(b)}function m(c){try{return o?n(o.randomBytes(d)):(a.crypto.getRandomValues(c=new Uint8Array(d)),n(c))}catch(e){return[+new Date,a,(c=a.navigator)&&c.plugins,a.screen,n(b)]}}function n(a){return String.fromCharCode.apply(0,a)}var o,p=c.pow(d,e),q=c.pow(2,f),r=2*q,s=d-1,t=c["seed"+i]=function(a,f,g){var h=[];f=1==f?{entropy:!0}:f||{};var o=l(k(f.entropy?[a,n(b)]:null==a?m():a,3),h),s=new j(h);return l(n(s.S),b),(f.pass||g||function(a,b,d){return d?(c[i]=a,b):a})(function(){for(var a=s.g(e),b=p,c=0;q>a;)a=(a+c)*d,b*=d,c=s.g(1);for(;a>=r;)a/=2,b/=2,c>>>=1;return(a+c)/b},o,"global"in f?f.global:this==c)};if(l(c[i](),b),g&&g.exports){g.exports=t;try{o=require("crypto")}catch(u){}}else h&&h.amd&&h(function(){return t})}(this,[],Math,256,6,52,"object"==typeof module&&module,"function"==typeof define&&define,"random");
+        //string Math.seedrandom(string _);
+        //float-[0,1) Math.random();
+        
+        //Returning this year, semi-manually-formatted csv exports instead of json
+        var listStrings = {
+            main: "arbid|softid|name|genre|weight|variance|filename|url|graphdesc|graphtext|detail;0|1|Venineth|Momentum Traveler|10000|500|venineth|https://store.steampowered.com/app/976500/Venineth/|Strictly mechanical, somewhat positive.|I don’t actually know if the ball is having a good time, but I assume deaths aren’t canon, so it has to be better than what the player is going through.|<p>Like Exo One from my list last year, a ball-em-up in alien environments, great for sightseeing. Unlike Exo One, Venineth does feel that it needs to continue in the lineage of marble-based video games, and that means it asks for quite a bit of dexterity from you. It's good, but it also gets in its own way -- its physics is accurate sometimes to its detriment (<em>especially</em> if you venture out to where the geometry looks tasty), it's got great use of visual effects sometimes to its detriment of making it not possible to see where you're going, and it's got great levelmaking engineering that can make it less straightforward to figure out where you're going -- more clever than smart. It's a different kind of challenge if you're looking for a marble game, and maybe not the right kind of game if you want to vibe in alien landscapes.</p>;1|2|Jets ‘n’ Guns 2|Shoot ‘em RPG|10000|500|jng2|https://store.steampowered.com/app/830820/JetsnGuns_2/|Leans biological, very positive.|The universe is in trouble and you wouldn’t have it any other way.|<p>I'm always desperate to spread the gospel of Tyrian, so here's a close relative. Relatively casual shmups with upgradable bits are still rare despite the rampant proliferation of RPG mechanics, but here's a sequel at last. It's still got bits of early 00s shareware jank in the air, but there's charm in that nowadays.</p>;2|3|Sunshine Heavy Industries|Spaceship Architecture (sort of)|10000|500|sunshinehi|https://store.steampowered.com/app/1542810/Sunshine_Heavy_Industries/|Mostly mechanical? Fairly positive.|Technically bad things are happening to the crew, but it’s not like you can’t build yourself out of it.|<p>Before Cobalt Core, there was this oblique little game. It's a spaceship design game, but given the level of tightness (well, looseness) of the requirements you have, it's something like a video game analogue of a coloring book. Sort of scratches a similar set of itches to SimTower, but it's coming from an odd angle.</p>;3|4|Cobalt Core|Card-based Roguelike|10000|500|ccore|https://store.steampowered.com/app/2179850/Cobalt_Core/|Leans biological, very negative.|Well, you’ll get there next time.|;4|5|Vectronom|Platformer-adjacent Rhythm|10000|500|vectronom|https://store.steampowered.com/app/925460/Vectronom/|Strictly mechanical, unclear wellness.|Maybe too abstract for this measurement system.|<p>Let's call it the other half of the fission of Rhythmove Dungeon, the other half being A Dance of Fire and Ice. Maybe the closer analogue is Starcraft's custom Bound maps? The game doesn't start out strict (you don't <em>have</em> to move to the beat, but it does get there. A pseudoplatformer to vibe to.</p>;5|6|InnerSpace|Space Archaeology|10000|500|innerspace|https://store.steampowered.com/app/347000/InnerSpace/|Mostly mechanical, things are bad.|Naturally, things are coming to an end and you hope to see what’s next.|<p>Some years ago, a close encounter... A year and a half before Outer Wilds released (but still long after its Alpha version), this came out. It took many decisions that in retrospect would be opposite of Outer Wilds, and yet conceptually it's a similar game? It's a more standard collectathon in comparison, but it's still very far from the gaming baseline. It's the game you'd expect must exist before Outer Wilds could be made, and yet the timing doesn't line up. There's plenty of archaeology out there.</p>;6|7|20 Small Mazes|Puzzle/Desk Arranger|10000|500|20sm|https://store.steampowered.com/app/2570630/20_Small_Mazes/|Strictly mechanical, good…?|I have to assume anyone willing to jump into a pile of mazes is having a good time.|<p>...It's 20 small puzzles for free, hop in.</p>;7|8|Balatro|Solitaire Roguelike|10000|500|balatro|https://store.steampowered.com/app/2379780/Balatro/|Mostly biological, positive until extremely not.|The mechanical can be all-consuming, hungry, demanding. But greed? Greed is biological. When it all crashes down, it’s on you.|;8|9|The Elephant Collection|Collection (largely platformer)|10000|500|elephantcol|https://armor-games-studios.itch.io/the-elephant-collection|Mostly biological. It’s complicated otherwise.|The elephant isn’t necessarily having a bad time, but there sure are a lot of dead elephants.|<p>Look, certain kinds of flash games don't age gracefully... For the price of free, dropping into an ecosystem of computers of often sketchy specs, you get platformers running at low framerates with sketchy movement and hit detection. But it's also interesting to see it replicated so faithfully this far in the future. Say goodbye together.</p>;9|10|4D Golf|13-dof minigolf|10000|500|4dgolf|https://store.steampowered.com/app/2147950/4D_Golf/|This is a sketch of a 4-dimensional axis chart mess.|...Maybe this wasn’t the best idea.|<p>It's as disorienting as you'd hope/expect. A bit more than advertised? Largest possible minigolf, in a sense.</p>;10|11|Moonlight Pulse|Team-based Metroidvania|10000|500|moonlightpulse|https://seafloorgames.itch.io/moonlight-pulse|Strictly biological, very negative.|Life and death in the pokeverse. The release valve Palworld couldn't hit.|<p>A brisk (~6hr) metroidvania with funny animals (disney definition) taking place on/in a world-turtle. Like you might expect after <em>Vision: Soft Reset</em> before it, it's got a few interesting wrinkles, maybe most comparable to Portrait of Ruin. A little less feature-rich for the genre compared to the other big hitters this year (no proper loot tracking, no proper fast travel) but it's not too long and the vibes are good. Only the second game out there taking place in a turtle that I'm aware of. A weird kind of kind body horror in that respect? I'd love to talk more but it'd be spoilers, like a lot. Look at the amount of hidden text below (no really, scroll down and then back here), this is my recommendation for you to buy the game instead of running into what will be fairly large <a href=\"javascript:unhide('mp_sp')\">spoilers... >>></a></p><p id=\"mp_sp\" style=\"visibility: hidden\">I don't know if I... agree? with what the game does with the final boss -- and it makes it sort of difficult to just recommend the game -- but it sort of hits. It sort of really hits. And yet it shouldn't? The art's a little wobbly and in the grand scheme of things, what's happening is sort of silly, so it shouldn't land, but i hope it does for you. Maybe Undertale is an apt comparison here, although the scale is a lot smaller. <em>Palworld</em> is oddly the other point of contrast I'd like to draw -- people do want some quote unquote maturity with their funny animals, but when it's crassness-forward usually there's something lost. It's a lot easier to stick the landing when you work with the tone and safety of the genre and then <a href=\"javascript:unhide('mp_sp_sp')\">rip it out</a>. Anyways: no, really, there are severe spoilers coming up.</p><span id=\"mp_sp_sp\" style=\"visibility: hidden\"> <p>Rip it out. The final boss has a pretty wide set of moves, and one of them <em>grabs a party member, cuts the game to silhouette, and bites off your current character's head, all bloody</em>. Fucking dead. Gone from the UI. Gone from the menus. Gone from the ending. Gone. Next team member tags in. Keep going, maybe lose even more people.</p><p>It feels like classic media-you've-heard-of-that-traumatizes-kids, maybe something that would have been a horror urban legend about some game. There's a silliness to it because of that--this shouldn't land, the writing in the game couldn't stand out in a year with this much competition, this should be like the fifth or so mention of hyperrealistic blood that takes you out of some creepypasta. There's not even <em>actually</em> any permanence to it--It's the final boss, once the fight's over you immediately go into a brief epilogue with the ramifications of, god forbid, however many friends you lost in that final point of the game, and the last save point is still right before the boss.</p><p>Before this point you can't lose anyone. If your active character dies, you do get a game over, but there's also a sort of lives system. The first few times per checkpoint your active character would take lethal damage, the next teammate would automatically tag in and take the damage instead. You'll see this a lot, you don't really have that much health relative to how much damage everything does. Because the one final boss move has two parts with a small initial hit, if you're particularly un/lucky, someone will tag in to save someone, really save someone, and immediately die.</p><p>Maybe that's what allows this to really land. Subconsciously convince the player that team really does care about each other, so there can be stakes, so there can be death. In the area before the final area (hey, you've been on/in a living animal so far!), you are stranded on the corpse of another world-animal and eventually find your way back. It's plenty clear beforehand that the stakes are life and death. The instakill move isn't at all difficult to see coming (at least after you get to experience how badly your first attempt goes), so it's not actually a <em>challenge</em> to get the ending with your entire team surviving -- but after a botched run it does its job of setting the stakes. You really are relieved to be finished with the fight.</p><p>Stuck in my craw forever. Good work. Probably too late for you, though, you've read this spoiler. <a href=\"https://seafloorgames.itch.io/moonlight-pulse\" target=\"_blank\">Maybe give it a stab anyways?</a></p></span>;11|12|The Talos Principle II|First-person Puzzler|10000|500|talos2|https://store.steampowered.com/app/835960/The_Talos_Principle_2/|Technically mechanical but also somewhat biological? Overall complicated.|Look, the philosophy half of this game directly questions both of these axes. I can’t help you here.|;12|13|1000xRESIST|History Traveler|10000|500|1000xresist|https://store.steampowered.com/app/1675830/1000xRESIST/|Almost entirely biological, vibes are rancid.|It’s the hardest work to take a vicious loop and turn it into a path forward.|<p>I don’t have takes to add here, but as an immigrant whose sibling group have unintentionally conspired to prune the family tree, this does cut deep.</p>;13|14|Times and Galaxy|Journalishtic Adventure|10000|500|timesngalaxy|https://fellowtraveller.itch.io/times-galaxy|Strictly mechanical? Vibes to be reported later.|Most of your peers are much less mechanical. It’s a good time to observe, usually.|<p>A runaround that's halfway between a story of journalism and the cutting room floor footage/shitpost release valve (both complimentary) of the Mass Effects. <em>Not</em> about robots in journalism despite being about a robot entering journalism, the timeline didn't line up for that, sometimes the future comes early and tackles you like that. Ends the only way journalism ends...</p>;14|15|Immortality|Reel Adventure|10000|500|immortality|https://store.steampowered.com/app/1350200/IMMORTALITY/|Mostly biological, fairly negative.|Although arguably, someone’s having a pretty good time.|;15|16|Exographer|Particular Metroidvania|10000|500|exographer|https://store.steampowered.com/app/2834320/Exographer/|Ambiguous protagonist, things are very negative.|It’s not clear what the protagonist is, but someone definitely almost annihilated everything.|<p>I'm placing this here not necessarily as a wholehearted recommendation, but because I have <em>no</em> clue how this game lands for people who aren't already familiar with surface-level particle physics. It maybe has the opposite problem of The Moonstone Equation in hewing dead close to actual physics (and names of physicists), although at least that doesn't factor in platformer physics. Surprisingly demanding as a 2D platformer??</p><p>More seriously, it's weird for the game to also sort of recount the history of the various discoveries, to the point of having characters whose names are anagrams of real people, but then also have interactions between these characters that don't necessarily correspond to anything in real life? Something about it feels fraught, or maybe just under-processed. This is a strange game to have to treat as historical.</p>;16|17|The Gnorp Apologue|Active Incremental|10000|500|gnorp|https://store.steampowered.com/app/1473350/the_Gnorp_Apologue/|Largely biological, things are good.|The joy of accumulation (it might hurt a bit)|<p>So in incremental/idler land, there has been an undercurrent of games that are more tests in your ability to identify and execute synergies, and a little less about the reset-and-improve loop and how expansive or recursive those loops can be. Gnorp has perks that have <em>severe</em> tradeoffs/downsides, a surprising breadth of strategies for the tight set of options available, and a definite end point -- although there's still some idling to be done. It's deep in touch with the equivalent of certain RTS games' supply limits.</p>;17|18|Islands of Insight|Puzzle/Hidden Objects|10000|500|islandsoi|https://store.steampowered.com/app/2071500/Islands_of_Insight/|Arguably biological, neutral with spread.|In stasis, why not just… look around.|<p>(Play me for important context)</p><audio id='ioiaudio' controls loop><source src='./images/goty/2024/insight_faded.wav' id='ioiaudiosrc' /></audio><p>(I did not have the chance to experience what the game was like as an MMO) This is... a giant bucket of puzzles. There are even some nice chained progressions for learning certain types of sub-puzzles, and I think this works fine as something to occupy the Squarelogic/daily sudoku/etc, etc niche in your day, but... it's got all of regular logic puzzles, dexterity puzzles, and hidden object puzzles in one, and in a lot of subtypes, your sort-of-skill-tree push you towards speed solving. It's a fun collection but it's very heavily peppered with anxiety.</p><p>The example for this that stuck the most to my head is an interaction between two things -- there are near-invisible hidden cubes, whose main tell is a chime you can hear when you're close. I beelined to a skill that extends the range of this chime. This was a bad idea, just because you can hear it doesn't mean you have a much better chance of finding it. And <em>then</em>, if you try to stick to a difficult puzzle with a cube in vicinity, you get to hear the chiming loop of a cube you can't find while trying to solve something that takes concentration. Anxiety.</p>;18|19|Terra Memoria|Turn-based RPG|10000|500|terramemoria|https://store.steampowered.com/app/1912750/Terra_Memoria/|Largement biologique, ce n’est pas plus mal.|Warning: This game is preposterously French.|<p>It's always... interesting to see a game company jump genres (let alone from rhythm games), but Old School Musical was just one game, and the undercurrent of the game already made it clear that the company is all about the <em title=\"Translator's note: Role-Playing Video Game\">jeu vidéo de rôle</em>. The result is something pretty fun and big on ideas but with not quite enough sauce/tendons to be something big. Part of it is having good ideas that... sort of generate even more development homework for itself, so you can tell the game is tight but could use more budget?</p><p>The game gets rid of hp/mp upkeep between fights, but that means having to figure out how to get the player to stop and rest regularly, and I think it found a neat out for it. The game confronts the often-seen elemental attacks system and abstracts a <em>lot</em> of it out so you can have an engaging weakness system that's not rampant memorization or guide-seeking. The combat timeline system is <em>great</em>. But after all the give and take of combat streamlining, it does feel like you're rubbing against the ceiling of combat complexity for a large chunk towards the end of the game, that there's not really going to be more new things to think about in combat.</p><p>I think... I also needed a lot more familiarity with French history/politics to really evaluate the writing. The tone is lighter and more irreverent than expected, but without necessarily discarding its own lore. It's probably fine? But you always worry when a plot talks big ideas but something doesn't feel fully translated.</p>;19|20|UFO 50|Collection (largely platformer)|10000|500|ufo50|https://store.steampowered.com/app/1147860/UFO_50/|It’s a mess of 50 or so dots, I’m so sorry.|It took a lot of effort, but with this much information, we have finally created a completely useless chart! ...Also I haven’t actually gotten close to “completing” the game, but I think the chart joke here will work better than whatever pops up next year, at least for this game.|;20|21|Pushcat|Boulder Dasher|10000|500|pushcat|https://store.steampowered.com/app/308440/Pushcat/|Slightly biological, pretty okay?|I guess canonically you’re a greedy cat who never dies? It’s going to take several tries from your point of view.|<p>I’m starting to make it a point to, once in a while, dig to the back end of my Steam wishlist and check for games that haven’t had discounts in a long, long time (which means they will never show up under my default sort-by-discounts glances) and poke at a few once in a while. This was one of those. Despite how it might look, this is quite a dip into the casual puzzler genre. Most levels don’t have set gems, so you just go in there and do your best. It’s a bit old and it shows, but it’s… relaxing?</p>;21|22|Konkan Coast Pirate Solutions|Clockwork Puzzle|10000|500|kcps|https://store.steampowered.com/app/2156410/Konkan_Coast_Pirate_Solutions/|Big ol’ superposition between completely mechanical and half biological, and somewhat bad and moderately good.|And that’s before considering what’s being simulated!|<p>An automaton puzzle with a very small action set but also complex consequences, a small laboratory on mutable instructions. A lot smaller than expected, but maybe that's for the best -- It can be hard to tell whether you're thinking through actions or metapuzzling by the end.</p>;22|23|Animal Well|Metroidvania|999999|1|animalwell|https://store.steampowered.com/app/813230/ANIMAL_WELL/|Strictly biological. You’d expect it to be positive, but it’s very negative.|Animal, well? Animal unwell.|",
+        };
+        
+        //There's probably a nicer way to do this, but it's a unique section, so eh
+        var scrapString = "arbid|softid|title|filename|weight|variance|desc;0|1|Inner Space|InnerSpace 1|10000|500|Despite being a flight game, enough of this game is close-quarters that it can be tricky to catch the right vista scenes.;1|2|The Elephant Collection|Elephant 1|10000|500|I’m sure it’s fine.;2|3|Animal Well|AnimalWell 1|10000|500|A lot about this room doesn’t quite work the way you'd hope.;3|4|Talos Principle II|TalosPrinciple2 1|10000|500|That’s not aliasing, that’s avant garde architecture (the fox <em>is</em> floating though);4|5|1000xResist|1000xResist 1|10000|500|Balls!!;5|6|Times and Galaxy|TimesAndGalaxy 1|10000|500|For crust enthusiasts.;6|7|Stardust Demon|StardustDemon 1|999999|1|With any luck this is a preview of 2025’s list. Good luck to me?";
+
+        //'hover' 'text'
+        function optionsText(opt) {
+            switch(opt) {
+                case 'hover':
+                    document.documentElement.style.setProperty('--imgCaptions', 'none');
+                    opt_hover_ctr.classList.add("options_selected");
+                    opt_text_ctr.classList.remove("options_selected");
+                    break;
+                case 'text':
+                    document.documentElement.style.setProperty('--imgCaptions', 'block');
+                    opt_hover_ctr.classList.remove("options_selected");
+                    opt_text_ctr.classList.add("options_selected");
+                    break;
+            }
+            option_img = opt;
+            if(cookie_allowed) {
+                setCookie('ord2024_img', option_img);
+            }
+        }
+
+        //Ingest csv into objects
+        const DELIM_MAJOR = ";";
+        const DELIM_MINOR = "|";
+        function enlist(str) {
+            var retObj = {};
+            let lines = str.split(DELIM_MAJOR);
+            let labels = lines[0].split(DELIM_MINOR);
+            
+            for(let line = 1; line < lines.length; ++line) {
+                let inFields = lines[line].split(DELIM_MINOR);
+                let lineObj = {};
+                for(let field = 0; field < labels.length; ++field) {
+                    lineObj[labels[field]] = inFields[field];
+                }
+                retObj[lineObj.arbid] = lineObj;
+            }
+            return retObj;
+        }
+        var lists = {
+            main: enlist(listStrings.main)
+        }
+        var scrapList = enlist(scrapString);
+
+        //Handle the cookie
+        cookie_allowed = getCookie('ord2024_allowed');
+        if(cookie_allowed) {
+            seed = getCookie('ord2024');
+            option_img = getCookie('ord2024_img');
+
+            optionsText(option_img);
+            switch(option_img){
+                case 'hover':
+                    opt_hover.checked = true;
+                    opt_text.checked = false;
+                    break;
+                case 'text':
+                    opt_hover.checked = false;
+                    opt_text.checked = true;
+                    break;
+            }
+
+            cookie_overlay.style.setProperty("visibility", "hidden");
+        }
+        if(!seed || seed == '') {
+            seed = Math.seedrandom();
+            setCookie('ord2024', btoa(seed));
+        } else { 
+            Math.seedrandom(atob(seed));
+        }
+
+        var ords = {};
+        //Conventional lists
+        for(let listName in lists) {
+            let list = lists[listName];
+            ords[listName] = {};
+            for(let entry in list) {
+                let loc = Math.floor(parseInt(list[entry].weight) + Math.random() * parseInt(list[entry].variance));
+                while(ords[listName][loc]) { loc += 1; }
+                ords[listName][loc] = entry;
+            }
+        }
+        //Scraplist
+        ords.scrap = {};
+        for(let entry in scrapList) {
+            let loc = Math.floor(parseInt(scrapList[entry].weight) + Math.random() * parseInt(scrapList[entry].variance));
+            while(ords.scrap[loc]) { loc += 1; }
+            ords.scrap[loc] = entry;
+        }
+
+        //TODO: Figure out moonlight pulse's whole deal
+        //TODO: Double check writing. Probably needs a lot more paragraph breaks.
+        //TODO: Incorporate clickables
+        
+        //Populate page
+        for(let listName in lists) {
+            let list = lists[listName];
+            let ordList = ords[listName];
+            let countdown = 0; for(let o in list) { countdown++; };
+            let build = '';
+            Object.entries(ordList).forEach( (oid, i) => {
+                let o = list[oid[1]];
+                build += `<div class="listEntry"><div class="listSidebar"><div class="listImgCtr"><a href="./images/goty/2024/graph_${o.filename}.png" target="_blank"><img class="listImg" src="./images/goty/2024/graph_${o.filename}.png" alt="${o.graphdesc}" title="${o.graphtext}" /></a><span class="listImgCaption">${o.graphtext}</span></div></div><div class="listContents"><div class="listTitle"><a href="${o.url}" target="_blank">${o.name}</a></div><div class="listGenre">${o.genre}</div>${o.detail ? '<div class="listDetail">' + o.detail + '</div>' : ''}</div></div>`;
+                --countdown;
+            });
+            listNames[listName].innerHTML += build;
+        }
+        let build = '';
+        Object.entries(ords.scrap).forEach( (oid, i) => {
+            let o = scrapList[oid[1]];
+            build += `<div class="scrapbookEntry"><a href="./images/goty/2024/${o.filename}.jpg" target="_blank"><img class="scrapbookImg" src="./images/goty/2024/${o.filename}.jpg"/></a><div class="scrapbookRight"><div class="scrapbookTitle">${o.title}</div><div class="scrapbookDesc">${o.desc}</div></div></div>`;
+        });
+        scrapListElem.innerHTML += build;
+
+    </script>
+</body>
+
+</html>
