@@ -7,7 +7,7 @@
   --ercot-color: #60b060;
 
   --whr-hr-row-height: 60px; /* TODO: Commit this and not use a variable */
-  --whr-day-row-height: 80px;
+  --whr-day-row-height: 90px;
 
   --whrtemp_01_indicatorbg: #fff;
   --whrtemp_02_indicatorbg: #fff;
@@ -95,6 +95,9 @@
   transition-property: width, height, left, top, background-color;
   transition-duration: 1s;
   transition-timing-function: linear;
+
+  --alertlen: 30s;
+  --alertoffset: -270px;
 }
 
 /* barlow-regular - latin_latin-ext */
@@ -103,7 +106,7 @@
   font-family: 'Barlow';
   font-style: normal;
   font-weight: 400;
-  src: url('../nonsharables/barlow-v12-latin_latin-ext-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('./nonsharables/barlow-v12-latin_latin-ext-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 /* barlow-600 - latin_latin-ext */
 @font-face {
@@ -111,7 +114,7 @@
   font-family: 'Barlow';
   font-style: normal;
   font-weight: 600;
-  src: url('../nonsharables/barlow-v12-latin_latin-ext-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('./nonsharables/barlow-v12-latin_latin-ext-600.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
 /* vt323-regular - latin_latin-ext */
@@ -120,7 +123,13 @@
   font-family: 'VT323';
   font-style: normal;
   font-weight: 400;
-  src: url('../nonsharables/vt323-v17-latin_latin-ext-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  src: url('./nonsharables/vt323-v17-latin_latin-ext-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+#body {
+  position: absolute;
+  /*left: 0px;
+  top: 0px;*/
 }
 
 .hidden {
@@ -224,7 +233,7 @@ background-color: #aaa;
   width: 100cqmin;
 
   background-color: #888;
-  border: 3px solid #fff;
+  border: 0px solid #fff;
   text-align: center;
   overflow: hidden;
   position: absolute;
@@ -244,13 +253,38 @@ background-color: #aaa;
   top: 0px;
 }
 
-#weatherfull_map {
+#weatherfull_alertcontainer {
   width: 270px;
   height: 270px;
   position: absolute;
   left: 270px;
   top: 0px;
+
+  color: #000;
+  background-color: #fff;
 }
+#weatherfull_alertdetail {
+  width: 270px;
+  position: relative;
+  left: 0px;
+  animation: alertscroll var(--alertlen) linear infinite;
+
+  color: #000;
+  background-color: #fff;
+  font-family: 'Courier New', monospace;
+  text-align: left;
+  font-size: small;
+}
+
+@keyframes alertscroll {
+  from {
+    top: 270px;
+  }
+  to {
+    top: var(--alertoffset);
+  }
+}
+
 
 #weatherfull_minrain {
   width: 540px;
@@ -258,6 +292,8 @@ background-color: #aaa;
   position: absolute;
   left: 540px;
   top: 0px;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 #weatherfull_hrtemp {
@@ -268,6 +304,7 @@ background-color: #aaa;
   left: 0px;
   top: 270px;
   border-right: 1px solid black;
+  border-top: 1px solid black;
 }
 
 #weatherfull_daycast{
@@ -278,6 +315,7 @@ background-color: #aaa;
   left: 540px;
   top: 270px;
   border-left: 1px solid black;
+  border-top: 1px solid black;
 }
 
 .weather-square {
@@ -332,6 +370,21 @@ background-color: #aaa;
   position: absolute;
   left: 5px;
   top: 155px;
+}
+
+#weather_miniAlert {
+  font-size: 20px;
+  position: absolute;
+  left: 10px;
+  top: 185px;
+}
+
+.weather_miniAlert_active {
+  border: 2px dashed red;
+  padding: 4px;
+  margin-right: 10px;
+  background-color: yellow;
+  color: #000;
 }
 
 #weatherfull_hrtemp {
@@ -556,8 +609,8 @@ background-color: #aaa;
 .whrDay_weather_icon {
   /* position: absolute;
   top: 2px; */
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
 }
 
 /* Commit to consts: Minimum spacer 35px, max width of bar is 290px if spacer is minimum. */
@@ -593,7 +646,7 @@ background-color: #aaa;
   border: 1px solid #bbb;
   border-radius: 24px;
   padding: 3px 12px;
-  height: 20px;
+  height: 30px;
 }
 
 #whrday_01_tempBar { width: var(--whrday_01_barlen); }
@@ -757,6 +810,7 @@ background-color: #aaa;
 }
 
 #sqercot {
+  pointer-events: none;
   background-color: var(--main-bg-color-dark);
 }
 

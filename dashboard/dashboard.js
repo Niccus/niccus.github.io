@@ -17,6 +17,11 @@ var _COLOR_ERCOT_HIGH = "#bd0000";
 
 //
 
+const _LOOP_NUDGE = 60003;
+const _NUDGE_OFFSET = 1;
+
+const _LOOP_SLOW = 10000;
+
 const _CLOCK_LENHOUR = 0.25;
 const _CLOCK_LENMINUTE = 0.42;
 const _CLOCK_LENSECOND= 0.5;
@@ -77,10 +82,15 @@ var locale = "en-US";
 
 //doodle_canvas - canvas persistence for whiteboard
 
+//
+
+var idleCounter = 0;
+const idleCounterRollover = 60; // * _LOOP_SLOW, presumably 10 seconds.
 
 /*
 
 todo:
+    favicon.ico
     * How does each brick prevent burn-in?
         Whole-screen sweep on the hour w/ time
     Bricks:
@@ -135,10 +145,10 @@ todo:
     Clock        done        done  n/a         done 
     Date         n/a               n/a   n/a        
     Time         n/a   n/a?  n/a   n/a   n/a        
-    Weather                                         
+    Weather      close!      mb?   sure             
     Doodle       done  n/a?! n/a                    
     Moon                                            
-    ERCOT                                           
+    ERCOT        n/a                     n/a        
     Severe                                          
     Thunder                                         
 
@@ -157,6 +167,7 @@ thunder
 //
 
 /** @type {HTMLCanvasElement} */
+let body = document.getElementById("body");
 let notifStopped = document.getElementById("notif_stopped");
 
 let squareClock = document.getElementById("sqclock");
@@ -172,11 +183,15 @@ let squareClockdigit_secondOnes = document.getElementById("clockdigit_second_one
 let cache_weather_data;
 let cache_weather_data_time;
 let squareWeather = document.getElementById("weathertest");
-let squareWeather_details = document.getElementById("weather_details");
+let squareWeather_mini_Alert = document.getElementById("weather_miniAlert");
 let squareWeather_icon = document.getElementById("weather_icon");
 let squareWeather_mini_CurTemp = document.getElementById("weather_miniCurTemp");
 let squareWeather_mini_CurTempFeels = document.getElementById("weather_miniFeels_digits");
+let squareWeather_mini_Label = document.getElementById("weather_miniWeatherLabel");
+let squareWeather_alertDetail = document.getElementById("weatherfull_alertdetail");
 let squareWeather_graph = document.getElementById("weathergraph");
+    squareWeather_graph.width = 540; //TODO: Do these need to be constants?
+    squareWeather_graph.height = 270;
 let squareWeatherHrTemps = [document.getElementById("whrtemp_01_temp"), document.getElementById("whrtemp_02_temp"), document.getElementById("whrtemp_03_temp"), document.getElementById("whrtemp_04_temp"), document.getElementById("whrtemp_05_temp"), document.getElementById("whrtemp_06_temp"), document.getElementById("whrtemp_07_temp"), document.getElementById("whrtemp_08_temp"), document.getElementById("whrtemp_09_temp"), document.getElementById("whrtemp_10_temp"), document.getElementById("whrtemp_11_temp"), document.getElementById("whrtemp_12_temp")];
 let squareWeatherHrTimes = [document.getElementById("whrtemp_01_time"), document.getElementById("whrtemp_02_time"), document.getElementById("whrtemp_03_time"), document.getElementById("whrtemp_04_time"), document.getElementById("whrtemp_05_time"), document.getElementById("whrtemp_06_time"), document.getElementById("whrtemp_07_time"), document.getElementById("whrtemp_08_time"), document.getElementById("whrtemp_09_time"), document.getElementById("whrtemp_10_time"), document.getElementById("whrtemp_11_time"), document.getElementById("whrtemp_12_time")];
 let squareWeatherHrLabels = [ document.getElementById("whrtemp_01_label"), document.getElementById("whrtemp_02_label"), document.getElementById("whrtemp_03_label"), document.getElementById("whrtemp_04_label"), document.getElementById("whrtemp_05_label"), document.getElementById("whrtemp_06_label"), document.getElementById("whrtemp_07_label"), document.getElementById("whrtemp_08_label"), document.getElementById("whrtemp_09_label"), document.getElementById("whrtemp_10_label"), document.getElementById("whrtemp_11_label"), document.getElementById("whrtemp_12_label")];
@@ -186,8 +201,6 @@ let squareWeatherDayRainDigits = [document.getElementById("whrday_01_rainchance_
 let squareWeatherDayWeatherIcons = [document.getElementById("whrday_01_weather_icon"), document.getElementById("whrday_02_weather_icon"), document.getElementById("whrday_03_weather_icon"), document.getElementById("whrday_04_weather_icon"), document.getElementById("whrday_05_weather_icon"), document.getElementById("whrday_06_weather_icon"), document.getElementById("whrday_07_weather_icon"), document.getElementById("whrday_08_weather_icon")];
 let squareWeatherDayTempLos = [document.getElementById("whrday_01_tempLo"), document.getElementById("whrday_02_tempLo"), document.getElementById("whrday_03_tempLo"), document.getElementById("whrday_04_tempLo"), document.getElementById("whrday_05_tempLo"), document.getElementById("whrday_06_tempLo"), document.getElementById("whrday_07_tempLo"), document.getElementById("whrday_08_tempLo")];
 let squareWeatherDayTempHis = [document.getElementById("whrday_01_tempHi"), document.getElementById("whrday_02_tempHi"), document.getElementById("whrday_03_tempHi"), document.getElementById("whrday_04_tempHi"), document.getElementById("whrday_05_tempHi"), document.getElementById("whrday_06_tempHi"), document.getElementById("whrday_07_tempHi"), document.getElementById("whrday_08_tempHi")];
-
-
 
 let squareMoon = document.getElementById("sqmoon");
 let squareMoon_icon = document.getElementById("moon_icon");
@@ -287,35 +300,24 @@ function getStorage(loc) {
 
 // Lune thoughts -- Lune with 1/4 area appears to be with a circle centered 0.621184 away from the circle with radius 1 (it should have radius = sqrt(1 + 0.621184^2))
 // https://www.desmos.com/calculator/m1yhxauivs
-//Mostly copy-pasted from Dither's https://gist.github.com/Dither/d2801f7b22d5602fff38821c2177e301
-//TODO: Allow fractions of day
 function moonphase(date = new Date(), type = 0) {
-    let year = date.getFullYear(),
-        month = date.getMonth(),
-        day = date.getDate();
 
-    let jd, phase;
+    let offset, phase;
 
-    if (month < 3) {
-        --year;
-        month += 12;
-    }
-
-    ++month;
-
-    jd = 365.25 * year + 30.6 * month + day - 694039.09; // jd is total days elapsed
-    jd /= 29.53; // divide by the moon cycle (29.53 days)
-    phase = parseInt(jd, 10); // int(jd) -> phase, take integer part of jd
-    jd -= phase; // subtract integer part to leave fractional part of original jd
-
-    jd *= 8;
+    const referenceNewMoon = 977764920000;
+    const synodicMonthMS = 2551442900;
+    //977764920000 is the last new moon in 2000
+    //2551442900 milliseconds in a lunar month
+    ((Date.now() - referenceNewMoon)%synodicMonthMS)/synodicMonthMS*8
+    offset = Date.now() - referenceNewMoon; // Offset from known new moon
+    offset = (offset%synodicMonthMS) / synodicMonthMS * 8; // Get phase out of 8
 
     if(type <= 0.0001) {
-        return jd;
+        return offset;
     }
 
-    phase = Math.ceil(jd); // scale fraction from 0-8 and round by adding 0.5
-    phase = phase & 7; // 0 and 8 are the same so turn 8 into 0
+    phase = Math.round(offset); // scale fraction from 0-8 and round by adding 0.5
+    phase = phase & 7; // Merge 0 and 8
 
     if(type <= 1.0001) {
         return phase;
@@ -338,7 +340,7 @@ function moonphase(date = new Date(), type = 0) {
         var o = {};
         o.id = phase;
         o.text = text;
-        o.float = jd;
+        o.float = offset;
         return o;
     }
 }
@@ -352,6 +354,36 @@ function updateColors(in_hue) {
     document.documentElement.style.setProperty('--main-bg-color-vivid', _COLOR_VIVID);
     document.documentElement.style.setProperty('--main-bg-color-faded', _COLOR_FADED);
     document.documentElement.style.setProperty('--main-bg-color-dark', _COLOR_DARK);
+}
+
+var iconIdxCode, iconIdxGroup, iconIdxDesc, iconIdxDefIcon, iconIdxNewIcon, iconIdxRaininess, iconIdxCloudiness;
+var iconCodeIndex;
+function getWeatherIcon(origIcon, origID) {
+    //preacheparse  index
+    if(!iconCodeIndex) {
+        iconCodeIndex = {};
+        
+        let idxRow = iconMapping[0];
+        iconIdxCode = idxRow.indexOf("code");
+        iconIdxGroup = idxRow.indexOf("group");
+        iconIdxDesc = idxRow.indexOf("description");
+        iconIdxDefIcon = idxRow.indexOf("default icon");
+        iconIdxNewIcon = idxRow.indexOf("new icon");
+        iconIdxRaininess = idxRow.indexOf("raininess");
+        iconIdxCloudiness = idxRow.indexOf("cloudiness");
+
+        for(let i = 1; i < iconMapping.length; ++i) {
+            iconCodeIndex[iconMapping[i][iconIdxCode]] = i;
+        }
+    }
+
+    let iconStr = iconMapping[iconCodeIndex[origID]][iconIdxNewIcon];
+    if(iconStr === "" || iconStr[iconStr.length - 1] === "-") {
+        let isDay = origIcon[origIcon.length - 1] === "d";
+        iconStr += (isDay ? "sun" : "moon") + ".svg";
+    }
+
+    return "./nonsharables/pixeden/" + iconStr;
 }
 
 
@@ -380,8 +412,10 @@ window.onload = function() {
     dud = init_wakeLocker();
     init_dragElement();
 
+    dud = loop_bodynudge();
+
     loop_clock();
-    init_calendar();
+    loop_calendar();
     loop_fillClockdigit();
     dud = init_weather();
     init_doodle();
@@ -395,8 +429,14 @@ window.onload = function() {
     //Disable page move
     document.body.addEventListener('touchmove', function(evt) {
         evt.preventDefault();
-    }, false);
+    }, {passive: true});
+
+    document.body.addEventListener('mousemove', mouseMove);
 };
+
+function mouseMove(evt) {
+    idleCounter = 0;
+}
 
 // TODO: Save other bits of settings, too. Maybe query data so refreshing doesn't spam API requests?
 window.onbeforeunload = function() { // TODO: Hardcode storage item name as a constant
@@ -438,7 +478,7 @@ function init_doodle() {
             dCtx.drawImage(img, 0, 0);
         };
     }
-canvas
+
     //Mouse event handlers
     if(dCanvas) {
         var isDown = false;
@@ -519,13 +559,57 @@ async function loop_slowUpdates() {
     //update_severe();
     //update_thunder();
 
-    setTimeout(loop_slowUpdates, 10000);
+    tickCycler();
+
+    setTimeout(loop_slowUpdates, _LOOP_SLOW);
+}
+
+var nudgeH = false;
+var nudgeV = false;
+//TODO: Go further and swap the side of the big widget left/right once in a while for screenburn.
+//      Probably tie it to an hourly time overlay like in uniqlock.
+async function loop_bodynudge() {
+    //Cycle through. ...in a bit of a weird way, but it's not heinous...
+    if(nudgeH) {
+        if(nudgeV) {
+            nudgeH = false;
+        } else {
+            nudgeV = true;
+        }
+    } else {
+        if(nudgeV) {
+            nudgeV = false;
+        } else {
+            nudgeH = true;
+        }
+    }
+
+    //Set nudge
+    body.style.left = `${nudgeH ? _NUDGE_OFFSET : 0}px`;
+    body.style.top = `${nudgeV ? _NUDGE_OFFSET : 0}px`;
+
+    //
+    setTimeout(loop_bodynudge, _LOOP_NUDGE);
+}
+
+//TODO: Move this somewhere better
+//TODO: Making squares take priority?
+//Pass priority once in a while.
+function tickCycler() {
+    idleCounter += 1;
+    if(idleCounter > idleCounterRollover) {
+        idleCounter = 0;
+        cycleLabelIdx = (cycleLabelIdx + 1) % cycleLabelCount;
+        clickBox(cyclableLabels[cycleLabelIdx]);
+        console.log(`Idling, switching to idx ${cyclableLabels[cycleLabelIdx]}`);
+    }
 }
 
 // TODO: Where... does this go?
 // TODO: Right now going off erase mode takes two clicks. Will take a lot of work, but make it more natural.
 //       Maybe highlight current setting, and swap between erase/nonerase modes?
 //       Maybe have small and large erasers?
+// TODO: Icons, etc too small for finger usage on tablet.
 function doodleTool(button) {
     switch(button) {
         case "eraser":
@@ -581,13 +665,19 @@ document.onkeydown = function(evt) {
     }
 };
 
-//
-
-function init_calendar() {
+//TODO: Break this out into a daily loop, for color changing etc?
+function loop_calendar() {
     let curDate = new Date();
     squareCalendar_month.innerText = _STR_MONTH[curDate.getMonth()];
     squareCalendar_date.innerText = curDate.getDate();
     squareCalendar_day.innerText = _STR_DAY[curDate.getDay()];
+
+    var h = curDate.getHours();
+    var m = curDate.getMinutes();
+    var s = curDate.getSeconds();
+    var msUntilTomorrow = ((24*60*60) - (h*60*60) - (m*60) - s + 1)*1000;
+
+    setTimeout(loop_calendar, msUntilTomorrow);
 }
 
 async function init_weather() {
@@ -597,6 +687,8 @@ async function init_weather() {
     return update_weather(true);
 }
 
+//TODO: Redo all icons to white. It looks like complete icon sets aren't really avaiable... is it time to take the plunge and animate every possible weather?
+// then render everything for static placeholders?
 async function update_weather(force = false) {
     if(cache_weather_data_time != null && cache_weather_data_time > (Date.now() - _WEATHER_FREQ_FAST )) {
         if(force) {
@@ -618,17 +710,64 @@ async function update_weather(force = false) {
     }
 }
 
-//TODO: Move calendar filling to its own function
 function fillWeather(o) {
+    //Minibox contents
     //squareWeather_details.innerHTML = `lon ${o.lon} | lat ${o.lat} <br> ${o.daily[0].temp.min} [ ${o.current.temp} ] ${o.daily[0].temp.max}`;
-    squareWeather_details.innerHTML = "";
-    squareWeather_icon.src = `./nonsharables/${o.current.weather[0].icon}.png`;
+    squareWeather_mini_Alert.innerHTML = "";
+    //squareWeather_icon.src = `./nonsharables/${o.current.weather[0].icon}.png`;
+    squareWeather_icon.src = getWeatherIcon(o.current.weather[0].icon, o.current.weather[0].id);
     squareWeather_icon.alt = `${o.current.weather[0].main}`;
 
     let nowTemp = o.current.temp;
     squareWeather_mini_CurTemp.innerText = Math.round(nowTemp) + "°";
     squareWeather_mini_CurTempFeels.innerText = Math.round(o.current.feels_like) + "°";
 
+    let label = o.current.weather[0].main;
+    for(let i = 1; i < o.current.weather.length; ++i) {
+        label += " / " + o.current.weather[i].main;
+    }
+    squareWeather_mini_Label.innerText = label;
+
+    //Mini- and full weather alerts
+    if(o.alerts) {
+        //Mini section
+        squareWeather_mini_Alert.classList.add("weather_miniAlert_active");
+        let alertText = o.alerts[0].event;
+        squareWeather_mini_Alert.innerText = o.alerts[0].event;
+        if(o.alerts.length > 1) {
+            for(let i = 1; i < o.alerts.length; ++i) {
+                alertText += "\n" + o.alerts[i].event;
+            }
+        }
+        squareWeather_mini_Alert.innerText = alertText;
+        //TODO: Set the alerty style only when there's text
+        //TODO: Full alert description scrollbar... where the radar was going to be? Does this need to be bigger?
+        //TODO: Make alert take control of auto-square-focus, since weather maps seem to be no-go.
+        //TODO: Make scrolling alert link to https://www.weather.gov/ewx/ or something
+
+        //Full text
+        //TODO: Have headings per section instead of just descriptions? User other fields?
+        let fullAlert = "";
+        for(let i = 0; i < o.alerts.length; ++i) {
+            if(i > 0) {
+                fullAlert += "\n"
+            }
+            fullAlert += o.alerts[i].description;
+        }
+        squareWeather_alertDetail.innerText = fullAlert;
+        let height = squareWeather_alertDetail.scrollHeight;
+        //TODO: Should 270 be a constant?
+        if(height > 270) {
+            document.documentElement.style.setProperty('--alertlen', `60s`);
+        } else {
+            document.documentElement.style.setProperty('--alertlen', `${(height/270.0)*30 + 30}s`);
+        }
+        document.documentElement.style.setProperty('--alertoffset', `-${squareWeather_alertDetail.scrollHeight}px`);
+    } else {
+        squareWeather_mini_Alert.classList.remove("weather_miniAlert_active");
+    }
+
+    //Weather minutely precipitation
     fillWeatherGraph(o);
 
     //Hourlies, precalc
@@ -649,7 +788,7 @@ function fillWeather(o) {
     if(temp_max > _WEATHER_TEMP_WIN_MAX) {
         temp_right = temp_max;
         temp_left = temp_right - _WEATHER_TEMP_WINDOW;
-    } else if(temp_max < _WEATHER_TEMP_WIN_MIN) {
+    } else if(temp_min < _WEATHER_TEMP_WIN_MIN) {
         temp_left = temp_min;
         temp_right = temp_left + _WEATHER_TEMP_WINDOW;
     } else {
@@ -713,7 +852,7 @@ function fillWeather(o) {
     if(temp_max > _WEATHER_TEMP_WIN_MAX) {
         temp_right = temp_max;
         temp_left = temp_right - _WEATHER_TEMP_WINDOW;
-    } else if(temp_max < _WEATHER_TEMP_WIN_MIN) {
+    } else if(temp_min < _WEATHER_TEMP_WIN_MIN) {
         temp_left = temp_min;
         temp_right = temp_left + _WEATHER_TEMP_WINDOW;
     } else {
@@ -735,7 +874,8 @@ function fillWeather(o) {
         }
 
         squareWeatherDayRainDigits[rowIdx].innerText = Math.round(curDay.pop * 100) + "%";
-        squareWeatherDayWeatherIcons[rowIdx].src = `./nonsharables/${curDay.weather[0].icon}.png`;
+        //squareWeatherDayWeatherIcons[rowIdx].src = `./nonsharables/${curDay.weather[0].icon}.png`;
+        squareWeatherDayWeatherIcons[rowIdx].src = getWeatherIcon(curDay.weather[0].icon, curDay.weather[0].id);
         squareWeatherDayWeatherIcons[rowIdx].alt = curDay.weather[0].main;
 
         let tempLo = curDay.temp.min;
@@ -743,8 +883,8 @@ function fillWeather(o) {
         squareWeatherDayTempLos[rowIdx].innerText = Math.round(tempLo) + "°";
         squareWeatherDayTempHis[rowIdx].innerText = Math.round(tempHi) + "°";
 
-        let tempLoCoord = (tempLo - temp_left)/_WEATHER_TEMP_WINDOW;
-        let tempHiCoord = (tempHi - temp_left)/_WEATHER_TEMP_WINDOW;
+        let tempLoCoord = Math.max(tempLo - temp_left, 0)/_WEATHER_TEMP_WINDOW;
+        let tempHiCoord = Math.min((tempHi - temp_left)/_WEATHER_TEMP_WINDOW, 1);
         let tempHiOffset = tempHiCoord - tempLoCoord;
         document.documentElement.style.setProperty(`--whrday_${rowIdxText}_padlen`, (tempLoCoord*_WEATHER_DAY_TEMP_BARLEN_MAX + _WEATHER_DAY_TEMP_PAD_MIN) + "px");
         document.documentElement.style.setProperty(`--whrday_${rowIdxText}_barlen`, (tempHiOffset*_WEATHER_DAY_TEMP_BARLEN_MAX) + "px");
@@ -770,13 +910,39 @@ function fillWeatherGraph(day) {
 
     /** @type {CanvasRenderingContext2D} */
     var graph = squareWeather_graph.getContext("2d");
-    squareWeather_graph.width = 540; //TODO: constants, move this to a setup function instead of per-draw
-    squareWeather_graph.height = 270;
     graph.lineCap = "round";
 
     //Background
     graph.fillStyle = _COLOR_FADED;
     graph.fillRect(0, 0, 540, 270);
+
+    // TODO: eek constants
+    // TODO: how to express fuzziness?
+    //Precipitation
+    graph.strokeStyle = "#aac8ec";
+    graph.fillStyle = "#77beec";
+    graph.lineWidth = 8;
+    graph.beginPath();
+    
+    graph.moveTo(20, precipitationToHeight(day.minutely[0].precipitation));
+    for(let i = 0; i < 60; ++i) {
+        graph.lineTo(20 + (1 + i)/60*500, precipitationToHeight(day.minutely[i].precipitation));
+        precipTotal += day.minutely[i].precipitation;
+    }
+    graph.lineTo(520, 240);
+    graph.lineTo(20, 240);
+    graph.lineTo(20, precipitationToHeight(day.minutely[0].precipitation));
+    graph.closePath();
+    graph.fill();
+
+    graph.beginPath();
+    graph.moveTo(20, precipitationToHeight(day.minutely[0].precipitation));
+    for(let i = 0; i < 60; ++i) {
+        graph.lineTo(20 + (1 + i)/60*500, precipitationToHeight(day.minutely[i].precipitation));
+        precipTotal += day.minutely[i].precipitation;
+    }
+    graph.stroke();
+    
 
     //Guidelines
     graph.strokeStyle = "#bbb";
@@ -814,23 +980,6 @@ function fillWeatherGraph(day) {
     graph.moveTo(50, 200);
     graph.lineTo(470, 200);
     graph.stroke(); */
-
-    // TODO: Actual graph
-    // TODO: eek constants
-    // TODO: how to express fuzziness?
-    //Precipitation
-    graph.fillStyle = "#77beec";
-    graph.beginPath();
-    graph.moveTo(20, 240);
-    graph.lineTo(20, precipitationToHeight(day.minutely[0].precipitation));
-    for(let i = 0; i < 60; ++i) {
-        graph.lineTo(20 + (1 + i)/60*500, precipitationToHeight(day.minutely[i].precipitation));
-        precipTotal += day.minutely[i].precipitation;
-    }
-    graph.lineTo(520, 240);
-    graph.closePath();
-    graph.stroke();
-    graph.fill();
 
     //Switchover...
     graph.strokeStyle = "#444";
@@ -901,6 +1050,7 @@ function init_ercot() {
 async function loop_ercot() {
     //Test OAuth fetch. Must be redone with proper handling of access tokens, etc.
     //TODO: above, and maybe make this not a nested fetch
+    //TODO: ...look, maybe it's time to give up and have a separate daemon fetch this, write onto a file, and just read off that as the website.
 
     if(cache_ercot_refreshtoken == null || cache_ercot_idtoken == null || Date.now() > cache_ercot_expires) {
         await ercot_fetchToken();
@@ -1045,16 +1195,15 @@ function loop_clock() {
         return;
     }
 
-    /* // I don't remember what this was for but it doesn't appear anymore
+    // I don't remember what this was for but it doesn't appear anymore
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
     ctx.lineWidth = 15;
     ctx.strokeStyle = "black";
     ctx.closePath();
     ctx.stroke();
-    ctx.fillStyle = "#dddddd";
+    ctx.fillStyle = _COLOR_FADED;
     ctx.fill();
-    */
     
     //Outside-inside of clock base
     ctx.beginPath();
@@ -1336,89 +1485,79 @@ function loop_clock() {
     setTimeout(loop_clock, 60);
 }
 
-//TODO: Now that the animation is desynced, change this to onclick events instead of frame loop. See where focusedSquare is changed.
-var focusedSquare = "1";
+//TODO: Is this still located weirdly?
+var focusedSquare = "7";
 var squarePositions;
-const defaultLabels = ["sqcalendar", "sqclock", "sqclockdigit", "sqweather", "sqdoodle", "sqmoon", "sqercot", "sqplaceholder1", "sqplaceholder2"]; //Add new elements here
+const defaultLabels = ["sqcalendar", "sqclock", "sqclockdigit", "sqweather", "sqdoodle", "sqmoon", "sqercot", "sqthunder", "sqplaceholder1", "sqplaceholder2"]; //Add new elements here
+const cyclableLabels = [             1,                         3,           4,          5       ];
+const cycleLabelCount = cyclableLabels.length;
+var cycleLabelIdx = 0;
 var windowHandles;
-var initFlag;
 function SquareManager() {
-    if(is_stop) {
-        setTimeout(SquareManager, 60);
-        return;
-    }
-
-    let now = Date.now();
-    
     //Init
-    if(squarePositions === undefined) {
-        windowHandles = [];
-        squarePositions = [];
-        for(i in defaultLabels) {
-            let sqRef = document.getElementById(defaultLabels[i]);
-            windowHandles[i] = sqRef
-            let pos = {};
-            pos.x = depix(sqRef.style.left);
-            pos.y = depix(sqRef.style.top);
-            pos.w = depix(sqRef.style.width);
-            squarePositions[i] = pos;
-            //console.log(JSON.stringify(pos));
+    windowHandles = [];
+    squarePositions = [];
+    for(i in defaultLabels) {
+        let sqRef = document.getElementById(defaultLabels[i]);
+        windowHandles[i] = sqRef
+        let pos = {};
+        pos.x = depix(sqRef.style.left);
+        pos.y = depix(sqRef.style.top);
+        pos.w = depix(sqRef.style.width);
+        squarePositions[i] = pos;
 
-            sqRef.onclick = ((id, ref) => () => clickBox(id, ref) )(i, sqRef);
-        }
+        sqRef.onclick = ((id, ref) => () => clickBox(id, ref) )(i, sqRef);
     }
 
-    if(!initFlag) {
-        initFlag = true;
-
-        animStart = now;
-        animEnd = animStart + 6000;
-
-        let nextX, nextY, nextW;
-
-        let columnIdx = 0;
-        for(i in windowHandles) {
-            let sq = squarePositions[i];
-            let sqRef = windowHandles[i];
-            //sq.x = depix(sqRef.style.left);
-            //sq.y = depix(sqRef.style.top);
-            //sq.w = depix(sqRef.style.width);
-
-            if(i === focusedSquare) {
-                nextX = 0;
-                nextY = 0;
-                nextW = _CELL_LARGE_W;
-                windowHandles[i].style.zIndex = "2";
-                windowHandles[i].classList.add("focus");
-            } else {
-                let idRow = columnIdx % _CELL_COL_LIMIT;
-                let idCol = Math.floor(columnIdx / _CELL_COL_LIMIT);
-
-                nextX = _CELL_LARGE_W + idCol*_CELL_SMALL_W + 10; // TODO: const this margin
-                nextY = idRow * (_CELL_SMALL_H);
-                nextW = _CELL_SMALL_W;
-                windowHandles[i].style.zIndex = "1";
-                windowHandles[i].classList.remove("focus");
-                columnIdx += 1;
-            }
-
-            sqRef.style.left = nextX + "px";
-            sqRef.style.top =  nextY + "px";
-            sqRef.style.width = nextW + "px";
-            sqRef.style.height = nextW + "px";
-
-            sq.x = nextX;
-            sq.y = nextY;
-            sq.w = nextW;
-        }
-    }
-
-    setTimeout(SquareManager, 60);
+    clickBox(focusedSquare);
 }
 
+//Handle change of box focus
 function clickBox(id, ref) {
+    if(is_stop) { return; }
+    id = String(id); //yeah...
+
+    //Track focus, and move automation along
     focusedSquare = id;
-    initFlag = false;
+    let nextCycleIdx = cyclableLabels.indexOf(id);
+    if(nextCycleIdx > -1) {
+        cycleLabelIdx = nextCycleIdx;
+    }
+
+    //Move boxes around
+    let nextX, nextY, nextW;
+    let columnIdx = 0;
+    for(i in windowHandles) {
+        let sq = squarePositions[i];
+        let sqRef = windowHandles[i];
+
+        if(i === focusedSquare) {
+            nextX = 0;
+            nextY = 0;
+            nextW = _CELL_LARGE_W;
+            windowHandles[i].style.zIndex = "2";
+            windowHandles[i].classList.add("focus");
+        } else {
+            let idRow = columnIdx % _CELL_COL_LIMIT;
+            let idCol = Math.floor(columnIdx / _CELL_COL_LIMIT);
+
+            nextX = _CELL_LARGE_W + idCol*_CELL_SMALL_W + 10; // TODO: const this margin
+            nextY = idRow * (_CELL_SMALL_H);
+            nextW = _CELL_SMALL_W;
+            windowHandles[i].style.zIndex = "1";
+            windowHandles[i].classList.remove("focus");
+            columnIdx += 1;
+        }
+
+        sqRef.style.left = nextX + "px";
+        sqRef.style.top =  nextY + "px";
+        sqRef.style.width = nextW + "px";
+        sqRef.style.height = nextW + "px";
+
+        sq.x = nextX;
+        sq.y = nextY;
+        sq.w = nextW;
+    }
 }
 
 var wakeLock;
@@ -1499,4 +1638,16 @@ function init_dragElement() {
 
         return null;
     }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+//Helpers for outside the active page, don't mind me.
+
+//csv-to-arr-arr
+
+function csvToArr(str) {
+    let xss = str.split("\n").map((x) => x.split(","));
+    console.log(JSON.stringify(xss).replaceAll("],","],\n"));
 }

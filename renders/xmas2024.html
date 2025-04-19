@@ -69,9 +69,12 @@ const r_max = 1.5;
 const v_min = 0.004;
 const v_max = 0.005;
 
-const threshold_base = 0.000000000000005;
-const threshold_inc = 0.000003;
+const threshold_base = 0.0026;
+const threshold_factor = 1.005;
 let threshold = threshold_base;
+let timer = 0;
+const timer_absolutemin = 200;
+const timer_min = 400; //50/second
 
 const minilights_radius = 0.6;
 const minilights_palette = ["#ff0000", "#0000bb", "#f0f000", "#00ff00"]; //Red, blue, yellow, green
@@ -99,10 +102,12 @@ function renderloop() {
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle="#000412";
     ctx.fillRect(-c_x, -c_y, c_x*2, c_y*2);
-
+    
+    timer += 1;
     //Low chance to make a new bubble
     //if(r() < 0.004) {
-    if(r() < threshold) {
+    if((timer > timer_absolutemin) && (r() < threshold)) {
+        timer = 0;
         threshold = threshold_base;
         let sizerand = Math.pow(r(), 5.5);
         bubbles.push({
@@ -113,10 +118,9 @@ function renderloop() {
             r: lerp(r_min, r_max, sizerand),
             th: r()*tau,
         });
-    } else {
+    } else if(timer > timer_min) {
         //exponential spiciness??
-        //threshold += threshold_inc; 
-        threshold *= 1.1;
+        threshold *= threshold_factor;
     }
 
     ctx.strokeStyle = "#ffffff";

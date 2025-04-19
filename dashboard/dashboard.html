@@ -12,7 +12,6 @@
 
     <title>Website</title>
 </head>
-<body>
     <div id="notif_stopped" class="hidden">*STOPPED*</div>
     <div id="body">
         <!-- proto-1 : just div with objects
@@ -103,14 +102,14 @@
                         <span id="weather_miniFeels_text">Feels</span>
                         <span id="weather_miniFeels_digits">77°</span>
                         <span id="weather_miniWeatherLabel">Cloudy</span>
-                        <span id="weather_details">
-                            lon ${o.coord.lon} | lat ${o.coord.lat} <br> ${o.main.temp_min} [ ${o.main.temp} ] ${o.main.temp_max}
-                        </span>
+                        <span id="weather_miniAlert"></span>
                         <br>
-                        
                     </div>
                 </div>
-                <div id="weatherfull_map" class="fullonly">How hard is it to have a weather radar map?</div>
+                
+                <div id="weatherfull_alertcontainer" class="fullonly">
+                    <div id="weatherfull_alertdetail" class="fullonly"></div>
+                </div>
                 <div id="weatherfull_minrain" class="fullonly">
                     <canvas id="weathergraph" style="background-color:#fff; width:100%; height:100%;"></canvas>
                 </div>
@@ -397,6 +396,19 @@
             <div id="ercot_label" class="ercot">
                 <span id="ercot_label_digits">8888.88</span><span id="ercot_label_usd">USD/MWh</span>
             </div>
+        </div>
+
+        <div id="sqthunder" class="square">
+            <iframe src="https://public.meteorage.com/vfhmap/map.html?lt=31.080063&lg=-98.520243&z=6&l=en" width="1000px" height="1000px"></iframe>
+            <!--
+            <iframe
+            id="inlineLightningMap"
+            title="lightningmaps.org"
+            width="1000"
+            height="1000"
+            src="https://www.lightningmaps.org/#m=oss;t=3;s=0;o=0;b=0.00;ts=0;d=2;dl=2;dc=0;z=12;y=30.3187;x=-97.6865;">
+            </iframe>
+            -->
         </div>
 
         <div id="sqplaceholder1" class="square">

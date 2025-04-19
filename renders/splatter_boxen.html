@@ -22,7 +22,7 @@
         }
     </style>
 
-    <title>003 - splatter b</title>
+    <title>005 - splatter box</title>
 </head>
 <body>
     <div id="main">
@@ -63,10 +63,19 @@ ctx.transform(scaleFactor, 0, 0, -scaleFactor, 0, 0);
 ctx.translate(c_x, -c_y);
 
 //Actual drawing
-const blorbCount = 175*c_far;
+const blorbCount = 40*c_far;
 let blorbs = [];
-for(let i = 0; i < blorbCount; ++i) {
-    let radius = lerp(0.3, 1.0, r());
+blorbs[0] = {
+        px: 0, py: 0,
+        dx: 0, dy: 0,
+        dc: 0.002 * (r() > 0.5 ? 1 : -1),
+        r: c_far*2,
+        //color: `oklch(35% 0.5 ${10 + r()*340}deg / 1)`
+        color: r()*360,
+        colorsat: 0.1,
+    }
+for(let i = 1; i < blorbCount; ++i) {
+    let radius = lerp(0.5, 1.5, r());
     let velocity = lerp(0.0001, 0.0002, r());
     let {x, y} = rand2rdir(velocity);
 
@@ -89,7 +98,7 @@ function renderloop() {
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle="#000";
     ctx.fillRect(-c_x, -c_y, c_x*2, c_y*2);
-    ctx.globalCompositeOperation = "lighter";
+    ctx.globalCompositeOperation = "source-over";
 
     let grad;
     for(let i = 0; i < blorbCount; ++i) {
@@ -105,25 +114,10 @@ function renderloop() {
         if((abs(x) - r) > c_x || (abs(y) - r) > c_y)
             { continue; }
 
-        grad = ctx.createRadialGradient(x, y, 0, x, y, r);
-
-        /*
-        grad.addColorStop(0, "black");
-        grad.addColorStop(1, c);
-        */
-
-        //grad.addColorStop(0, `hsl(${c} ${b.colorsat*0.58}% 60% / 1)`);
-        grad.addColorStop(0, `hsl(${c} 10% 90% / 1)`);
-        grad.addColorStop(0.22, `hsl(${c} ${b.colorsat*100}% 45% / 0.6)`);
-        grad.addColorStop(0.25, `hsl(${c} ${b.colorsat*b.colorsat*100*0.7}% 25% / 0.5)`);
-        grad.addColorStop(1, "rgba(0, 0, 0, 0)");
-
-        // Set the fill style and draw a rectangle
-        ctx.fillStyle = grad;
-        //ctx.ellipse(x, y, r, r, 0, 0, tau);
-        //ctx.fill();
+        ctx.fillStyle = `#00000080`;
+        ctx.fillRect(x-r-0.1, y-r-0.1, r*2+0.2, r*2+0.2);
+        ctx.fillStyle = `hsl(${c} ${b.colorsat*100}% 60%)`;
         ctx.fillRect(x-r, y-r, r*2, r*2);
-        delete grad;
     }
 
     setTimeout(renderloop, 50);
