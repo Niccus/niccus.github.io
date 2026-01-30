@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aleo:wght@500&family=Lato&display=swap" rel="stylesheet">
+    <title>nic did not really tackle this year in a way that resembles normal video game consumption, but here are games of 2025</title>
+    <meta property="og:title" content="nic did not really tackle this year in a way that resembles normal video game consumption, but here are games of 2025">
+    <meta property="og:description" content="(the list is more normal than ever, but...)">
+    <style>
+        :root {
+            /*--imgCaptions: hidden;*/
+            --imgCaptions: none;
+        }
+
+        * {
+            /*top: 0px;*/
+            left: 0px;
+            padding-top: 1%;
+            padding-left: 1%;
+            padding-bottom: 1%;
+            position: static;
+            font-family: 'Lato', sans-serif;
+
+            font-size: 25px;
+        }
+
+        a:link {
+            color: #99f;
+        }
+
+        p {
+            padding: 0.25em;
+            margin: 0px;
+        }
+
+        img {
+            max-width: 900px;
+        }
+
+        em, s, a { /*I have definitely made a mistake*/
+            padding: 0;
+        }
+
+        .list {
+            position: relative;
+            overflow: hidden;
+            /*background: linear-gradient(120deg, transparent 0%, #ffff 100%);*/
+
+            &::before {
+                background-image: url("/images/studded.png");
+                background-size: 50px 50px;
+                
+                content: "";
+                position: absolute;
+                width: 500%;
+                height: 500%;
+                top: -250%;
+                left: -250%;
+                z-index: 0;
+                opacity: 0.7;
+            }
+        }
+
+        #prelude {
+            margin-bottom: 100px;
+            width: 75%;
+            background-color: rgba(0,0,0, 0.5);
+        }
+
+        .desc {
+            margin-top: 200px;
+            padding-bottom: 0.2em;
+            border-left: 15px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .options_samples {
+            display: inline-block;
+            width: 400px;
+        }
+
+        .options_selected {
+            background-color: #000;
+            border: 2px solid white;
+        }
+
+        #mp_sp_sp p {
+            background-color: #100;
+            text-shadow: #600 -1px -1px;
+        }
+
+        .digresso {
+            border: 3px dashed lightgrey;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        .listDigression {
+            border: 3px dashed lightgrey;
+            padding: 0px;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dotted gray;
+            cursor: crosshair;
+            padding: 0;
+        }
+        /* Tooltip text */
+        .tooltiptext {
+            visibility: hidden; /* Hidden by default */
+            width: 130px;
+            position: absolute;
+        }
+
+        .listImgCaption {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            position: sticky;
+        }
+
+        .list {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+        }
+
+        .list .listEntry {
+            display: flex;
+            background: linear-gradient(135deg, transparent 0%, transparent 50%, #ffffff28 100%);
+        }
+
+        .list .listSidebar {
+            flex: 1;
+            width: 330px;
+        }
+
+        .list .listImgCtr {
+            width: 320px;
+        }
+
+        .list .listImg {
+            width: 300px;
+            position: sticky;
+        }
+
+        .list .listImgCaption {
+            /*visibility: var(--imgCaptions, hidden);*/
+            /* display: var(--imgCaptions, none);*/
+            display: none;
+        }
+
+        .list .listContents {
+            flex: 13;
+        }
+
+        .list .listEntry {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 10px groove rgba(255,255,255, 0.1);
+            z-index: 2;
+            position:relative;
+
+            padding-top: 0.5em;
+            padding-bottom: 1em;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .list .listDigression .listEntry {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+        .list .listTitle {
+            position: relative;
+            z-index: 3;
+            background-color: #111;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .list .listGenre {
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+            left: 3em;
+            z-index: 2;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #111;
+            border-top: 5px dashed;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            width: fit-content;
+            padding-top: 5px;
+            padding-bottom: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .listGenre:hover {
+            z-index: 4;
+        }
+
+        .list .listDetail {
+            background-color: #050505;
+            position: relative;
+            width: 800px;
+            font-size: 18px;
+            z-index: 1;
+            padding-bottom: 10px;
+            padding-right: 10px;
+        }
+
+        .listDetail:hover {
+            z-index: 4;
+        }
+
+        .tooPopular {
+            background-color: rgba(255, 0, 0, 0.05);
+        }
+
+        .tooPopular .listGenre {
+            border-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .small {
+            background-color: rgba(0, 255, 48, 0.05);
+        }
+
+        .small .listGenre {
+            border-color: rgba(0, 255, 48, 0.5);
+        }
+
+        .main {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .main .listGenre {
+            border-color: rgba(40, 6, 255, 0.5);
+        }
+
+        .closeBacklog {
+            background-color: rgba(192, 64, 0, 0.05);
+        }
+
+        .closeBacklog .listGenre {
+            border-color: rgba(192, 64, 0, 0.5);
+        }
+
+        .scrapbookEntry {
+            display: flex;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .scrapbookImg {
+            flex: 1;
+            width: 720px;
+        }
+
+        .scrapbookRight {
+            flex: 10;
+        }
+
+        .scrapbookTitle {
+            position: relative;
+            z-index: 3;
+            background-color: #111;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .scrapbookDesc {
+            background-color: #050505;
+            position: relative;
+            width: 75%;
+            font-size:18px;
+            z-index: 1;
+            padding-bottom: 10px;
+            padding-right: 10px;
+        }
+
+        #postlude {
+            background-color: #080808;
+        }
+
+        @media (max-aspect-ratio: 1) {
+            * {
+                font-size: 16px;
+            }
+
+            #prelude {
+                margin-bottom: 50px;
+                width: 95%;
+            }
+
+            /* Tooltip text */
+            .tooltiptext {
+                visibility: hidden; /* Hidden by default */
+                width: 300px;
+                background-color: black;
+                color: #ffffff;
+                text-align: center;
+                padding: 5px 0;
+                border-radius: 6px;
+                position: absolute;
+                z-index: 1; /* Ensure tooltip is displayed above content */
+            }
+
+            /* Show the tooltip text on hover */
+            .tooltip:hover .tooltiptext {
+                visibility: visible;
+            }
+
+            .list .listEntry {
+                flex-wrap: wrap;
+            }
+
+            .list .listContents {
+                flex: 1;
+            }
+
+            .list .listDetail {
+                width: 90%;
+                font-size:16px;
+            }
+
+            .list .listGenre {
+                font-size: 12px;
+            }
+
+            .scrapbookDesc {
+                width: 95%;
+                font-size:16px;
+            }
+
+            .listImgCaption {
+                font-size: 12px;
+            }
+
+            .list .listImgCaption {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width: 99%; position: absolute; top: 0px; color: #eee; background-color: #222;">
+        <div id="topseparator"></div>
+        <br>
+        <div id="prelude">
+            <p><h5>TODO: Link up all the random references to games</h5></p>
+            <p>Even more than previous years, this goty is less of a guide to games and more of an exorcism of gaming thoughts.</p>
+            <p>2025 has been the year of... uh... alternate means of gaming, and treating most of everything like a permanent Nextfest. Most of it has been trying to find the right, you know, "vacation" games. I'm well-set for "hobby"/"serious" games; I will never run out of good puzzle games and my backlog is only growing, and between those and the occasional big release, I will never stop having a good game for concentration time.</p>
+            <p>I'm fully set for my "houseplant" game between Warframe and &lt;insert shelves of roguelikes with dailies and idlers here&gt;. Those games are permanently set on my windowsill and getting daily care, and I'll be happy seeing those succulents of games grow. I'm mostly looking for "vacation" games, for my vacation from vacations. Even better if playable by controller while lounging (.........maybe while high). Less game-y games, outright gameless games. Really browsing through games.</p>
+            <p>Theoretically this means I'm seeing a lot more games and spending more money on games in a more informed way, and that's *mostly* true. Most games filter out fast. There are plenty of kinds of incompatibilities you can sniff out within a quarter hour, maybe one hour of playing a game. Too many of them take a lot longer. I'm even running into a special category of impasse for niche games that look promising but are politically... suspenseful? I think I like what the chefs are cooking but I don't know if I want to <span class="tooltip" title="Well OK, I do try to buy the game if this phase goes on too long, it's only fair.">support the establishment<span class="tooltiptext">Well OK, I do try to buy the game if this phase goes on too long, it's only fair.</span></span>. "Trying things out" becomes digging myself into a too-deep pit of mysteries upon mysteries.</p>
+            <p>I guess I'll just have to play those games to completion and figure out what's what?</p>
+            <p>This scattershot kind of gaming has been great for figuring out the ins and outs of what I actually want from games, but it has been atrocious for building a list of games that have been played to completion.</p>
+            <p>So, this year, there will be less individual game writeups, and a lot more derailments.</p>
+
+            <div class="digresso">
+                <div class="listTitle"><a href="javascript:toggle('dg_intro')">Digression: The Library</a></div>
+                <div id="dg_intro" style="display:none;" class="listDetail">
+                    <p>I finally took the plunge of getting a NAS set up this year, and I have a *lot* of stuff to sort... I don't think this is finishing in the foreseeable future, but at least I have a very large chunk of my media library sorted out. MusicBrainz helped a lot, but when the old, old stuff was built on piracy and you were big into trance music, you create a unique hell for yourself. Are these credits even vaguely right? In this genre, every DJ and their relatives were making their own mixes. Many of these songs are crossfading from/into things you don't know, and they've been sped up or slowed down to match something else. I get to compare these songs to Youtube uploads and realize that I have the "same" song, but I have no idea what exact release they're from. This is the least important thing to figure out unless you want music in better quality than 128kbps. I have a batch of chaff wrongly credited to Aphex Twin, but somehow the random remix of Pac-Man really was from him?</p>
+                    <p>This is the real danger of piracy.</p>
+                </div>
+            </div>
+
+
+            <p>Will my window-shopping-gaming continue into 2026? Probably? We'll see how the puzzle backlog works out. The guides for Void Stranger are now complete enough to bypass the one snake puzzle, so that's probably going to be high priority, and I only have <em>maybe</em> 20-30 other puzzle games to check out, and most of them are only... baba-level or harder... so we'll see.</p>
+            <p>The list itself. This list is statically ordered this year, but they're still not <em>solidly</em> ordered except for a few standouts.</p>
+            <p>As usual, even if I spend time complaining about a game, any game you see on the main list is recommended... but anything in the digressions is more complicated.</p>
+            <p>-nic</p>
+        </div>
+
+        <div id="listmain" class="list main">
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/antimatter_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/antimatter_1.jpg"
+                                alt="Screenshot of menus. The game is all menus."
+                                title="Loops upon loops, prestiges upon prestiges."></a><span
+                            class="listImgCaption">Loops upon loops, prestiges upon prestiges.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/1399720/Antimatter_Dimensions/"
+                            target="_blank">Antimatter Dimensions</a></div>
+                    <div class="listGenre">Semiautomatable Idler</div>
+                    <div class="listDetail">
+                        <p>One of the bridges between the browser-only and standalone eras of idlers. Maybe too much of its time (see the achievements...). The late-game automation system feels like a strange step between the old and the new), but as far as history lessons go, a pretty good idler. You'll start seeing its handprints on other idlers...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/qualatro_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/qualatro_1.jpg"
+                                alt="It's like a screenshot of Balatro, but significantly scrungled."
+                                title="I swear this normally looks like normal Balatro... but while this might look like a mess, but it sounds like an even bigger mess."></a><span
+                            class="listImgCaption">I swear this normally looks like normal Balatro... but while this might look like a mess, but it sounds like an even bigger mess.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://highquality.rip/qualatro/"
+                            target="_blank">Qualatro</a></div>
+                    <div class="listGenre">Balatro, but different, but the same.</div>
+                    <div class="listDetail">
+                        <p>A free ride to aural hell! Mod for Balatro from the SiIvaGunner troupe with a set of more-or-less-balanced-like-original-jokers jokers that all affect the soundtrack a bit. The (pictured) missingno challenges are also a good time if you want your Balatro experience to be extra mulched.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/usi_file_1.png" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/usi_file_1.png"
+                                alt="This idler is also mostly menus, with a little spaceship fighting on the side."
+                                title="(File photo from Steam page)"></a><span
+                            class="listImgCaption">(File photo from Steam page)</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/2471100/Unnamed_Space_Idle/"
+                            target="_blank">Unnamed Space Idle</a></div>
+                    <div class="listGenre">Idler</div>
+                    <div class="listDetail">
+                        <p>The more modern idler of this list. Not quite complete yet, but it's already pretty large. Good fun with systems interlocking together, and hey, it's free.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listDigression">
+                <div class="listTitle"><a href="javascript:toggle('dg_1')">Digression: Purchase of the Year</a></div>
+                <div id="dg_1" style="display:none;" class="listDetail"><p>I bought a strip light and it's been a fascinating addition to my life. It's just really nice. Unfortunately it's online-only, and it's less customizable than I'd hope... It might be time to relearn python to make the lights do weird things via some unofficial API.</p></div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/littlewood_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/littlewood_1.jpg"
+                                alt="Overview of a town."
+                                title="Not seen: the desperate mess of flower cultivation."></a>
+                    <span class="listImgCaption">Not seen: the desperate mess of flower cultivation.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/894940/Littlewood/"
+                            target="_blank">Littlewood</a></div>
+                    <div class="listGenre">Farmlike</div>
+                    <div class="listDetail">
+                        <p>One of those farming games, but simplified almost to the point of absurdity. Maybe more busywork than not, but if you want something similar with <em>no</em> pressure, here's one. You also have total control over village and terrain layout, for better and for worse -- very Animal Crossing-like in that respect.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/nidana_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/nidana_1.jpg"
+                                alt="Layers upon layers of hollow square tilings."
+                                title="Shapes!"></a>
+                        <span class="listImgCaption">Shapes!</span>
+                    </div>
+                    <div class="listImgCtr"><a href="./images/goty/2025/nidana_2.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/nidana_2.jpg"
+                                alt="A mess of interlinked squares."
+                                title="Shapes again!"></a>
+                        <span class="listImgCaption">Shapes again!</span>
+                    </div>
+                    <div class="listImgCtr"><a href="./images/goty/2025/nidana_3.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/nidana_3.jpg"
+                                alt="Grid of planks, each as tall as buildings."
+                                title="So many shapes."></a>
+                        <span class="listImgCaption">So many shapes.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/3186120/NIDANA/"
+                            target="_blank">Nidana</a></div>
+                    <div class="listGenre">Walking Simulator</div>
+                    <div class="listDetail">
+                        <p>Shapes! We have shapes! Do you like shapes? Do you enjoy shapes? What if you had a lot more of stuff like the ending of Antichamber? This game is almost entirely shapes. Akin to Naissancee, maybe similarly it should've been less gamey, but it's still a very beautiful game. At first I was worried that the game is weird about women, and towards the end it started to feel relatively benign, but then there's the maze of large women, so I don't know. I don't know.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listDigression">
+                <div class="listTitle"><a href="javascript:toggle('dg_turrell','flex')">Digression: Turrell</a></div>
+                <div id="dg_turrell" style="display:none" class="listEntry">
+                    <div class="listSidebar">
+                        <div class="listImgCtr"><a href="./images/goty/2025/yunknown_1.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/yunknown_1.png"
+                                    alt="A bridge in a spartan hall/structure, too large for the air to stay transparent."
+                                    title="Big."></a>
+                            <span class="listImgCaption">Big.</span>
+                        </div>
+                        <div class="listImgCtr"><a href="./images/goty/2025/yunknown_2.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/yunknown_2.png"
+                                    alt="A view from inside a dark structure, the sky red."
+                                    title="Big and red."></a>
+                            <span class="listImgCaption">Big and red.</span>
+                        </div>
+                    </div>
+                    <div class="listContents">
+                        <div class="listDetail">
+                            <p>More games should have James-Turrell-esque scenes. Pictured here is <a href="https://sockman.itch.io/year-unknown" target="_blank">Year Unknown</a>. That's all.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/mgarden_1.png" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/mgarden_1.png"
+                                alt="A very, very large maintenance tunnel with a cargo train1."
+                                title="It's hard to express this game in single screenshots (and it's easy to forget to absorb the scale while playing), but it's a big, big place."></a>
+                        <span class="listImgCaption">It's hard to express this game in single screenshots (and it's easy to forget to absorb the scale while playing), but it's a big, big place.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/3539440/Metal_Garden/"
+                            target="_blank">Metal Garden</a></div>
+                    <div class="listGenre">First Person Shooter/Platformer</div>
+                    <div class="listDetail">
+                        <p>We're getting small games inspired by Half-Life 1 out there! Reasonably short romp, good difficulty options, very large structures. Great vibes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/logicbombs_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/logicbombs_1.jpg"
+                                alt="An example puzzle."
+                                title="I'm not deleting one of my solutions for a screenshot, have a solved tutorial puzzle."></a>
+                        <span class="listImgCaption">I'm not deleting one of my solutions for a screenshot, have a solved tutorial puzzle.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/3816700/Logic_Bombs/"
+                            target="_blank">Logic Bombs</a></div>
+                    <div class="listGenre">Logic Puzzle</div>
+                    <div class="listDetail">
+                        <p>Less nonogram-adjacent than it looks, but it's scratching a similar itch. A well-curated set of puzzles with minimal external notetaking needed.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/svagabond_file_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/svagabond_file_1.jpg"
+                                alt="Planetary/local system travel in a 2D space game."
+                                title="File photo from the Steam page."></a>
+                        <span class="listImgCaption">File photo from the Steam page.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/2448930/Starstruck_Vagabond/"
+                            target="_blank">Starstruck Vagabond</a></div>
+                    <div class="listGenre">2D Trader</div>
+                    <div class="listDetail">
+                        <p>Yahtzee's always made decent crunchy games, and this one (I think?) is the first one made to really take time to play, and it does it well. You'd hope the writing would be a standout, but at least it's not cowardly. I think this game works well as a condensation of space games often being courier games, now slotting in as your houseplant game that you eventually shape to completion.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listDigression">
+                    <div class="listTitle"><a href="javascript:toggle('dg_space')">Digression: I don't know what I want from space games</a></div>
+                    <div id="dg_space" style="display:none;" class="listDetail">
+                        <p>I've been looking for space.</p>
+                        <p>Trying out a shotgun blast of games means diving into some genres without familiarity of the evolution of the genre, and that means my analyses this year will be <em>extra</em> sparsely informed -- but even as a relative stranger, you immediately pick up vibes, evidence, craters. By the time you try your third colony/building sim you can tell that the genre had an extinction-level Slay-the-Spire-type impact event, and now there's a shape to a subgenre that you see all over the place. I can't tell you what exactly happened here, but I can tell you they all involve semi-airtight rooms, control of various gases, temperature simulation, NPCs with stats and emotional states, etc, etc. It's not quite Dwarf Fortress, just one step removed... It's almost certainly RimWorld, right? I think there was a slow wave of games with similar mechanics, but RimWorld was the bottleneck so many other design went through. I think there's a consistent language among space-based peoples manager games now.</p>
+                        <p>...None of those games are making it on to the list though, mostly because these are naturally very large games. Maybe a few years from now. This genre does tend towards being demanding of their players, and puzzle games have near-monopoly on those spoons for me, so I don't have high hopes?</p>
+                        <p>On another corner of unfamiliarity, there's the space traveler genre. By default, my point of reference this year is No Man's Sky. This is not an ideal point of view to work with. It's very difficult to figure out what you want from a genre using a game that doesn't know what it wants. It's maybe even harder when you skip <span class="tooltip" title="Nothing personal, just a very demanding game that in another life I'd have imprinted on, but doesn't fit anywhere in my life. Vacation game search, remember?">Elite(: Dangerous)<span class="tooltiptext">Nothing personal, just a very demanding game that in another life I'd have imprinted on, but doesn't fit anywhere in my life. Vacation game search, remember?</span></span>. Maybe I should even peek into Star Citizen? EVE?!</p>
+                        <p>At least in NMS, there are <span class="tooltip" title="The game's got that live-game-itis where mechanics are added over time and don't really feed into each other, at least not cohesively. Digging into that would be utterly out of scope for a GOTY.">many, many mechanics<span class="tooltiptext">The game's got that live-game-itis where mechanics are added over time and don't really feed into each other, at least not cohesively. Digging into that would be utterly out of scope for a GOTY.</span></span>, and they all fit the general ideals of spacing-in-space. Gathering resources is standard for survive-em-ups, object scanning because why not, whole-planet exploration is maybe aiming too high but it's still welcome, space travel is reasonably done, space stations are disappointingly uniform (but maybe that's for the best...), base building is still standard for survive-em-ups but is caught in a weird medium between solo construction and having fellow colonists, colony management is odd, spaceship customization is standard, space trading isn't very explored but it's still partially a glue for the whole space travel thing, medium spaceship/corvette management is an awkward middle but I'm sure I'll get into it when I enter that <span class="tooltip" title="Money has been an interesting question in space fantasies, but money is getting its own digression later in this GOTY. Imagine a very large shrug for now.">income bracket<span class="tooltiptext">Money has been an interesting question in space fantasies, but money is getting its own digression later in this GOTY. Imagine a very large shrug for now.</span></span>, large spaceship/frigate/fleet management is getting strange and the game is overreaching by this point but it's functional. These are all space. Are these all what I'm looking for in space games? I wouldn't say <em>no</em>, I don't know if I would take any of them away, but this can't be what I would settle on. I think I'll still play quite a bit more of it before leaving, and in the end there's a lot to dissect about this game because it touches on so many things, and not badly at it. But it's caught in such a strange in-between of loneliness and not...</p>
+                        <p>OK, let's narrow the scope way, way down. The central glue for space wandering games had always been to give a reason to travel between places, and the easy way to make someone travel between interesting places (constructed) and interesting places (natural) is to do some trading (and resource extraction). What if a game had <em>nothing</em> except for this, not even a minigame for trading or gathering? Then you'd have <a href="https://hf-games.itch.io/galaxy-trader" target="_blank">Galaxy Trader</a>. Take the central loop for (arguably) No Man's Sky or its ilk, or maybe <span class="tooltip" title="Is Uncharted Waters a space game? Or maybe No Man's Sky is a boat game. Maybe I should be looking at boats instead?">Uncharted Waters<span class="tooltiptext">Is Uncharted Waters a space game? Or maybe No Man's Sky is a boat game. Maybe I should be looking at boats instead?</span></span> and make 3D spaceship travel so dead simple that a touchscreen interface is more than fine. It still mostly works! I'm towards the end of the game and its very finite map, and the evil side of my conscience is telling me that this would have worked fine with a much larger map. It's not the game I'm looking for, but it has fed into my throughline of my year: Try out the games that have less game per game, sometimes they work! Figure out what gamey parts aren't as necessary as they felt, and interrogate what contributes to the actual pull of a game.</p>
+                        <p>There are still many other subgenres I could talk about, but I don't need to make this genre crisis even larger. Space dogfight games are sort of in the conversation (Everspace 2 looks pretty good!) There are plenty of sci-fi narrative games set in various corners of space (sometimes involving <em>a lot</em> of space). On the farming side, Little-Known Galaxy isn't <em>very</em> spacey, but I think it sort of gets the vibe across? Maybe this is the problem of the everything-ness of space, maybe this cannot fit in my casual gaming slot. Some part of me fears that maybe I'm only looking for a novelty spigot. I like to think I'm still looking for the spaciness of space. I don't know if it's out there; I don't even know if it would be a single game. At least I think I'm having a better idea of what I don't want.</p>
+                        <p>Maybe I really should spend a lot of time on Elite.</p>
+                    </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/tei-amme_file_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/tei-amme_file_1.jpg"
+                                alt="A block-pushing game with a suspicious bendy mechanical arm."
+                                title="File photo from the Steam page. It's not an expansive game, but maybe it's bigger than you think."></a>
+                        <span class="listImgCaption">File photo from the Steam page. It's not an expansive game, but maybe it's bigger than you think.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/3352300/The_Electrifying_Incident_A_Monster_MiniExpedition/"
+                            target="_blank">The Electrifying Incident: A Monster Mini-Expedition</a></div>
+                    <div class="listGenre">Sokoban and Context Puzzler</div>
+                    <div class="listDetail">
+                        <p>The usual Draknek treatment on a decent bite-sized puzzle game, and also a good introduction to "leaky" puzzles. Push boxes, and then push boundaries...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listDigression">
+                    <div class="listTitle"><a href="javascript:toggle('dg_courier')">Digression: Courier Games</a></div>
+                    <div id="dg_courier" style="display:none;" class="listDetail">
+                        <p>Jumping off Space Trader... There have been genres crystallizing as part of the cozy games movement, and at least from what I've played, courier games are in an interesting spot. It's not a genre that has solidified (there's no template getting copied like Slay the Spire or Vampire Survivors or Symphony of the Night) but there's... a consistent vibe? a direction a several games are sharing. It's the shared endpoint of taking relatively open action-adventure games and then removing all the combat from it. You tend to end up with collection quests and bringing things from one place to another, and the design challenge is making it still feel gamy. It's convergent evolution on trading-based games on the past (Uncharted Waters, early trucking games, Elite), but these aren't quite descendants of those games.</p>
+                        <p>Some of the roots of the genre feel like they came from farming games, but I don't know if they initiate a proper chain of cause and effect all the way to current games. I can sort of argue that farming games have been pushing out in this direction, these games have pushed to be more excursionary. In a way, Stardew Valley and the Runes Factory represent action-adventures coming in to add dungeons and long expeditions. However, these trips don't always revolve around combat, and sometimes you take these trips just for random foraging or revisiting unique shops. And then you have games like My Time at Portia pushing these travels longer and longer, and it seems inevitable that some games will pop out that focus on travel.</p>
+                        <p>So what's been inherited from farming games? You naturally have towns again (sometimes with villagers. and sometimes they even change over time). Day/night clocks almost feel obligatory, but sometimes they don't serve to provide pressure, instead it expresses passage of time and allows the setting to have distinct day- and night-vibes. I might dare to claim that <span class="tooltip" title="Might still be unmatched in vibe-setting. To this day games only rarely make places quite that populated.">Diaries of a Spaceport Janitor<span class="tooltiptext">Might still be unmatched in vibe-setting. To this day games only rarely make places quite that populated, that bustling.</span></span> is one of the earliest games leading into this genre. It's still very gamy because the mission statement is about the pressures of living, and not &lt;the shared mission of explicitly-stated-as-"cozy" games&gt;. Currencies still usually follow over, but that inheritance goes farther back. Infrastructure-as-metroidvania (building bridges, fixing things, etc) often make a return. A lot of the bones are still there.</p>
+                        <p>The missing part of the theory is... I'm having trouble pointing out consistent halfway steps to this genre, at least among games I've played. Instead I have multiple approaches from different directions around 2021? Wytchwood is a mostly peaceful craft'em'up with a lot of gathering and grinding. It's something like fitting the form of Don't Starve to be less about a hostile world, but it still has hostile NPCs and a health system. Garden Story is mostly in the fighty action-adventure pool, but it's also dipping into farming mechanics *and* it's trying to make a multi-town world work. Fixfox feels so close to the genre as it is now, but the details all don't quite fit? I think its open world vibe is sort of off by having the world shuffle itself periodically? It is still very, very ahead of its time though. Can I patch my GOTY list that year to put it higher?</p>
+                        <p>So where are we now? In the main list I've put Starstruck Vagabond, Distant Blooms, and Rekindled Trails. Clearly I can't finish this digression without mentioning Death Stranding (2), but it also can't help being very gamy, so I think its intended audience doesn't necessarily overlap with the other courier games that much? I've also run into Fading Serenades this year, which I'm not as sure about recommending, but you should glance at it. I can't quite put a finger on what it's lacking, but maybe it just needs a little more stuff overall. (Look, this entire GOTY writeup is a crisis about encountering je-ne-sais-quoi-s everywhere, go try some of these games.) I've also played the demo for Letters to Arralla and it looks quite promising, and that one's all about <span class="tooltip" title="Oh! Also shoutouts to Lake.">letter delivery<span class="tooltiptext">Oh! Also shoutouts to Lake.</span></span>. I wouldn't be surprised if the postal service wrapper will be a common base for this corner of cozy games, but maybe that doesn't happen without some breakout hit annihilating variety going forward.</p>
+                        <div class="digresso">
+                            <div class="listTitle"><a href="javascript:toggle('dg_dg_serpent')">Digression on Digression: The Serpent Rogue</a></div>
+                            <div id="dg_dg_serpent" style="display:none;" class="listDetail">
+                                <p>Quick aside: I wanted to add The Serpent Rogue as a random shoutout to the segment above, but after double-checking, it really doesn't fit. The quest loop might be concocting potions, but it's way too fighty for its own good. I have no idea where it fits in the gaming space.</p>
+                                <p>If you're swearing off game subscriptions/passes, keep in mind that some of your money <em>did</em> go to unproven/weird corners of the indie space, so remember to regularly (even if sparingly) take a random shot. You deserve to get baffled once in a while.</p>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/bloom_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/bloom_1.jpg"
+                                alt="Looking over a restored forest and river."
+                                title="You're getting a spoiler for after the cleanup, why not. It's a nice place."></a>
+                        <span class="listImgCaption">You're getting a spoiler for after the cleanup, why not. It's a nice place.</span>
+                    </div>
+                    <div class="listImgCtr"><a href="./images/goty/2025/bloom_2.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/bloom_2.jpg"
+                                alt="Walking over a restored snowscape."
+                                title="Snow trails are always nice."></a>
+                        <span class="listImgCaption">Snow trails are always nice.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/1450250/Distant_Bloom/"
+                            target="_blank">Distant Bloom</a></div>
+                    <div class="listGenre tooltip" style="border-bottom: 3px dotted gray;" title="Originally named Home Grown? The translation is sometimes a bit inconsistent, so both names got name-dropped in the plot...">Actionless Adventure<span class="tooltiptext">Originally named Home Grown? The translation is sometimes a bit inconsistent, so both names got name-dropped in the plot...</span></div>
+                    <div class="listDetail">
+                        <p>This game is <em>skeletal</em>. Take the structure of something like Zelda ALttP or its ilk, and remove as much as you can from it. It still sort of works? It's like FixFox but even more pared. There's not even a map (this might be a dealbreaker). I wish the planting had more of a puzzle to it, but honestly reducing everything to busywork still works fine for the genre. It's also very... jank, maybe under-budgeted. You will get stuck on geometry at very strange places.</p>
+                        <p>Oddly, there isn't really any postgame direction/objective to actually go out into the world after you've cleaned it up and enjoy all the changes in the world. There's clearly been hard work put into what the world is <em>supposed</em> to look like, but it's only visible after you completely finish an area, so you spend most of the game not seeing it. Maybe this is better? Maybe it's better to not have a game tell you to do that.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listDigression">
+                <div class="listTitle"><a href="javascript:toggle('dg_rt','flex')">Digression:</a> <span class="tooltip" title="I have to break the linearity of GOTYs here. These two are solid 7/10 games, but I'm ending up more fond of Distant Bloom, but I feel like I have to talk about Distant Bloom first before talking about Rekindled Trails to make the comparisons make sense.">Rekindled Trails<span class="tooltiptext">I have to break the linearity of GOTYs here. These two are solid 7/10 games, but I'm ending up more fond of Distant Bloom, but I feel like I have to talk about Distant Bloom first before talking about Rekindled Trails to make the comparisons make sense.</span></span></div>
+                <div id="dg_rt" style="display:none" class="listEntry">
+                    <div class="listSidebar">
+                        <div class="listImgCtr"><a href="./images/goty/2025/retrails_1.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/retrails_1.png"
+                                    alt="Looking over a restored forest and river, in the snowscape."
+                                    title="River and a snowscape."></a>
+                            <span class="listImgCaption">River and a snowscape.</span>
+                        </div>
+                        <div class="listImgCtr"><a href="./images/goty/2025/retrails_2.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/retrails_2.png"
+                                    alt="Running around next to a mountain pond."
+                                    title="The ponds are also nice."></a>
+                            <span class="listImgCaption">The ponds are also nice.</span>
+                        </div>
+                    </div>
+                    <div class="listContents">
+                        <div class="listTitle"><a href="https://store.steampowered.com/app/3378330/Rekindled_Trails/"
+                                target="_blank">Rekindled Trails</a></div>
+                        <div class="listGenre">Courier Adventure</div>
+                        <div class="listDetail">
+                            <p>Flip that approach. Distant Bloom spent a lot of effort on its environment and how it changes while leaving the gameplay barebones (and arguably incomplete), while Rekindled Trails here...</p>
+                            <p>Rekindled Trails shares a <em>lot</em> of the same skeleton. These are both largely single-plane walkarounds on an expansive world, there's no jumping (but sometimes you can drop down ledges), and there's even similar jank of sometimes getting stuck in menacing invisible geometry. Instead of cultivation, the central verb of the game is resource harvesting (with mini-minigames) and (indirect?) trade. The world is split into regions of cities and their surroundings, and each region has different resources, each city has a preference for types of goods they don't have, and each city wants particular resources (and money...) to level up. Travel is straightforward but effective -- If you graze past the torches and lamps littered along roads, you get fired up and temporarily move a lot faster. So you run around the world, city to city, gathering resources along the way. The backpack and selling systems are proper inventory tetris with some locational bonuses, like if Moonlighter 1's backpack system evolved further. It's fun!</p>
+                            <p>...But you do a lot of it. It's not at all the intent of the game, but throughout the game I felt the crushing weight of money. This is a problem that eventually solves itself post-game once all the possible item bonuses can play with each other, but while the game paces itself well so that you do minimal grinding to progress the story along, it doesn't give a lot of slack en route. That means when the game regularly introduces new cosmetics to buy, pets to keep, or side upgrades along the way, they feel like they're priced a bit high for that point of the game, and it feels best to skip everything. Maybe the game just needed more things so that not everything feels like they're priced for the postgame. The backpack upgrades are especially harsh; the upgrade price makes economic sense for how valuable things can be in the postgame, but it never feels good to grind for it. Meanwhile, the process of unlocking shortcut routes felt better -- they don't necessarily take less effort, but instead they ask for specific mystery items, and you have to figure out what they are and bring them there. Economically I'm pretty sure the opportunity cost is similar, but they feel like they fit better.</p>
+                            <p>The big spends in the game (and required to propel the plot) are the city upgrades, and here's the other big point of comparison with Bloom. Where Distant Bloom probably spent too much of its effort portraying the world changing, Rekindled Trails felt like it should've done more. The first tier of city upgrades was neat (introducing eggs as slot-fillers is clever!) but there's less... knitting the world together as the story implied? The cities and especially the roads are too static. The shortcuts help a bit, but I'll take Distant Bloom's heavy-handed flowers-everywhere approach over nothing...</p>
+                            <br>
+                            <p>That was a long digression on not much wrongness in a random game, but please don't take this as a takedown on the game. Sometimes you play two 7/10 games back to back and you come away with unexpected points of comparison and new things to pay attention to. It's how, once in a long while, the je-ne-sais-quoi gets to congeal into a concrete thought. Sometimes something has to be wrong in the right way.</p>                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/harvestella_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/harvestella_1.jpg"
+                                alt="Overlooking the farm."
+                                title="I would put some of the larger scapes here but they'd be spoilers..."></a>
+                        <span class="listImgCaption">I would put some of the larger scapes here but they'd be spoilers...</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/1816300/HARVESTELLA/"
+                            target="_blank">Harvestella</a></div>
+                    <div class="listGenre">Action-RPG-Adventure-Farmer</div>
+                    <div class="listDetail">
+                        <p>What a strange package. Ambition far exceeding its budget, too much filler for its own good, clear throughline of high heel fetish, but the aspiration is there, and the plotline is... fine. Honestly, a pretty good experience overall. Maybe keep Cheat Engine on hand to pause the time sometimes, though. It is so strange to put so much effort in your setpieces in the kind of game where time always moves forward.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/gentoo_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/gentoo_1.jpg"
+                                alt="A puzzle level with multiple paths of recursion."
+                                title="Deeper (yes, all of these are the same level)"></a>
+                        <span class="listImgCaption">Deeper (yes, all of these are the same level)</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/2830480/Gentoo_Rescue/"
+                            target="_blank">Gentoo Rescue</a></div>
+                    <div class="listGenre">Sokoban and Context Puzzler</div>
+                    <div class="listDetail">
+                        <p>Speaking of leaky boundaries between puzzles... This game is eventually all about what happens when a puzzle gets a new context. It's <em>thorough</em> in annotating the puzzling process, at least up to the postgame content. If you ever wished that knowledge check puzzle games had an in-game list of interactions (and filtered to relevant interactions per level!) and an in-game hinting system, this game has your back. Still fairly difficult, but its systems make it a great introduction to this corner of the puzzling world.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listDigression">
+                <div class="listTitle"><a href="javascript:toggle('dg_walk','flex')">Digression: Hiking Games</a></div>
+                <div id="dg_walk" style="display:none" class="listEntry">
+                    <div class="listSidebar">
+                        <div class="listImgCtr"><a href="./images/goty/2025/beamng_1.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/beamng_1.png"
+                                    alt="Looking out to the sea from inside a dark stone fort."
+                                    title="(BeamNG.drive) Right... a driving game..."></a>
+                            <span class="listImgCaption">(BeamNG.drive) Right... a driving game...</span>
+                        </div>
+                        <div class="listImgCtr"><a href="./images/goty/2025/cotw_1.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/cotw_1.png"
+                                    alt="View of mountains and a glacier from a road."
+                                    title="(Call of the Wild: The Angler) Folks, it's very possible that 2026 is the year I get into hunting games."></a>
+                            <span class="listImgCaption">(Call of the Wild: The Angler) Folks, it's very possible that 2026 is the year I get into hunting games.</span>
+                        </div>
+                        <div class="listImgCtr"><a href="./images/goty/2025/crew-oil.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/crew-oil.png"
+                                    alt="Moonrise and oil derricks from a beach."
+                                    title="(The Crew) *nods* Uh-huh, driving games."></a>
+                            <span class="listImgCaption">(The Crew) *nods* Uh-huh, driving games.</span>
+                        </div>
+                        <div class="listImgCtr"><a href="./images/goty/2025/hitman_1.png" target="_blank"><img
+                                    class="listImg" src="./images/goty/2025/hitman_1.png"
+                                    alt="Standing in the waves at a cold, cold beach."
+                                    title="(Hitman 3) This is already mostly a walking game, why not walk some more?"></a>
+                            <span class="listImgCaption">(Hitman 3) This is already mostly a walking game, why not walk some more?</span>
+                        </div>
+                    </div>
+                    <div class="listContents">
+                        <div class="listDetail">
+                            <p>The talk about gaminess and piracy maybe hinted towards this. I've been spending some time doing something like hiking in games. Just walk and look around. This is an absurd, perverse pit to fall into. By its nature, this is almost the least gaming you can do, but it's often best done with the most expensive games out there with <span class="tooltip" title="It really is VR-less VR... Although! Speaking of! VRChat has plenty of very good worlds to sightsee, and most of them are optimized for the Quest. Those are free and accessible, go try'em out!">the best rig you can get<span class="tooltiptext">It really is VR-less VR... Although! Speaking of! VRChat has plenty of very good worlds to sightsee, and most of them are optimized for the Quest. Those are free and accessible, go try'em out!</span></span>. It's the complete opposite of weird little puzzle games, and I'm here to tell that it's <em>good</em>. (......spend responsibly)</p>
+                            <p>Rockstar and Rockstar-derived games are naturally very good for this. They've spent so many millions and effort-hours building those worlds, and sometimes the details are even fun to see! And for the most part, the game world lets you do this, you don't have to mod out encounters or anything like that. The game's UI is also relatively hands-off. It's nice to have a world big enough to be able to wander, and then wander without thinking about objectives. Go take a vacation <em>from</em> playing games.</p>
+                            <p>Driving is also hiking, sometimes. The most visible examples are the Truck Simulators (courier games!) and the wide wide genre of transit simulators, but a lot of conventional driving games have gone all-in on open worlds. Since driving games are not at all interested in spicing up travel with gameplay (since the the travel <em>is</em> the gameplay), they are great if you just want to fuck off. I admittedly didn't seek too many racing games out, so I can't give many examples, but they've been great for tourists. <span class="tooltip" title="Recently resurrected with the The Crew Unlimited project, if you already legally own the game.">The Crew 1<span class="tooltiptext">Recently resurrected with the The Crew Unlimited project, if you already legally own the game.</span></span> & <a href="https://store.steampowered.com/app/646910/The_Crew_2/" target="_blank">2</a> have menacingly large expansive worlds for driving, at least when the UI and random challenges aren't being too intrusive. <a href="https://store.steampowered.com/app/284160/BeamNGdrive/" target="_blank">BeamNG.drive</a> isn't quite as expansive as its higher-budget cousins but it's <em>incredible</em> on every other aspect.</p>
+                            <p>I think weird feeling I'm left with in my gut is that budget (both dev-side and customer-side) seems to help a <em>lot</em>. On the dev side, a lot of the very recommendable worlds are AAA+ projects, and in all cases represent many, many, many labor hours. Procedural generation <em>should</em> work (and a lot of survival games kindly let you convert them to wandering games), but something's... It's a je-ne-sais-quoi sort of deal again. Even though random generation theoretically generates infinitely, what you get out of it seems in proportion to the effort you put in, so I don't know if I'd call it labor-saving. On the other side, this kind of gaming can be very low in hours relative to the price if you don't practice the discipline to just... hang around more. Maybe this makes for a good use-case for game streaming services (savor high end graphics! ignore latency issues! dive into vast libraries!), but so much of the streaming concept is feeling more and more off.</p>
+                            <p>I guess in the end these are the same questions that apply to all of gaming, but I worry that this genre is inherently more... disposable? In the design-space there's not a lot of room for walking games to be different from each other since all you have are the world and its looks. Maybe it's because this feels more like the substrate of a game than a game-in-of-itself (and I've mentioned plenty of treating other games as hiking games by ignoring the gamey parts), an anxiety that it would be somehow wasteful if this actually takes off as a genre. Maybe this would be a much more natural genre to exist if world reuse was a much more common thing. Hell, it would be great if there was a genre about appreciating existing maps in other games more. Should I ask for this genre to start existing for real? Walking is so nice, in any case.</p>
+                            <p>The natural follow-up after thinking about dev-side costs would be to talk and muse about GenAI and how it doesn't work even when it functions correctly, but that will be some other article, something more coherent. Maybe 2026 GOTY, if my plans work out.</p>
+                            <br>
+                            <p>To round things out, other examples I can't afford to go too deep on: <span class="tooltip" title="Close calls include Pattern, increpare's Subway Adventure, Zeronorthzerowest, Eidolon, Ambient Dark, and so on, and so on.">Actual factual walking simulators<span class="tooltiptext">Close calls include Pattern, increpare's Subway Adventure, Zeronorthzerowest, Eidolon, Ambient Dark, and so on, and so on.</span></span>, <span class="tooltip" title="There are uploads of the walkaround part of The Matrix Awakens out there, there's the odd water simulation demos, and demos of gaussian splatting are fascinating but starting to veer close to AI.">random tech demos<span class="tooltiptext">There are uploads of the walkaround part of The Matrix Awakens out there, there's the odd water simulation demos, and demos of gaussian splatting are fascinating but starting to veer close to AI.</span></span>, <span class="tooltip" title="Microsoft Flight Simulator 2024 straight up made the world a walking sim, although shame about the microsoft thing">flight sims?!<span class="tooltiptext">Microsoft Flight Simulator 2024 straight up made the world a walking sim, although shame about the microsoft thing</span></span>, Assassin's Creed Discovery Tours, Isle of Pan, <span class="tooltip" title="...but only sometimes, and only if you don't mind being among other people">MMOs<span class="tooltiptext">...but only sometimes, and only if you don't mind being among other people</span></span>, <span class="tooltip" title="This really is just hiking with how enormous the maps are. The maps are gorgeous, but each is a DLC, but it's a reasonable charge.">Call of the Wild (Hunter and Angler)<span class="tooltiptext">This really is just hiking with how enormous the maps are. The maps are gorgeous, but each is a DLC, but it's a reasonable charge.</span></span>, <span class="tooltip" title="This can be an enormous digression by itself. Maybe start at Interior Worlds? or specifically Pools of the liminal-likes genre.">horror games<span class="tooltiptext">This can be an enormous digression by itself. Maybe start at Interior Worlds? or specifically Pools of the liminal-likes genre.</span></span>?!</p>
+                            <p>And as one last quick aside, the explosion of battle royale and extraction games <em>should</em> have meant a very large supply of hikable locations, but it's far from the norm to let you just explore the map. I wish I knew why.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/jigsaws_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/jigsaws_1.jpg"
+                                alt="Strange jigsaws."
+                                title="(File photo from Steam page for) Strange Jigsaws."></a>
+                        <span class="listImgCaption">(File photo from Steam page for) Strange Jigsaws.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/2702170/Strange_Jigsaws/"
+                            target="_blank">Strange Jigsaws</a></div>
+                    <div class="listGenre">Strange Jigsaws/Minihunt</div>
+                    <div class="listDetail">
+                        <p>As you'd expect from a follow-up to <a href="https://store.steampowered.com/app/2570630/20_Small_Mazes/" target="_blank">20 Small Mazes</a>, a very good entry-level puzzler, this time focusing a lot more on the puzzles-with-metas structure seen in puzzle hunts. It's very good! Sometimes it involves a normal jigsaw! Please, <em>please</em> join us in the mystery hunt abyss.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/iosas_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/iosas_1.jpg"
+                                alt="Puzzle block pushing with many elements."
+                                title="(File photo from Steam page, anything from my file involves too many mild spoilers)"></a>
+                        <span class="listImgCaption">(File photo from Steam page, anything from my file involves too many mild spoilers)</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://store.steampowered.com/app/1233070/Isles_of_Sea_and_Sky/"
+                            target="_blank">Isles of Sea and Sky</a></div>
+                    <div class="listGenre">Puzzle Adventure</div>
+                    <div class="listDetail">
+                        <p>Half sokoban variant, half... item hunting like in older metroidvanias? Very good puzzle game, but you'll also need to have a stomach for secret hunting. The way the game adds verbs along the way is sort of in the same spirit of <a href="https://store.steampowered.com/app/395620/Ittle_Dew_2/" target="_blank">Ittle Dew</a>, but with a very different overall philosophy. I'm not quiiite done with it (there's definitely at least one very esoteric thing left...) but everything had been solid.</p>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="listDetail">
+                <p>There's a big gulf here.</p>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div class="listDetail">
+                <p>My top game is a difficult room-based puzzle game</p>
+                <p>involving thorough examination of details,</p>
+                <p>puzzle interactions between rooms,</p>
+                <p>many secrets,</p>
+                <p>and multiple points of ending.</p>
+                <br>
+                <p>That's right, it's...</p>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div class="listEntry">
+                <div class="listSidebar">
+                    <div class="listImgCtr"><a href="./images/goty/2025/dokh_1.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/dokh_1.jpg"
+                                alt="A puzzle room with Evil Eyes and two curious switches."
+                                title="This custom hold starts as more or less a tutorial, but will rapidly grow in complexity."></a>
+                        <span class="listImgCaption">This custom hold starts as more or less a tutorial, but will rapidly grow in complexity.</span>
+                    </div>
+                    <div class="listImgCtr"><a href="./images/goty/2025/dokh_2.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/dokh_2.jpg"
+                                alt="A suspiciously sparse puzzle room with just one enemy."
+                                title="Beware of puzzle rooms bearing suspiciously few moving parts."></a>
+                        <span class="listImgCaption">Beware of puzzle rooms bearing suspiciously few moving parts.</span>
+                    </div>
+                    <div class="listImgCtr"><a href="./images/goty/2025/dokh_3.jpg" target="_blank"><img
+                                class="listImg" src="./images/goty/2025/dokh_3.jpg"
+                                alt="A different suspiciously sparse puzzle room."
+                                title="Really, really beware of puzzle rooms bearing suspiciously few moving parts."></a>
+                        <span class="listImgCaption">Really, really beware of puzzle rooms bearing suspiciously few moving parts.</span>
+                    </div>
+                </div>
+                <div class="listContents">
+                    <div class="listTitle"><a href="https://forum.caravelgames.com/viewtopic.php?TopicID=46328"
+                            target="_blank">The Descent of King Hesper</a></div>
+                    <div class="listGenre">Clopen-world Puzzler</div>
+                    <div class="listDetail">
+                        <p>(The link is for the direct download of the hold itself, but the route to play it is to buy/get the demo of <a href="https://store.steampowered.com/app/351320/DROD_The_Second_Sky/" target="_blank">DROD: The Second Sky</a> or Gunthro and the Epic Blunder and load from there)</p>
+                        <p>I'm not <em>done</em> done with the game, but I'm two endings in (and unlocked the museum of the making-of process), and I think there are at least two more. And that leaves... just the hardest 20% of the game remaining, but I'm going to do it! Eventually!</p>
+                        <p>So. This was a project from a chunk of the community to create a proper introduction to every single piece of the game. It's not that the original games glossed over each introduced element or anything, but there's been a subgenre of puzzle games that take a proper microscope to mechanics that are involved, a real scholarly thoroughness. Stuff like Bean & Nothingness, Recursed, Stephen's Sausage Roll, and so on. DROD had built a large library of game elements over time, and there are some complicated elements indeed, so naturally, this project is very, very large. Despite its size though, it's not redundant, and the puzzles are very good throughout. I'd say it's a pretty good introduction to the series itself if you prefer this kind of approach (it does work as a self-contained game!), with the caution that it's long because it has to be, and it does eventually get significantly more difficult than the game series itself. It's a good way to fill your whole year. And the next.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="midseparator" style="margin-top: 30px; margin-bottom: 30px;"></div>
+        <div id="postlude">
+            <p>That's all! Thanks for reading. I already have an idea for what 2026's GOTY will involve, and hopefully I actually finish puzzle games this time around. That, or get around to programming things. Something will be done.</p>
+            <p>Because my puzzle backlog has gotten too large for its own good, here are some shout-outs that I've only poked at, or haven't broken into at all:</p>
+            <ul>
+                <li><a href="https://store.steampowered.com/app/1961850/Toroban/" target="_blank">Toroban</a></li>
+                <li><a href="https://store.steampowered.com/app/3108190/Puzzle_Depot/" target="_blank">Puzzle Depot</a></li>
+                <li><a href="https://store.steampowered.com/app/3606390/Box_Stocks/" target="_blank">Box Stocks</a></li>
+                <li><a href="https://store.steampowered.com/app/2699290/Kevin19972077/" target="_blank">Kevin (1997-2077)</a></li>
+                <li><a href="https://store.steampowered.com/app/3418910/Ginger/" target="_blank">Ginger</a></li>
+                <li><a href="https://store.steampowered.com/app/3350460/Flicker/" target="_blank">Flicker</a></li>
+                <li><a href="https://store.steampowered.com/app/2500450/Anx_Defense/" target="_blank">Anx Defense</a></li>
+                <li><a href="https://store.steampowered.com/app/3575260/Only_Sliding/" target="_blank">Only Sliding</a></li>
+                <li><a href="https://store.steampowered.com/app/2008250/Bonfire_Peaks__Lost_Memories/" target="_blank">Bonfire Peaks: Lost Memories pt. 2/3</a></li>
+                <li><a href="https://store.steampowered.com/app/2462810/Ligo/" target="_blank">Ligo</a></li>
+                <li><a href="https://store.steampowered.com/app/2662590/UltraNothing/" target="_blank">UltraNothing</a></li>
+                <li><a href="https://store.steampowered.com/app/2092660/Magnet_Block/" target="_blank">Magnet Block</a></li>
+                <li><a href="https://store.steampowered.com/app/2457870/Sandys_Great_Escape/" target="_blank">Sandy's Great Escape</a></li>
+                <li><a href="https://store.steampowered.com/app/1717940/After_Light_Fades/" target="_blank">After Light Fades</a></li>
+            </ul>
+            <p>As usual, ask me anything at your leisure.</p>
+        </div>
+        <div id="botseparator" style="margin-top: 250px; margin-bottom: 250px;"></div>
+        <div style="font-size: 8px;">Finally found out about the Touched Music collective and wow, so many good albums from there.</div>
+    </div>
+    <script>
+        //Cheaty function to invoke within text. Very illegal.
+        function unhide(id) {
+            let obj = document.getElementById(id);
+            if(obj) {
+                obj.style.visibility = "visible";
+            }
+        }
+        function toggle(id, display="inline-block") {
+            let obj = document.getElementById(id);
+            let scrollY = window.scrollY; // Record the current scroll position
+            if(obj) {
+                if(obj.style.display && obj.style.display === "none") {
+                    obj.style.display = display;
+                } else {
+                    obj.style.display = "none";
+                }
+            }
+            window.scrollTo(0, scrollY);
+        }
+        
+    </script>
+</body>
+
+</html>
